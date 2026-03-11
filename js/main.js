@@ -133,6 +133,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.remove('cal-modal-open');
     // Clear widget after transition
     setTimeout(() => { container.innerHTML = ''; }, 300);
+    // Force nav scroll recheck after body overflow restores
+    requestAnimationFrame(() => {
+      const nav = document.querySelector('.nav');
+      if (nav) {
+        if (window.scrollY > 60) {
+          nav.classList.add('scrolled');
+        } else {
+          nav.classList.remove('scrolled');
+        }
+      }
+    });
   }
 
   closeBtn.addEventListener('click', closeCalendlyModal);
