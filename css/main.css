@@ -1877,6 +1877,25 @@ body.cal-modal-open {
   overflow: hidden;
 }
 
+@media (max-width: 640px) {
+  .cal-modal {
+    padding: env(safe-area-inset-top, 16px) 0 env(safe-area-inset-bottom, 16px);
+  }
+
+  .cal-modal__card {
+    width: 96vw;
+    height: 75dvh;
+    height: 75vh; /* fallback */
+    max-height: none;
+    border-radius: 16px;
+  }
+
+  .cal-modal__close {
+    margin-top: 12px;
+    margin-bottom: 4px;
+  }
+}
+
 /* ============================================
    FOOTER
    ============================================ */

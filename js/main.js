@@ -117,7 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(s);
   }
 
+  let savedScrollY = 0;
+
   function openCalendlyModal() {
+    savedScrollY = window.scrollY;
     modal.classList.add('is-open');
     document.body.classList.add('cal-modal-open');
     loadCalendlySDK(() => {
@@ -131,10 +134,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function closeCalendlyModal() {
     modal.classList.remove('is-open');
     document.body.classList.remove('cal-modal-open');
+    // Restore scroll position before body overflow was locked
+    window.scrollTo(0, savedScrollY);
     // Clear widget after transition
     setTimeout(() => { container.innerHTML = ''; }, 300);
-    // Force nav scroll recheck after body overflow restores
-    requestAnimationFrame(() => {
+    // Force nav scroll recheck after Safari settles
+    setTimeout(() => {
       const nav = document.querySelector('.nav');
       if (nav) {
         if (window.scrollY > 60) {
@@ -143,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
           nav.classList.remove('scrolled');
         }
       }
-    });
+    }, 100);
   }
 
   closeBtn.addEventListener('click', closeCalendlyModal);
