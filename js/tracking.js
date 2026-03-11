@@ -1,7 +1,7 @@
 /* ============================================
    United Immigration Medical Exams
    Analytics & Conversion Tracking
-   GA4: G-M6D4QHH38F
+   GA4: G-M6D4QHH38F | v2
 
    NOTE: Uses event delegation (document-level listeners)
    so tracking works on dynamically loaded components
