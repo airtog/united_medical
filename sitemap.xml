@@ -2,122 +2,134 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://unitedmedicalexams.com/</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/appointments.html</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/contact.html</loc>
-    <lastmod>2025-03-09</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/blog.html</loc>
-    <lastmod>2025-03-09</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://unitedmedicalexams.com/privacy-policy.html</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://unitedmedicalexams.com/hipaa-notice.html</loc>
+    <lastmod>2026-03-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
   <!-- Location Pages -->
   <url>
     <loc>https://unitedmedicalexams.com/locations/</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/locations/paterson-nj.html</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/locations/newark-nj.html</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/locations/jersey-city-nj.html</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/locations/hackensack-nj.html</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/locations/elizabeth-nj.html</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/locations/passaic-nj.html</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/locations/fort-lee-nj.html</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/locations/east-orange-nj.html</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/locations/union-city-nj.html</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/locations/north-bergen-nj.html</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/locations/garfield-nj.html</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/locations/fair-lawn-nj.html</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/locations/paramus-nj.html</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/locations/wayne-nj.html</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://unitedmedicalexams.com/locations/totowa-nj.html</loc>
-    <lastmod>2025-03-11</lastmod>
+    <lastmod>2026-03-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
