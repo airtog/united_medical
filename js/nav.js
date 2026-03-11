@@ -10,11 +10,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const drawer = document.querySelector('.nav__drawer');
 
     // --- Sticky Nav : add scrolled class ---
+    // Pages without a dark hero should always show scrolled nav
+    const hasHero = document.querySelector('.hero');
+    if (!hasHero) {
+        nav.classList.add('scrolled');
+    }
+
     const handleScroll = () => {
-        if (window.scrollY > 60) {
-            nav.classList.add('scrolled');
-        } else {
-            nav.classList.remove('scrolled');
+        if (hasHero) {
+            if (window.scrollY > 60) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
         }
     };
 
