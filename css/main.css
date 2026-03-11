@@ -2022,7 +2022,7 @@ body.cal-modal-open {
   .footer__grid {
     grid-template-columns: 1fr;
     gap: 32px;
-    text-align: center;
+    text-align: left;
   }
 
   .footer__bottom {
@@ -2098,8 +2098,27 @@ body.cal-modal-open {
     font-size: 2.8rem;
   }
 
+  /* — Mobile testimonials: stacked vertical layout — */
+  .testimonials__carousel {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .testimonials__arrow {
+    display: none;
+  }
+
+  .testimonials__track {
+    flex-direction: column;
+    overflow-x: visible;
+    scroll-snap-type: none;
+    gap: 16px;
+    padding: 0;
+  }
+
   .testimonial-card {
-    flex: 0 0 280px;
+    flex: 0 0 auto;
+    width: 100%;
   }
 
   .areas-served__drive-times {
