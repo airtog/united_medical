@@ -162,4 +162,49 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(openCalendlyModal, 500);
   }
 
+  // --- Social Proof Toast Notifications ---
+  const toast = document.createElement('div');
+  toast.className = 'social-toast';
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
+  document.body.appendChild(toast);
+
+  let bookedCount = Math.floor(Math.random() * 3) + 1; // start at 1–3
+
+  const toastMessages = [
+    () => {
+      const n = Math.floor(Math.random() * 3) + 1; // 1–3, fluctuates naturally
+      return {
+        icon: '<span class="social-toast__dot"></span>',
+        text: `${n} ${n === 1 ? 'person is' : 'people are'} finding times right now`
+      };
+    },
+    () => {
+      // Only increment (0 or 1), never decrease, cap at 5
+      if (bookedCount < 5) bookedCount += Math.round(Math.random());
+      return {
+        icon: '<span class="social-toast__icon">📅</span>',
+        text: `${bookedCount} ${bookedCount === 1 ? 'person' : 'people'} booked today`
+      };
+    }
+  ];
+
+  let toastTimeout;
+  function showToast() {
+    const msg = toastMessages[Math.floor(Math.random() * toastMessages.length)]();
+    toast.innerHTML = `${msg.icon}<span>${msg.text}</span>`;
+    toast.classList.add('is-visible');
+
+    // Auto-hide after 4.5s
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+      toast.classList.remove('is-visible');
+      // Schedule next toast 20–40s later
+      setTimeout(showToast, (Math.random() * 20000) + 20000);
+    }, 4500);
+  }
+
+  // First toast after 5 seconds
+  setTimeout(showToast, 5000);
+
 });
