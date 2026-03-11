@@ -78,6 +78,17 @@ document.addEventListener('DOMContentLoaded', () => {
     updateArrows();
   }
 
+  // --- Show More Reviews (mobile stacked layout) ---
+  const showMoreBtn = document.getElementById('showMoreReviews');
+  if (showMoreBtn && track) {
+    const carousel = track.closest('.testimonials__carousel');
+    showMoreBtn.addEventListener('click', () => {
+      const expanded = track.classList.toggle('is-expanded');
+      if (carousel) carousel.classList.toggle('is-expanded', expanded);
+      showMoreBtn.textContent = expanded ? 'Show Less ↑' : 'Show More Reviews ↓';
+    });
+  }
+
   // --- Calendly Modal ---
   const CALENDLY_URL = 'https://calendly.com/unitedmedicalexams-info/30min?hide_event_type_details=1';
 

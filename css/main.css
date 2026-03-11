@@ -507,6 +507,11 @@ p {
   color: var(--color-primary);
 }
 
+/* Mobile-only hero CTAs — hidden on desktop */
+.hero__mobile-ctas {
+  display: none;
+}
+
 /* ============================================
    PAGE HERO (sub-pages)
    ============================================ */
@@ -1355,6 +1360,11 @@ p {
   color: #999;
 }
 
+/* Show More button — hidden by default (shown only on mobile via media query) */
+.testimonials__show-more {
+  display: none;
+}
+
 /* ============================================
    LOCATION & AREAS SERVED
    ============================================ */
@@ -1783,8 +1793,15 @@ p {
 }
 
 @keyframes calSlideUp {
-  from { opacity: 0; transform: translateY(24px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .cal-modal__close {
@@ -2077,7 +2094,94 @@ body.cal-modal-open {
   }
 
   .hero__split {
-    padding: 80px 16px 40px;
+    padding: 120px 20px 48px;
+    gap: 100px;
+  }
+
+  .hero__left {
+    padding-top: 0;
+  }
+
+  .hero__eyebrow {
+    font-size: 0.65rem;
+    margin-bottom: 16px;
+    letter-spacing: 1.5px;
+  }
+
+  .hero__left h1 {
+    font-size: 1.75rem;
+    margin-bottom: 16px;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  .hero__sub {
+    font-size: 0.92rem;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    text-wrap: balance;
+  }
+
+  /* Show mobile-only CTAs */
+  .hero__mobile-ctas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin-top: 24px;
+  }
+
+  .hero__mobile-ctas .btn {
+    width: 100%;
+    max-width: 320px;
+    justify-content: center;
+    text-align: center;
+    padding: 12px 24px;
+    font-size: 0.95rem;
+  }
+
+  /* Trust strip — 2 on top, 1 centered below on mobile */
+  .hero__trust-strip {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 20px;
+    margin-bottom: 16px;
+  }
+
+  .hero__urgency {
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+    text-wrap: balance;
+  }
+
+  /* Compact price card on mobile */
+  .hero__price-card {
+    max-width: 100%;
+  }
+
+  .hero__price-card-header {
+    padding: 28px 24px 20px;
+  }
+
+  .hero__price-dollar {
+    font-size: 2.4rem;
+  }
+
+  .hero__price-features {
+    padding: 20px 24px 12px;
+    gap: 10px;
+  }
+
+  .hero__price-features li {
+    font-size: 0.82rem;
+    gap: 8px;
+  }
+
+  .hero__price-actions {
+    padding: 4px 24px 24px;
+    gap: 12px;
   }
 
   .btn-group {
@@ -2111,14 +2215,39 @@ body.cal-modal-open {
   .testimonials__track {
     flex-direction: column;
     overflow-x: visible;
+    overflow-y: hidden;
     scroll-snap-type: none;
     gap: 16px;
     padding: 0;
+    max-height: 780px;
+    position: relative;
+    transition: max-height 0.5s ease;
+    -webkit-mask-image: linear-gradient(to bottom,
+        black 0%,
+        black 80%,
+        transparent 100%);
+    mask-image: linear-gradient(to bottom,
+        black 0%,
+        black 80%,
+        transparent 100%);
+  }
+
+  /* When expanded, remove truncation */
+  .testimonials__track.is-expanded {
+    max-height: 4000px;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .testimonial-card {
     flex: 0 0 auto;
     width: 100%;
+  }
+
+  /* Show More button — visible only on mobile */
+  .testimonials__show-more {
+    display: inline-flex;
+    transition: all 0.3s ease;
   }
 
   .areas-served__drive-times {
