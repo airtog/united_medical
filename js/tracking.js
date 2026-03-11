@@ -34,7 +34,7 @@
           gtag('event', 'invitee_meeting_scheduled', {
             event_category: 'conversion',
             event_label: 'calendly_booking',
-            value: 449
+            value: 599
           });
         }
       }
