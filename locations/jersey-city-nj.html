@@ -28,9 +28,9 @@
     rel="stylesheet">
 
   <!-- Styles -->
-  <link rel="stylesheet" href="../css/nav.css?v=3">
-  <link rel="stylesheet" href="../css/main.css?v=15">
-  <link rel="stylesheet" href="../css/locations.css?v=1">
+  <link rel="stylesheet" href="/css/nav.css?v=3">
+  <link rel="stylesheet" href="/css/main.css?v=15">
+  <link rel="stylesheet" href="/css/locations.css?v=1">
 
   <!-- Structured Data -->
   <script type="application/ld+json">
@@ -86,54 +86,7 @@
 <body>
 
   <!-- ========== NAVIGATION ========== -->
-  <nav class="nav" role="navigation" aria-label="Main navigation">
-    <div class="nav__inner">
-      <a href="../index.html" class="nav__logo"><img src="../assets/unitedmedicalexams_logo.png"
-          alt="United Immigration Medical Exams" class="nav__logo-img"><span>United Immigration<br>Medical
-          Exams</span></a>
-
-      <ul class="nav__links">
-        <li><a href="../index.html#what-to-expect">Exam</a></li>
-        <li><a href="../index.html#pricing">Pricing</a></li>
-        <li><a href="../index.html#team">Care Team</a></li>
-        <li><a href="../index.html#what-to-bring">What to Bring</a></li>
-        <li class="nav__dropdown">
-          <button class="nav__dropdown-trigger" aria-expanded="false">More <span class="nav__dropdown-arrow">▾</span></button>
-          <ul class="nav__dropdown-menu">
-            <li><a href="../index.html#faq">FAQs</a></li>
-            <li><a href="../index.html#areas-served">Locations Served</a></li>
-          </ul>
-        </li>
-      </ul>
-
-      <div class="nav__cta">
-        <a href="tel:+18557551312" class="btn btn--outline-white">Call / Text (855) 755-1312</a>
-        <a href="../appointments.html" class="btn btn--gold">Schedule Appointment</a>
-      </div>
-
-      <button class="nav__hamburger" aria-label="Toggle menu" aria-expanded="false">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </div>
-
-    <!-- Mobile Drawer -->
-    <div class="nav__drawer" id="nav-drawer">
-      <ul>
-        <li><a href="../index.html#what-to-expect">Exam</a></li>
-        <li><a href="../index.html#pricing">Pricing</a></li>
-        <li><a href="../index.html#team">Care Team</a></li>
-        <li><a href="../index.html#what-to-bring">What to Bring</a></li>
-        <li><a href="../index.html#faq">FAQs</a></li>
-        <li><a href="../index.html#areas-served">Locations Served</a></li>
-      </ul>
-      <div class="btn-group">
-        <a href="tel:+18557551312" class="btn btn--outline-gold">Call / Text (855) 755-1312</a>
-        <a href="../appointments.html" class="btn btn--gold">Schedule Appointment</a>
-      </div>
-    </div>
-  </nav>
+  <div id="nav-placeholder"></div>
 
   <!-- ========== LOCATION HERO ========== -->
   <section class="loc-hero">
@@ -277,14 +230,7 @@
   </section>
 
   <!-- ========== CTA BANNER ========== -->
-  <section class="loc-cta">
-    <h2>Ready to Complete Your Immigration Medical Exam?</h2>
-    <p>Same-week appointments available for Jersey City residents. Our team is here to guide you through the process with care and accuracy.</p>
-    <div class="btn-group btn-group--center">
-      <a href="../appointments.html" class="btn btn--gold">Schedule Your Exam</a>
-      <a href="tel:+18557551312" class="btn btn--outline-white">Call / Text (855) 755-1312</a>
-    </div>
-  </section>
+  <div id="cta-placeholder"></div>
 
   <!-- ========== NEARBY LOCATIONS ========== -->
   <section class="loc-nearby">
@@ -299,51 +245,14 @@
   </section>
 
   <!-- ========== FOOTER ========== -->
-  <footer class="site-footer">
-    <div class="footer__grid">
-      <div class="footer__brand">
-        <a href="../index.html"><img src="../assets/unitedmedicalexams_logo_lockup.png" alt="United Immigration Medical Exams"
-            class="footer__logo-img"></a>
-        <p>Trusted I-693 Immigration Medical Exams in New Jersey. Compassionate care for every patient.</p>
-      </div>
-      <div class="footer__links">
-        <h4>Quick Links</h4>
-        <ul>
-          <li><a href="../index.html#what-to-expect">Exam</a></li>
-          <li><a href="../index.html#pricing">Pricing</a></li>
-          <li><a href="../index.html#team">Care Team</a></li>
-          <li><a href="../index.html#what-to-bring">What to Bring</a></li>
-          <li><a href="../index.html#faq">FAQs</a></li>
-          <li><a href="index.html">Locations Served</a></li>
-        </ul>
-      </div>
-      <div class="footer__contact">
-        <h4>Contact</h4>
-        <p><a href="tel:+18557551312">(855) 755-1312</a></p>
-        <p><a href="https://unitedmedicalexams.com">unitedmedicalexams.com</a></p>
-        <p>842 Clifton Ave, Clifton, NJ 07013</p>
-        <p style="margin-top: 8px; font-size: 0.82rem; line-height: 1.6;">
-          Mon–Thurs: 9:00am–5:30pm<br>
-          Fri: 9:00am–3:30pm<br>
-          Sat–Sun: Closed
-        </p>
-      </div>
-    </div>
-    <div class="footer__bottom">
-      <span>&copy; 2025 United Immigration Medical Exams. All rights reserved.</span>
-      <div class="footer__bottom-links">
-        <a href="../privacy-policy.html">Privacy Policy</a>
-        <a href="../hipaa-notice.html">HIPAA Notice</a>
-      </div>
-    </div>
-  </footer>
+  <div id="footer-placeholder"></div>
 
   <!-- Scripts -->
-  <script src="../js/nav.js"></script>
-  <script src="../js/main.js"></script>
+  <script src="/js/nav.js"></script>
+  <script src="/js/main.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>lucide.createIcons();</script>
-  <script src="../js/tracking.js"></script>
+  <script src="/js/tracking.js"></script>
 </body>
 
 </html>

@@ -1,9 +1,83 @@
 /* ============================================
    United Immigration Medical Exams
-   Main JavaScript — Scroll Animations
+   Main JavaScript — Components + Scroll Animations
    ============================================ */
 
-document.addEventListener('DOMContentLoaded', () => {
+/* ---- Component Loader ---- */
+const loadComponent = async (placeholderId, componentPath) => {
+  const placeholder = document.getElementById(placeholderId);
+  if (!placeholder) return null;
+
+  try {
+    const resp = await fetch(componentPath);
+    if (resp.ok) {
+      const html = await resp.text();
+      placeholder.outerHTML = html;
+      return true;
+    }
+  } catch (e) {
+    console.warn(`Failed to load component ${placeholderId}:`, e);
+  }
+  return null;
+};
+
+document.addEventListener('DOMContentLoaded', async () => {
+
+  /* === 1. Load shared components === */
+  const navLoaded = await loadComponent('nav-placeholder', '/components/nav.html');
+  const ctaPlaceholder = document.getElementById('cta-placeholder');
+  let ctaOverrides = {};
+  if (ctaPlaceholder) {
+    // Capture data-* overrides BEFORE the placeholder is replaced
+    ctaOverrides = {
+      heading: ctaPlaceholder.dataset.ctaHeading,
+      text: ctaPlaceholder.dataset.ctaText,
+      btn1Text: ctaPlaceholder.dataset.ctaBtn1Text,
+      btn1Href: ctaPlaceholder.dataset.ctaBtn1Href,
+      btn2Text: ctaPlaceholder.dataset.ctaBtn2Text,
+      btn2Href: ctaPlaceholder.dataset.ctaBtn2Href,
+    };
+  }
+  await loadComponent('cta-placeholder', '/components/cta-banner.html');
+  await loadComponent('footer-placeholder', '/components/footer.html');
+
+  /* === 2. Apply CTA overrides === */
+  if (ctaOverrides.heading || ctaOverrides.text) {
+    const ctaHeading = document.querySelector('.cta-banner__heading');
+    const ctaText = document.querySelector('.cta-banner__text');
+    const ctaBtn1 = document.querySelector('.cta-banner__btn1');
+    const ctaBtn2 = document.querySelector('.cta-banner__btn2');
+
+    if (ctaOverrides.heading && ctaHeading) ctaHeading.textContent = ctaOverrides.heading;
+    if (ctaOverrides.text && ctaText) ctaText.textContent = ctaOverrides.text;
+    if (ctaOverrides.btn1Text && ctaBtn1) ctaBtn1.textContent = ctaOverrides.btn1Text;
+    if (ctaOverrides.btn1Href && ctaBtn1) ctaBtn1.href = ctaOverrides.btn1Href;
+    if (ctaOverrides.btn2Text && ctaBtn2) ctaBtn2.textContent = ctaOverrides.btn2Text;
+    if (ctaOverrides.btn2Href && ctaBtn2) ctaBtn2.href = ctaOverrides.btn2Href;
+  }
+
+  /* === 3. Init nav (after it's loaded into DOM) === */
+  if (navLoaded && typeof window.initNav === 'function') {
+    window.initNav();
+  }
+
+  /* === 4. Re-init Lucide icons (for dynamically injected HTML) === */
+  if (typeof lucide !== 'undefined' && lucide.createIcons) {
+    lucide.createIcons();
+  }
+
+  /* === 5. Rebind appointment-link interceptors (Calendly modal) === */
+  // These run after nav/footer inject new appointment links
+  document.querySelectorAll('a[href="/appointments.html"], a[href="appointments.html"], a[href="./appointments.html"], a[href="../appointments.html"]').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (typeof openCalendlyModal === 'function') openCalendlyModal();
+    });
+  });
+
+  /* ========================================
+     Existing functionality below
+     ======================================== */
 
   // --- Fade-in on scroll (Intersection Observer) ---
   const fadeEls = document.querySelectorAll('.fade-in');
@@ -119,7 +193,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let savedScrollY = 0;
 
-  function openCalendlyModal() {
+  // Expose globally so component-injected links can call it
+  window.openCalendlyModal = function () {
     savedScrollY = window.scrollY;
     modal.classList.add('is-open');
     document.body.classList.add('cal-modal-open');
@@ -129,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
         parentElement: container
       });
     });
-  }
+  };
 
   function closeCalendlyModal() {
     modal.classList.remove('is-open');
@@ -161,21 +236,25 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('[data-open-calendly]').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      openCalendlyModal();
+      window.openCalendlyModal();
     });
   });
 
-  // Intercept all appointment links on the same site
-  document.querySelectorAll('a[href="appointments.html"], a[href="./appointments.html"]').forEach((link) => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      openCalendlyModal();
-    });
+  // Intercept all appointment links (including dynamically loaded from components)
+  document.querySelectorAll('a[href="/appointments.html"], a[href="appointments.html"], a[href="./appointments.html"], a[href="../appointments.html"]').forEach((link) => {
+    // Avoid double-binding
+    if (!link.dataset.calendlyBound) {
+      link.dataset.calendlyBound = 'true';
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.openCalendlyModal();
+      });
+    }
   });
 
   // Auto-open modal on appointments page
   if (document.querySelector('[data-auto-open-calendly]')) {
-    setTimeout(openCalendlyModal, 500);
+    setTimeout(window.openCalendlyModal, 500);
   }
 
   // --- Social Proof Toast Notifications ---

@@ -2092,6 +2092,22 @@ body.cal-modal-open {
   gap: 20px;
 }
 
+.footer__credit {
+  font-size: 0.75rem;
+  opacity: 0.5;
+}
+
+.footer__credit a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.footer__credit a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
 /* ============================================
    RESPONSIVE
    ============================================ */

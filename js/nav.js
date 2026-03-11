@@ -3,11 +3,13 @@
    Navigation JavaScript
    ============================================ */
 
-document.addEventListener('DOMContentLoaded', () => {
+window.initNav = function () {
 
     const nav = document.querySelector('.nav');
     const hamburger = document.querySelector('.nav__hamburger');
     const drawer = document.querySelector('.nav__drawer');
+
+    if (!nav) return;
 
     // --- Sticky Nav : add scrolled class ---
     // Pages without a dark hero should always show scrolled nav
@@ -63,4 +65,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Dropdown toggle (desktop More menu) ---
+    const dropdownTrigger = nav.querySelector('.nav__dropdown-trigger');
+    if (dropdownTrigger) {
+        dropdownTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const parent = dropdownTrigger.closest('.nav__dropdown');
+            const isOpen = parent.classList.toggle('is-open');
+            dropdownTrigger.setAttribute('aria-expanded', isOpen);
+        });
+
+        document.addEventListener('click', () => {
+            const openDropdown = nav.querySelector('.nav__dropdown.is-open');
+            if (openDropdown) {
+                openDropdown.classList.remove('is-open');
+                openDropdown.querySelector('.nav__dropdown-trigger')
+                    .setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+
+};
+
+// If nav already exists in the DOM on load (fallback), init immediately
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.querySelector('.nav') && !document.getElementById('nav-placeholder')) {
+        window.initNav();
+    }
 });
