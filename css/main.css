@@ -47,7 +47,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* scroll-behavior handled by JS in nav.js for ease-in-out easing */
   -webkit-text-size-adjust: 100%;
 }
 
