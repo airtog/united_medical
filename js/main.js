@@ -199,6 +199,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     modal.classList.add('is-open');
     document.body.classList.add('cal-modal-open');
     loadCalendlySDK(() => {
+      // Clear any previous widget to prevent duplicate calendars
+      container.innerHTML = '';
       Calendly.initInlineWidget({
         url: CALENDLY_URL,
         parentElement: container
