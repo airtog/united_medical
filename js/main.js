@@ -66,15 +66,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     lucide.createIcons();
   }
 
-  /* === 5. Rebind appointment-link interceptors (Calendly modal) === */
-  // These run after nav/footer inject new appointment links
-  document.querySelectorAll('a[href="/appointments.html"], a[href="appointments.html"], a[href="./appointments.html"], a[href="../appointments.html"]').forEach((link) => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (typeof openCalendlyModal === 'function') openCalendlyModal();
-    });
-  });
-
   /* ========================================
      Existing functionality below
      ======================================== */
@@ -163,101 +154,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // --- Calendly Modal ---
-  const CALENDLY_URL = 'https://calendly.com/unitedmedicalexams-info/30min?hide_event_type_details=1';
-
-  // Build modal DOM
-  const modal = document.createElement('div');
-  modal.className = 'cal-modal';
-  modal.innerHTML = `
-    <div class="cal-modal__backdrop"></div>
-    <div class="cal-modal__card">
-      <div class="cal-modal__body" id="calendly-modal-container"></div>
-    </div>
-    <button class="cal-modal__close" aria-label="Close">✕ Close</button>
-  `;
-  document.body.appendChild(modal);
-
-  const container = document.getElementById('calendly-modal-container');
-  const closeBtn = modal.querySelector('.cal-modal__close');
-  const backdrop = modal.querySelector('.cal-modal__backdrop');
-  let widgetLoaded = false;
-
-  function loadCalendlySDK(cb) {
-    if (widgetLoaded) return cb();
-    const s = document.createElement('script');
-    s.src = 'https://assets.calendly.com/assets/external/widget.js';
-    s.onload = () => { widgetLoaded = true; cb(); };
-    document.head.appendChild(s);
-  }
-
-  let savedScrollY = 0;
-
-  // Expose globally so component-injected links can call it
-  window.openCalendlyModal = function () {
-    savedScrollY = window.scrollY;
-    modal.classList.add('is-open');
-    document.body.classList.add('cal-modal-open');
-    loadCalendlySDK(() => {
-      // Clear any previous widget to prevent duplicate calendars
-      container.innerHTML = '';
-      Calendly.initInlineWidget({
-        url: CALENDLY_URL,
-        parentElement: container
-      });
-    });
-  };
-
-  function closeCalendlyModal() {
-    modal.classList.remove('is-open');
-    document.body.classList.remove('cal-modal-open');
-    // Restore scroll position before body overflow was locked
-    window.scrollTo(0, savedScrollY);
-    // Clear widget after transition
-    setTimeout(() => { container.innerHTML = ''; }, 300);
-    // Force nav scroll recheck after Safari settles
-    setTimeout(() => {
-      const nav = document.querySelector('.nav');
-      if (nav) {
-        if (window.scrollY > 60) {
-          nav.classList.add('scrolled');
-        } else {
-          nav.classList.remove('scrolled');
-        }
-      }
-    }, 100);
-  }
-
-  closeBtn.addEventListener('click', closeCalendlyModal);
-  backdrop.addEventListener('click', closeCalendlyModal);
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.classList.contains('is-open')) closeCalendlyModal();
-  });
-
-  // Attach to explicit data-open-calendly buttons
-  document.querySelectorAll('[data-open-calendly]').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.openCalendlyModal();
-    });
-  });
-
-  // Intercept all appointment links (including dynamically loaded from components)
-  document.querySelectorAll('a[href="/appointments.html"], a[href="appointments.html"], a[href="./appointments.html"], a[href="../appointments.html"]').forEach((link) => {
-    // Avoid double-binding
-    if (!link.dataset.calendlyBound) {
-      link.dataset.calendlyBound = 'true';
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        window.openCalendlyModal();
-      });
-    }
-  });
-
-  // Auto-open modal on appointments page
-  if (document.querySelector('[data-auto-open-calendly]')) {
-    setTimeout(window.openCalendlyModal, 500);
-  }
 
   // --- Social Proof Toast Notifications ---
   const toast = document.createElement('div');

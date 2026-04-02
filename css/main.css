@@ -1674,227 +1674,424 @@ a.drive-time:hover {
 }
 
 /* ============================================
-   APPOINTMENTS PAGE
+   APPOINTMENTS PAGE — Rebuilt
    ============================================ */
-.appt {
-  padding: 140px 40px 100px;
-  background: var(--color-bg);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-}
-
-.appt__inner {
-  max-width: 420px;
-  margin: 0 auto;
+.appt-header {
+  padding: 130px 24px 0;
+  background: var(--color-primary);
   text-align: center;
+  color: var(--color-white);
 }
 
-.appt__inner h1 {
+.appt-header h1 {
   font-family: var(--font-heading);
-  font-size: 2rem;
+  font-size: clamp(1.7rem, 4vw, 2.4rem);
   font-weight: 800;
-  color: var(--color-primary);
+  color: var(--color-white);
   margin-bottom: 8px;
   line-height: 1.2;
 }
 
-.appt__lead {
+.appt-header__sub {
   font-size: 1.05rem;
-  color: var(--color-text-light);
-  margin-bottom: 32px;
+  opacity: 0.85;
+  margin-bottom: 0;
   line-height: 1.6;
 }
 
-.appt__checks {
-  list-style: none;
-  display: inline-flex;
-  flex-direction: column;
-  gap: 14px;
-  margin-bottom: 36px;
-  text-align: left;
+/* Trust reassurance bar */
+.appt-trust {
+  background: var(--color-primary);
+  padding: 24px 24px 40px;
 }
 
-.appt__checks li {
+.appt-trust__grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.appt-trust__item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 0.95rem;
-  color: var(--color-text);
-  font-weight: 500;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.2px;
 }
 
-.appt__checks svg {
+.appt-trust__item svg {
+  width: 18px;
+  height: 18px;
+  color: #d4a44a;
   flex-shrink: 0;
 }
 
-.appt__cta {
+/* Two-column layout */
+.appt-content {
+  padding: 0 24px 64px;
+  padding-top: 80px; /* nav height only — flush to top */
+  background: var(--color-bg);
+}
+
+.appt-content__grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 36px;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+/* Left column: Info panel */
+.appt-info {
+  position: sticky;
+  top: 80px;
+  padding-top: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.appt-info__heading {
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1.15;
+  margin-bottom: 0;
+}
+
+.appt-info__sub {
+  font-size: 0.95rem;
+  color: var(--color-text-light);
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+
+.appt-info__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.appt-info__badges span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text);
+  background: var(--color-white);
+  padding: 5px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+}
+
+.appt-info__badges span svg {
+  color: #16a34a;
+  flex-shrink: 0;
+}
+
+.appt-info__awards {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.appt-info__awards img {
+  height: 100px;
+  width: auto;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+}
+
+/* Calendly embed card */
+.appt-embed {
+  background: transparent;
+  border-radius: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+.appt-embed__widget {
+  min-width: 320px;
+}
+
+.appt-embed__widget .calendly-inline-widget {
+  width: 100% !important;
+}
+
+.appt-embed__widget .calendly-inline-widget iframe {
+  width: 100% !important;
+  border: none !important;
+}
+
+/* Sidebar cards (now in left info column) */
+.appt-sidebar__card {
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+}
+
+.appt-sidebar__price {
+  text-align: center;
+  background: var(--color-light-accent);
+  padding: 28px 24px;
+}
+
+.appt-sidebar__price-amount {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.appt-sidebar__price-note {
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+  font-weight: 500;
+}
+
+.appt-sidebar__card h3 {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 16px;
+}
+
+.appt-sidebar__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.appt-sidebar__list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+.appt-sidebar__list li svg {
+  width: 18px;
+  height: 18px;
+  color: #16a34a;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.appt-sidebar__bring li svg {
+  color: var(--color-accent);
+}
+
+.appt-sidebar__phone {
+  text-align: center;
+  background: var(--color-light-accent);
+  border: 1px solid rgba(59, 125, 216, 0.15);
+}
+
+.appt-sidebar__phone p {
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+  margin-bottom: 8px;
+}
+
+.appt-sidebar__phone a {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s ease;
+}
+
+.appt-sidebar__phone a svg {
+  width: 20px;
+  height: 20px;
+}
+
+.appt-sidebar__phone a:hover {
+  color: var(--color-accent-hover);
+}
+
+/* Process steps */
+.appt-process {
+  padding: 64px 24px 80px;
+  background: var(--color-white);
+}
+
+.appt-process__inner {
+  max-width: 860px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.appt-process h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.3rem, 3vw, 1.6rem);
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 40px;
+}
+
+.appt-process__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  text-align: center;
+}
+
+.appt-process__step-number {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-white);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.05rem;
-  padding: 16px 44px;
-  margin-bottom: 24px;
-  cursor: pointer;
-  border: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: 16px;
 }
 
-.appt__cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+.appt-process__step h3 {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 8px;
 }
 
-.appt__call {
+.appt-process__step p {
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+  line-height: 1.6;
+}
+
+/* Mobile: phone CTA sticky bar */
+.appt-mobile-cta {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  background: var(--color-white);
+  padding: 12px 16px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  border-top: 1px solid var(--color-border);
+}
+
+.appt-mobile-cta a {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-size: 0.9rem;
-  color: var(--color-text-light);
-}
-
-.appt__call a {
-  font-weight: 700;
-  color: var(--color-accent);
+  width: 100%;
+  padding: 14px 20px;
+  background: var(--color-accent);
+  color: var(--color-white);
+  font-family: var(--font-heading);
   font-size: 1rem;
-  transition: color 0.2s ease;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: background 0.2s ease;
 }
 
-.appt__call a:hover {
-  color: var(--color-accent-hover);
+.appt-mobile-cta a:hover {
+  background: var(--color-accent-hover);
+  color: var(--color-white);
 }
 
-/* ============================================
-   CALENDLY MODAL
-   ============================================ */
-.cal-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.25s ease, visibility 0.25s ease;
+.appt-mobile-cta a svg {
+  width: 20px;
+  height: 20px;
 }
 
-.cal-modal.is-open {
-  opacity: 1;
-  visibility: visible;
-}
-
-.cal-modal__backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(15, 30, 50, 0.6);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-.cal-modal__card {
-  position: relative;
-  width: 94vw;
-  max-width: 680px;
-  height: 82vh;
-  max-height: 760px;
-  background: var(--color-white);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  animation: calSlideUp 0.3s ease both;
-}
-
-.cal-modal:not(.is-open) .cal-modal__card {
-  animation: none;
-}
-
-@keyframes calSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(24px) scale(0.97);
+/* Appointments responsive */
+@media (max-width: 860px) {
+  .appt-content {
+    padding-top: 80px;
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+  .appt-content__grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
   }
-}
 
-.cal-modal__close {
-  order: -1;
-  flex-shrink: 0;
-  align-self: center;
-  z-index: 10001;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 22px;
-  border-radius: 999px;
-  border: none;
-  background: rgba(255, 255, 255, 0.95);
-  color: var(--color-text);
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  cursor: pointer;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
-  transition: background 0.2s ease, transform 0.2s ease;
-}
+  .appt-info {
+    position: static;
+    order: 0;
+    padding-top: 24px;
+    gap: 12px;
+  }
 
-.cal-modal__close:hover {
-  background: var(--color-white);
-  transform: scale(1.05);
-}
+  .appt-info__heading {
+    font-size: 1.5rem;
+  }
 
-.cal-modal__body {
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.cal-modal__body::-webkit-scrollbar {
-  display: none;
-}
-
-.cal-modal__body .calendly-inline-widget {
-  min-width: 100% !important;
-  height: 100% !important;
-}
-
-.cal-modal__body iframe {
-  border: none !important;
-}
-
-body.cal-modal-open {
-  overflow: hidden;
+  .appt-embed {
+    order: 1;
+  }
 }
 
 @media (max-width: 640px) {
-  .cal-modal {
-    padding: env(safe-area-inset-top, 16px) 0 env(safe-area-inset-bottom, 16px);
+  .appt-content {
+    padding: 80px 12px 48px;
   }
 
-  .cal-modal__card {
-    width: 96vw;
-    height: 75dvh;
-    height: 75vh; /* fallback */
-    max-height: none;
-    border-radius: 16px;
+  .appt-info {
+    padding-top: 16px;
+    gap: 10px;
   }
 
-  .cal-modal__close {
-    margin-top: 12px;
-    margin-bottom: 4px;
+  .appt-info__heading {
+    font-size: 1.35rem;
+    text-align: center;
+  }
+
+  /* Hide subtitle and what's included on mobile */
+  .appt-info__sub,
+  .appt-info__badges,
+  .appt-info .appt-sidebar__card {
+    display: none;
+  }
+
+  .appt-process__grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .appt-mobile-cta {
+    display: block;
+  }
+
+  .appt-sidebar__phone {
+    display: none;
   }
 }
+
 
 /* ============================================
    LEGAL CONTENT (Privacy, HIPAA)
@@ -2233,10 +2430,6 @@ body.cal-modal-open {
 @media (max-width: 640px) {
   :root {
     --section-padding: 64px 16px;
-  }
-
-  .appt {
-    padding: 100px 16px 60px;
   }
 
   .hero__doctor-badge {
