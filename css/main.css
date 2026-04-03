@@ -1508,11 +1508,12 @@ p {
 
 @media (max-width: 640px) {
   /* ---- MOBILE HERO REDESIGN ---- */
-  /* Two-zone layout: video top + navy bottom */
+  /* Full-viewport hero: primary content centered, proof/badges below fold */
   .hero {
-    min-height: auto;
+    min-height: 100svh;
     background: var(--navy);
-    align-items: flex-start;
+    align-items: center;
+    justify-content: flex-start;
     flex-direction: column;
   }
 
@@ -1521,27 +1522,28 @@ p {
     top: 0;
     left: 0;
     right: 0;
-    height: 55vh;
+    height: 60vh;
     bottom: auto;
   }
 
   .hero__video {
-    height: 55vh;
-    min-height: 55vh;
+    height: 60vh;
+    min-height: 60vh;
   }
 
   .hero__overlay {
     background: linear-gradient(180deg,
-      rgba(30, 58, 95, 0.45) 0%,
-      rgba(30, 58, 95, 0.6) 50%,
-      rgba(30, 58, 95, 1) 92%
+      rgba(30, 58, 95, 0.4) 0%,
+      rgba(30, 58, 95, 0.55) 45%,
+      rgba(30, 58, 95, 1) 88%
     );
   }
 
   .hero__content {
     position: relative;
     z-index: 2;
-    padding: 100px 24px 48px;
+    padding: 0 28px 56px;
+    padding-top: max(100px, 22vh);
     max-width: 100%;
     text-align: center;
     display: flex;
@@ -1552,7 +1554,7 @@ p {
   .hero__eyebrow {
     font-size: 0.7rem;
     text-align: center;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
   }
 
   .hero__content h1 {
@@ -1561,11 +1563,10 @@ p {
     line-height: 1.2;
   }
 
-  /* Spacer — pushes subtitle into the navy zone below video */
   .hero__sub {
-    margin-top: 36px;
+    margin-top: 40px;
     font-size: 0.95rem;
-    margin-bottom: 28px;
+    margin-bottom: 32px;
     opacity: 0.85;
     line-height: 1.8;
   }
@@ -1574,24 +1575,26 @@ p {
     flex-direction: column;
     width: 100%;
     max-width: 320px;
+    gap: 14px;
   }
 
   .hero__ctas .btn {
     width: 100%;
     max-width: 320px;
-    padding: 15px 24px;
+    padding: 16px 24px;
     font-size: 0.95rem;
   }
 
   .hero__proof {
     font-size: 0.9rem;
     justify-content: center;
-    margin-top: 4px;
+    margin-top: 32px;
   }
 
   .hero__badges {
     gap: 14px;
     justify-content: center;
+    margin-top: 8px;
   }
 
   .hero__badges img {
@@ -1681,7 +1684,7 @@ p {
   }
 
   .social-toast {
-    bottom: 80px;
+    bottom: 20px;
     max-width: none;
     width: auto;
     font-size: 0.82rem;
