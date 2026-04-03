@@ -13,7 +13,7 @@
 
 .nav.scrolled {
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
-    padding: 10px 24px;
+    padding: 16px 24px;
 }
 
 .nav.scrolled::before {
@@ -32,6 +32,7 @@
     justify-content: space-between;
     max-width: 1200px;
     margin: 0 auto;
+    height: 44px;
 }
 
 /* Logo */
@@ -42,7 +43,7 @@
     font-family: 'Inter', system-ui, sans-serif;
     font-size: 1.05rem;
     font-weight: 700;
-    color: var(--color-white);
+    color: #fff;
     text-decoration: none;
     transition: color 0.3s ease;
     line-height: 1.2;
@@ -50,18 +51,17 @@
 }
 
 .nav.scrolled .nav__logo {
-    color: var(--color-primary);
+    color: #1e3a5f;
 }
 
 .nav__logo-img {
     height: 44px;
     width: auto;
     object-fit: contain;
-    transition: filter 0.3s ease;
 }
 
 .nav.scrolled .nav__logo-img {
-    filter: brightness(0) saturate(100%) invert(10%) sepia(30%) saturate(2000%) hue-rotate(190deg) brightness(95%) contrast(95%);
+    filter: brightness(0) saturate(100%) invert(16%) sepia(45%) saturate(900%) hue-rotate(182deg);
 }
 
 /* Nav Links */
@@ -292,13 +292,62 @@
 }
 
 .nav.scrolled .nav__cta .btn--outline-white {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
+    color: #3b7dd8;
+    border-color: #3b7dd8;
 }
 
 .nav.scrolled .nav__cta .btn--outline-white:hover {
-    background: var(--color-accent);
-    color: var(--color-white);
+    background: #3b7dd8;
+    color: #fff;
+}
+
+/* Phone link in nav */
+.nav__phone-link {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+}
+
+.nav__phone-link:hover {
+    color: #fff;
+}
+
+.nav.scrolled .nav__phone-link {
+    color: #1e3a5f;
+}
+
+.nav.scrolled .nav__phone-link:hover {
+    color: #3b7dd8;
+}
+
+/* Blue CTA in nav */
+.nav__schedule-btn {
+    padding: 10px 22px !important;
+    font-size: 0.85rem !important;
+}
+
+.nav__cta .btn--blue {
+    background: #3b7dd8;
+    border-color: #3b7dd8;
+    color: #fff;
+}
+
+.nav__cta .btn--blue:hover {
+    background: #2d6bc4;
+    border-color: #2d6bc4;
+}
+
+.nav.scrolled .nav__cta .btn--blue {
+    background: #3b7dd8;
+    border-color: #3b7dd8;
+    color: #fff;
+}
+
+.nav.scrolled .nav__cta .btn--blue:hover {
+    background: #2d6bc4;
+    border-color: #2d6bc4;
 }
 
 /* Hamburger */
@@ -357,6 +406,11 @@
         display: flex;
     }
 
+    /* Shapeshifting: hamburger turns navy when open (over white drawer) */
+    .nav__hamburger.open span {
+        background: var(--color-primary) !important;
+    }
+
     .nav__drawer {
         display: block;
         position: fixed;
@@ -364,17 +418,51 @@
         left: 0;
         right: 0;
         background: var(--color-white);
-        padding: 80px 24px 32px;
-        box-shadow: var(--shadow-lg);
+        padding: 0 24px 32px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
         transform: translateY(-100%);
         opacity: 0;
         transition: transform 0.35s ease, opacity 0.35s ease;
         z-index: 999;
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 16px;
     }
 
     .nav__drawer.open {
         transform: translateY(0);
         opacity: 1;
+    }
+
+    /* Drawer header — logo */
+    .nav__drawer-header {
+        display: flex;
+        align-items: center;
+        padding: 18px 0 16px;
+        padding-right: 48px; /* space for hamburger/X */
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        margin-bottom: 8px;
+    }
+
+    .nav__drawer-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: var(--color-primary);
+    }
+
+    .nav__drawer-logo img {
+        width: 36px;
+        height: 36px;
+        filter: brightness(0) saturate(100%) invert(18%) sepia(30%) saturate(1200%) hue-rotate(185deg) brightness(95%);
+    }
+
+    .nav__drawer-logo span {
+        font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+        font-weight: 700;
+        font-size: 0.85rem;
+        line-height: 1.2;
+        color: var(--color-primary);
     }
 
     .nav__drawer ul {

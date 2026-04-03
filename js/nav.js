@@ -104,12 +104,25 @@ window.initNav = function () {
 
     // --- Hamburger Toggle ---
     if (hamburger && drawer) {
+        const drawerClose = document.getElementById('nav-drawer-close');
+
+        const closeDrawer = () => {
+            hamburger.classList.remove('open');
+            drawer.classList.remove('open');
+            hamburger.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        };
+
         hamburger.addEventListener('click', () => {
             const isOpen = hamburger.classList.toggle('open');
             drawer.classList.toggle('open');
             hamburger.setAttribute('aria-expanded', isOpen);
             document.body.style.overflow = isOpen ? 'hidden' : '';
         });
+
+        if (drawerClose) {
+            drawerClose.addEventListener('click', closeDrawer);
+        }
 
         // Close drawer on link click + smooth-scroll for hash links
         drawer.querySelectorAll('a').forEach((link) => {

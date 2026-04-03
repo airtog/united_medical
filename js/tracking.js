@@ -1,76 +1,82 @@
 // ============================================================
-// tracking.js v3 — United Medical Exams
+// tracking.js v5 — United Medical Exams
 // GA4: G-M6D4QHH38F
+// 7 tracked events per v2 brief
 // ============================================================
 
 (function () {
   'use strict';
 
-  // ----------------------------------------------------------
-  // Deduplication flags (per page load)
-  // ----------------------------------------------------------
   let bookingTracked = false;
-  let ctaClickTracked = false;
+  let callTracked = false;
+  let scheduleTracked = false;
 
-  // Helper: safe gtag check
-  function fireEvent(eventName, params) {
-    if (typeof gtag === 'function') {
-      gtag('event', eventName, params || {});
-    }
+  function fire(name, params) {
+    if (typeof gtag === 'function') gtag('event', name, params || {});
   }
 
-  // ----------------------------------------------------------
-  // 1. CLICK-TO-CALL TRACKING
-  //    Fires once per page load when user taps any tel: link
-  // ----------------------------------------------------------
-  let callTracked = false;
+  // 1. click_to_call
   document.addEventListener('click', function (e) {
     var link = e.target.closest('a[href^="tel:"]');
     if (link && !callTracked) {
       callTracked = true;
-      fireEvent('click_to_call', {
-        event_category: 'engagement',
-        event_label: link.href
-      });
+      fire('click_to_call', { event_category: 'conversion', event_label: link.href });
     }
   });
 
-  // ----------------------------------------------------------
-  // 2. CALENDLY BOOKING COMPLETED
-  //    Listens for postMessage from Calendly iframe.
-  //    Calendly can fire event_scheduled more than once per
-  //    booking — the flag prevents duplicate GA4 hits.
-  // ----------------------------------------------------------
+  // 2. schedule_click
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('a[href*="appointments"]');
+    if (link && !scheduleTracked) {
+      scheduleTracked = true;
+      fire('schedule_click', { event_category: 'conversion', event_label: link.textContent.trim(), transport_type: 'beacon' });
+    }
+  });
+
+  // 3. calendly_confirmed
   window.addEventListener('message', function (e) {
     if (e.data && e.data.event === 'calendly.event_scheduled' && !bookingTracked) {
       bookingTracked = true;
-      fireEvent('invitee_meeting_scheduled', {
-        event_category: 'conversion',
-        event_label: 'calendly_booking',
-        value: 599
-      });
+      fire('calendly_confirmed', { event_category: 'conversion', event_label: 'calendly_booking', value: 599 });
     }
   });
 
-  // ----------------------------------------------------------
-  // 3. SCHEDULE CTA CLICK (homepage only)
-  //    Uses beacon transport so the hit completes before
-  //    the browser navigates to /appointments.html.
-  //    Fires once per page load.
-  // ----------------------------------------------------------
-  document.addEventListener('click', function (e) {
-    var link = e.target.closest('a[href*="appointments"]');
-    if (link && !ctaClickTracked) {
-      ctaClickTracked = true;
-      // Use sendBeacon transport to survive page navigation
-      if (typeof gtag === 'function') {
-        gtag('event', 'schedule_cta_click', {
-          event_category: 'engagement',
-          event_label: link.textContent.trim(),
-          transport_type: 'beacon'
-        });
+  // 4. scroll_depth (25%, 50%, 75%, 90%)
+  var scrollMarks = { 25: false, 50: false, 75: false, 90: false };
+  window.addEventListener('scroll', function () {
+    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    if (docHeight <= 0) return;
+    var pct = Math.round((scrollTop / docHeight) * 100);
+    [25, 50, 75, 90].forEach(function (mark) {
+      if (pct >= mark && !scrollMarks[mark]) {
+        scrollMarks[mark] = true;
+        fire('scroll_depth', { event_category: 'engagement', event_label: mark + '%' });
       }
-      // Don't preventDefault — let the link navigate naturally
+    });
+  }, { passive: true });
+
+  // 5. faq_expand
+  document.addEventListener('toggle', function (e) {
+    if (e.target.matches('.faq-item') && e.target.open) {
+      var q = e.target.querySelector('summary');
+      fire('faq_expand', { event_category: 'engagement', event_label: q ? q.textContent.trim() : 'unknown' });
+    }
+  }, true);
+
+  // 6. sticky_cta_click
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('#sticky-call-cta, #sticky-book-cta');
+    if (btn) {
+      fire('sticky_cta_click', { event_category: 'conversion', event_label: btn.textContent.trim() });
+    }
+  });
+
+  // 7. google_reviews_click
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('#google-reviews-link');
+    if (link) {
+      fire('google_reviews_click', { event_category: 'engagement', event_label: 'see_all_reviews_google' });
     }
   });
 
