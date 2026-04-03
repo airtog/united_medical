@@ -1,7 +1,7 @@
 // ============================================================
-// tracking.js v5 — United Medical Exams
+// tracking.js v6 — United Medical Exams
 // GA4: G-M6D4QHH38F
-// 7 tracked events per v2 brief
+// 6 tracked events per v2 brief
 // ============================================================
 
 (function () {
@@ -63,16 +63,7 @@
       fire('faq_expand', { event_category: 'engagement', event_label: q ? q.textContent.trim() : 'unknown' });
     }
   }, true);
-
-  // 6. sticky_cta_click
-  document.addEventListener('click', function (e) {
-    var btn = e.target.closest('#sticky-call-cta, #sticky-book-cta');
-    if (btn) {
-      fire('sticky_cta_click', { event_category: 'conversion', event_label: btn.textContent.trim() });
-    }
-  });
-
-  // 7. google_reviews_click
+  // 6. google_reviews_click
   document.addEventListener('click', function (e) {
     var link = e.target.closest('#google-reviews-link');
     if (link) {
