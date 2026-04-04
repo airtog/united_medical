@@ -237,9 +237,8 @@ p {
   display: flex;
   align-items: center;
   overflow: hidden;
-  /* Poster frame: instant visual while video loads */
-  background: url('https://i.vimeocdn.com/video/2037571327-7c128ea19f950e03b27180de312200a7e5a55851b0c55e31cbf3a61b71c99aac-d_1920x1080?region=us') center/cover no-repeat,
-    linear-gradient(135deg, #0e2240 0%, #1a3a6e 50%, #162d52 100%);
+  /* Cinematic fallback while video loads */
+  background: linear-gradient(135deg, #0e2240 0%, #1a3a6e 50%, #162d52 100%);
 }
 
 .hero__video-wrap {
@@ -248,7 +247,7 @@ p {
   z-index: 0;
   overflow: hidden;
   opacity: 0;
-  transition: opacity 2s ease;
+  transition: opacity 0.8s ease;
 }
 
 .hero__video-wrap.is-loaded {

@@ -573,7 +573,7 @@
   <script>lucide.createIcons();</script>
   <script src="js/tracking.js?v6"></script>
 
-  <!-- Hero video cinematic crossfade -->
+  <!-- Hero video smooth fade-in -->
   <script>
     (function () {
       var wrap = document.querySelector('.hero__video-wrap');
@@ -585,14 +585,14 @@
         done = true;
         wrap.classList.add('is-loaded');
       }
-      // Wait for iframe to load + buffer, then crossfade
-      if (iframe) iframe.addEventListener('load', function () { setTimeout(reveal, 2000); });
-      // Also listen for Vimeo playback
+      // Trigger on iframe load
+      if (iframe) iframe.addEventListener('load', function () { setTimeout(reveal, 300); });
+      // Listen for Vimeo playback
       window.addEventListener('message', function (e) {
-        if (e.origin && e.origin.indexOf('vimeo') !== -1) setTimeout(reveal, 500);
+        if (e.origin && e.origin.indexOf('vimeo') !== -1) reveal();
       });
-      // Fallback
-      setTimeout(reveal, 3000);
+      // Fallback: 1.5s
+      setTimeout(reveal, 1500);
     })();
   </script>
 
