@@ -573,6 +573,31 @@
   <script>lucide.createIcons();</script>
   <script src="js/tracking.js?v6"></script>
 
+  <!-- Hero video smooth fade-in -->
+  <script>
+    (function () {
+      var wrap = document.querySelector('.hero__video-wrap');
+      if (!wrap) return;
+      var done = false;
+      function reveal() {
+        if (done) return;
+        done = true;
+        wrap.classList.add('is-loaded');
+      }
+      // Listen for Vimeo playback start
+      window.addEventListener('message', function (e) {
+        if (e.origin && e.origin.indexOf('vimeo') !== -1) {
+          try {
+            var d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+            if (d.event === 'playProgress' || d.event === 'play' || d.method === 'play') reveal();
+          } catch (err) {}
+        }
+      });
+      // Fallback: fade in after 4s regardless
+      setTimeout(reveal, 4000);
+    })();
+  </script>
+
 </body>
 
 </html>

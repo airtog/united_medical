@@ -237,6 +237,8 @@ p {
   display: flex;
   align-items: center;
   overflow: hidden;
+  /* Cinematic fallback while video loads */
+  background: linear-gradient(135deg, #0e2240 0%, #1a3a6e 50%, #162d52 100%);
 }
 
 .hero__video-wrap {
@@ -244,6 +246,12 @@ p {
   inset: 0;
   z-index: 0;
   overflow: hidden;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+.hero__video-wrap.is-loaded {
+  opacity: 1;
 }
 
 .hero__video {
