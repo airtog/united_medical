@@ -247,7 +247,7 @@ p {
   z-index: 0;
   overflow: hidden;
   opacity: 0;
-  transition: opacity 1.2s ease;
+  transition: opacity 0.8s ease;
 }
 
 .hero__video-wrap.is-loaded {

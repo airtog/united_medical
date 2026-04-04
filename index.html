@@ -577,6 +577,7 @@
   <script>
     (function () {
       var wrap = document.querySelector('.hero__video-wrap');
+      var iframe = wrap && wrap.querySelector('iframe');
       if (!wrap) return;
       var done = false;
       function reveal() {
@@ -584,17 +585,14 @@
         done = true;
         wrap.classList.add('is-loaded');
       }
-      // Listen for Vimeo playback start
+      // Trigger on iframe load
+      if (iframe) iframe.addEventListener('load', function () { setTimeout(reveal, 300); });
+      // Listen for Vimeo playback
       window.addEventListener('message', function (e) {
-        if (e.origin && e.origin.indexOf('vimeo') !== -1) {
-          try {
-            var d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
-            if (d.event === 'playProgress' || d.event === 'play' || d.method === 'play') reveal();
-          } catch (err) {}
-        }
+        if (e.origin && e.origin.indexOf('vimeo') !== -1) reveal();
       });
-      // Fallback: fade in after 4s regardless
-      setTimeout(reveal, 4000);
+      // Fallback: 1.5s
+      setTimeout(reveal, 1500);
     })();
   </script>
 
