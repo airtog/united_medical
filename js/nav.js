@@ -1,5 +1,5 @@
 /* ============================================
-   United Immigration Medical Exams
+   United Medical Immigration Exams
    Navigation JavaScript
    ============================================ */
 
