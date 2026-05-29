@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>United Medical Exams — Impact Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#faf9f7;
+  --surface:#fff;
+  --surface-alt:#f3f1ed;
+  --border:#e8e5df;
+  --text:#1a1a18;
+  --text-secondary:#6b6862;
+  --text-dim:#a09d96;
+  --green:#0d7a55;
+  --green-bg:rgba(13,122,85,0.06);
+  --red:#c44b3f;
+  --blue:#2d5fa5;
+  --trad-bar:#9e9b94;
+  --web-bar:#0d7a55;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'Libre Franklin',system-ui,sans-serif;
+  --pad:1rem;
+  --radius:12px;
+}
+
+/* ===== PASSWORD GATE ===== */
+#gate{
+  position:fixed;inset:0;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;
+  transition:opacity 0.4s ease, visibility 0.4s ease;
+}
+#gate.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.gate-box{
+  text-align:center;
+  padding:2rem;
+  max-width:360px;
+  width:100%;
+}
+.gate-box .gate-logo{
+  font-family:var(--serif);
+  font-size:24px;
+  color:var(--text);
+  margin-bottom:0.5rem;
+}
+.gate-box .gate-sub{
+  font-family:var(--sans);
+  font-size:13px;
+  color:var(--text-dim);
+  margin-bottom:2rem;
+}
+.gate-box input{
+  width:100%;
+  padding:0.85rem 1rem;
+  font-family:var(--sans);
+  font-size:15px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:var(--surface);
+  color:var(--text);
+  text-align:center;
+  outline:none;
+  transition:border-color 0.2s;
+  -webkit-appearance:none;
+}
+.gate-box input:focus{border-color:var(--green)}
+.gate-box input.error{border-color:var(--red);animation:shake 0.4s ease}
+.gate-box button{
+  width:100%;
+  margin-top:0.75rem;
+  padding:0.85rem 1rem;
+  font-family:var(--sans);
+  font-size:15px;
+  font-weight:500;
+  background:var(--text);
+  color:var(--bg);
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  transition:opacity 0.2s;
+}
+.gate-box button:hover{opacity:0.85}
+.gate-box button:active{opacity:0.7}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+#content{display:none}
+#content.visible{display:block}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* ===== HERO ===== */
+.hero{
+  padding:2.5rem var(--pad) 2rem;
+  text-align:center;
+  max-width:880px;
+  margin:0 auto;
+}
+.hero .eyebrow{
+  font-size:10px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  font-weight:500;
+  margin-bottom:1.25rem;
+}
+.hero h1{
+  font-family:var(--serif);
+  font-size:clamp(30px,8vw,56px);
+  font-weight:400;
+  line-height:1.1;
+  color:var(--text);
+  margin-bottom:0.75rem;
+  letter-spacing:-0.5px;
+}
+.hero h1 em{color:var(--green);font-style:italic}
+.hero .sub{
+  font-size:14px;
+  color:var(--text-secondary);
+  font-weight:400;
+  max-width:520px;
+  margin:0 auto;
+  line-height:1.7;
+}
+.hero .sub strong{font-weight:500;color:var(--text)}
+
+/* ===== METRICS STRIP ===== */
+.metrics-strip-wrap{
+  max-width:880px;
+  margin:0 auto 2rem;
+  padding:0 var(--pad);
+}
+.metrics-strip{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:1px;
+  background:var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  border:1px solid var(--border);
+}
+.ms-item{
+  padding:1.25rem 0.75rem;
+  text-align:center;
+  background:var(--surface);
+}
+.ms-item .num{
+  font-family:var(--serif);
+  font-size:clamp(26px,7vw,40px);
+  font-weight:400;
+  line-height:1;
+  margin-bottom:5px;
+}
+.ms-item .num.accent{color:var(--green)}
+.ms-item .lbl{
+  font-size:11px;
+  color:var(--text-secondary);
+  font-weight:400;
+  letter-spacing:0.2px;
+  line-height:1.3;
+}
+
+/* ===== SECTIONS ===== */
+.section{
+  max-width:880px;
+  margin:0 auto 1.5rem;
+  padding:0 var(--pad);
+}
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.25rem;
+  overflow:hidden;
+}
+.card-header{
+  margin-bottom:1.25rem;
+}
+.card-title{
+  font-family:var(--serif);
+  font-size:19px;
+  font-weight:400;
+  color:var(--text);
+  line-height:1.3;
+}
+.card-title small{
+  display:block;
+  font-family:var(--sans);
+  font-size:12px;
+  font-weight:400;
+  color:var(--text-secondary);
+  margin-top:5px;
+  line-height:1.5;
+}
+.legend{
+  display:flex;
+  gap:12px;
+  font-size:11px;
+  color:var(--text-secondary);
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.legend-dot{
+  width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:4px;vertical-align:middle;
+}
+
+/* ===== CHARTS ===== */
+.chart-wrap{
+  position:relative;
+  height:280px;
+}
+.chart-wrap canvas{width:100%!important;height:100%!important;}
+
+/* ===== TABLES ===== */
+.table-scroll{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  margin:0.5rem -1.25rem 0;
+  padding:0 1.25rem;
+  scrollbar-width:thin;
+}
+.table-scroll::-webkit-scrollbar{height:4px}
+.table-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.data-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+  min-width:480px;
+}
+.data-table th{
+  font-weight:500;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--text-dim);
+  text-align:right;
+  padding:0.6rem 0.5rem;
+  border-bottom:2px solid var(--border);
+  white-space:nowrap;
+}
+.data-table th:first-child{text-align:left}
+.data-table td{
+  padding:0.6rem 0.5rem;
+  text-align:right;
+  border-bottom:1px solid var(--border);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+.data-table td:first-child{
+  text-align:left;
+  font-weight:500;
+  color:var(--text);
+}
+.data-table tr:last-child td{border-bottom:none}
+.data-table .baseline-row{background:var(--surface-alt);color:var(--text-secondary)}
+.data-table .baseline-row td{font-weight:400;color:var(--text-secondary)}
+.data-table .total-row{border-top:2px solid var(--text)}
+.data-table .total-row td{font-weight:600;color:var(--text);border-bottom:none}
+.highlight-cell{color:var(--green)!important;font-weight:600!important}
+
+/* ===== INSIGHT CARDS ===== */
+.insight-row{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:0.75rem;
+  max-width:880px;
+  margin:0 auto 1.5rem;
+  padding:0 var(--pad);
+}
+.insight-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.25rem;
+  display:flex;
+  gap:1rem;
+  align-items:flex-start;
+}
+.insight-card .ic-num{
+  font-family:var(--serif);
+  font-size:32px;
+  font-weight:400;
+  line-height:1;
+  flex-shrink:0;
+}
+.insight-card .ic-num.green{color:var(--green)}
+.insight-card .ic-num.red{color:var(--red)}
+.insight-card .ic-label{
+  font-size:13px;
+  color:var(--text-secondary);
+  font-weight:400;
+  line-height:1.6;
+  padding-top:6px;
+}
+.insight-card .ic-label strong{font-weight:600;color:var(--text)}
+
+/* ===== CALLOUT ===== */
+.callout{
+  max-width:880px;
+  margin:0 auto 1.5rem;
+  padding:0 var(--pad);
+}
+.callout-inner{
+  background:var(--green-bg);
+  border:1px solid rgba(13,122,85,0.12);
+  border-radius:var(--radius);
+  padding:1.25rem;
+}
+.callout-text{
+  font-size:14px;
+  line-height:1.7;
+  color:var(--text);
+  font-weight:400;
+}
+.callout-text strong{font-weight:600}
+
+/* ===== FOOTER ===== */
+.footer{
+  max-width:880px;
+  margin:0 auto;
+  padding:1.5rem var(--pad);
+  text-align:center;
+  font-size:10px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  border-top:1px solid var(--border);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.animate{animation:fadeUp 0.5s ease-out both}
+.d1{animation-delay:0.1s}.d2{animation-delay:0.15s}.d3{animation-delay:0.2s}.d4{animation-delay:0.25s}.d5{animation-delay:0.3s}
+
+/* ===== DESKTOP ===== */
+@media(min-width:640px){
+  :root{--pad:2rem;--radius:14px}
+  .hero{padding:4rem 2rem 3rem}
+  .hero .eyebrow{font-size:11px;letter-spacing:4px}
+  .hero .sub{font-size:15px}
+  .metrics-strip-wrap{margin-bottom:3rem}
+  .metrics-strip{grid-template-columns:repeat(4,1fr)}
+  .ms-item{padding:1.75rem 1.25rem}
+  .ms-item .lbl{font-size:12px}
+  .section{margin-bottom:2.5rem}
+  .card{padding:2rem}
+  .card-title{font-size:22px}
+  .card-title small{font-size:13px}
+  .legend{font-size:12px;gap:18px}
+  .chart-wrap{height:340px}
+  .table-scroll{margin:0.5rem 0 0;padding:0}
+  .data-table{font-size:14px;min-width:0}
+  .data-table th{font-size:11px;padding:0.75rem 1rem}
+  .data-table td{padding:0.75rem 1rem}
+  .insight-row{grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2.5rem}
+  .insight-card{padding:1.75rem;display:block}
+  .insight-card .ic-num{font-size:36px;margin-bottom:8px}
+  .insight-card .ic-label{font-size:14px;padding-top:0}
+  .callout-inner{padding:2rem 2.5rem}
+  .callout-text{font-size:15px}
+  .footer{padding:2rem}
+}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="gate">
+  <div class="gate-box">
+    <div class="gate-logo">United Medical Exams</div>
+    <div class="gate-sub">Impact Report · Confidential</div>
+    <input type="password" id="pw" placeholder="Enter password" autocomplete="off" autofocus>
+    <button onclick="unlock()">View Report</button>
+  </div>
+</div>
+
+<div id="content">
+<!-- HERO -->
+<div class="hero animate">
+  <div class="eyebrow">Patient Acquisition System — Impact Report</div>
+  <h1>From 3.4 to <em>16.7</em> appointments per&nbsp;month</h1>
+  <p class="sub">Before-and-after analysis for <strong>Dr. Emmanuel Weiss</strong> at United Medical Exams, Clifton, NJ.<br>Baseline: Jan 2024 – Jun 2025 → Impact: Nov 2025 – Apr 2026</p>
+</div>
+
+<!-- TOP METRICS -->
+<div class="metrics-strip-wrap animate d1">
+<div class="metrics-strip">
+  <div class="ms-item">
+    <div class="num accent">+390%</div>
+    <div class="lbl">Appointment lift</div>
+  </div>
+  <div class="ms-item">
+    <div class="num">$59,900</div>
+    <div class="lbl">Revenue generated</div>
+  </div>
+  <div class="ms-item">
+    <div class="num accent">12.4×</div>
+    <div class="lbl">Return on ad spend</div>
+  </div>
+  <div class="ms-item">
+    <div class="num">$4,838</div>
+    <div class="lbl">Total ad spend</div>
+  </div>
+</div>
+</div>
+
+<!-- CHART 1 -->
+<div class="section animate d2">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Monthly Appointment Volume<small>18-month baseline average vs. post-launch performance</small></div>
+      <div class="legend">
+        <span><span class="legend-dot" style="background:var(--trad-bar)"></span>Traditional</span>
+        <span><span class="legend-dot" style="background:var(--web-bar)"></span>Website (new)</span>
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="chartMain"></canvas></div>
+  </div>
+</div>
+
+<!-- MONTHLY TABLE -->
+<div class="section animate d3">
+  <div class="card">
+    <div class="card-title">Month-by-Month Breakdown<small>Verified against EHR export. Each appointment = $599.</small></div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr><th>Month</th><th>Trad</th><th>Web</th><th>Total</th><th>Revenue</th><th>Web %</th></tr>
+        </thead>
+        <tbody>
+          <tr class="baseline-row"><td>Baseline avg (18 mo)</td><td>2.7</td><td>~0</td><td>3.4</td><td>$2,033</td><td>—</td></tr>
+          <tr><td>Nov 2025</td><td>6</td><td>1</td><td>7</td><td>$4,193</td><td>14%</td></tr>
+          <tr><td>Dec 2025</td><td>6</td><td>10</td><td>16</td><td>$9,584</td><td class="highlight-cell">63%</td></tr>
+          <tr><td>Jan 2026</td><td>7</td><td>7</td><td>14</td><td>$8,386</td><td>50%</td></tr>
+          <tr><td>Feb 2026</td><td>12</td><td>9</td><td>21</td><td>$12,579</td><td>43%</td></tr>
+          <tr><td>Mar 2026</td><td>17</td><td>2</td><td>19</td><td>$11,381</td><td>11%</td></tr>
+          <tr><td>Apr 2026</td><td>17</td><td>6</td><td>23</td><td>$13,777</td><td>26%</td></tr>
+          <tr class="total-row"><td>Impact Total</td><td>65</td><td>35</td><td>100</td><td>$59,900</td><td>35%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- INSIGHT CARDS ROW 1 -->
+<div class="insight-row animate d3">
+  <div class="insight-card">
+    <div class="ic-num green">35</div>
+    <div class="ic-label">Website bookings — a channel that <strong>didn't exist</strong> before. 35% of all appointments now come from the web.</div>
+  </div>
+  <div class="insight-card">
+    <div class="ic-num green">6.3×</div>
+    <div class="ic-label">Traditional walk-in/phone grew from 2.7 to 17/mo. Patients find the practice online, then call or walk in.</div>
+  </div>
+</div>
+
+<!-- CHART 2: FUNNEL -->
+<div class="section animate d4">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Ad Spend → Calls → Bookings<small>Weekly full-funnel view. Red zones = ads paused by Google.</small></div>
+      <div class="legend">
+        <span><span class="legend-dot" style="background:var(--trad-bar)"></span>Trad</span>
+        <span><span class="legend-dot" style="background:var(--web-bar)"></span>Web</span>
+        <span><span class="legend-dot" style="background:var(--blue)"></span>Calls</span>
+        <span><span class="legend-dot" style="background:var(--red);border-radius:50%"></span>Ad $</span>
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="chartFunnel"></canvas></div>
+  </div>
+</div>
+
+<!-- INSIGHT CARDS ROW 2 -->
+<div class="insight-row animate d4">
+  <div class="insight-card">
+    <div class="ic-num">179</div>
+    <div class="ic-label">Incoming calls tracked through the website phone number. The site generates phone calls, not just online bookings.</div>
+  </div>
+  <div class="insight-card">
+    <div class="ic-num red">$0</div>
+    <div class="ic-label">Multiple weeks of paused ads due to Google verification. Despite this, April set a <strong>new revenue record</strong> at $13,777.</div>
+  </div>
+</div>
+
+<!-- CHART 3: REVENUE -->
+<div class="section animate d4">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Revenue Growth<small>Monthly revenue vs. the $2,033 baseline</small></div>
+      <div class="legend">
+        <span><span class="legend-dot" style="background:var(--green)"></span>Monthly revenue</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:0;border-top:2px dashed var(--red)"></span>Baseline</span>
+      </div>
+    </div>
+    <div class="chart-wrap" style="height:240px"><canvas id="chartRevenue"></canvas></div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- BRANDING & SEO ATTRIBUTION SECTION      -->
+<!-- ======================================== -->
+
+<!-- Section intro -->
+<div class="section animate d5">
+  <div class="card" style="border:1px solid rgba(13,122,85,0.2);background:linear-gradient(to bottom,rgba(13,122,85,0.03),var(--surface))">
+    <div class="card-title" style="font-size:clamp(22px,5vw,28px);text-align:center;margin-bottom:0.25rem">The Snowball Effect</div>
+    <p style="text-align:center;font-size:14px;color:var(--text-secondary);max-width:580px;margin:0 auto;line-height:1.7">
+      The system didn't just add website bookings on top of existing volume. It created a compounding growth engine that lifted <em>every</em> channel — including ones that have nothing to do with ads. The branding, SEO, and local search presence are doing the heavy lifting.
+    </p>
+  </div>
+</div>
+
+<!-- What was actually built — SEO detail -->
+<div class="section animate d5">
+  <div class="card">
+    <div class="card-title">What Was Built Beyond Ads<small>The system is more than a Google Ads campaign. It's an entire brand and search presence built from scratch.</small></div>
+    <div style="margin-top:1rem;display:grid;grid-template-columns:1fr;gap:0.75rem">
+
+      <div style="padding:1rem;background:var(--surface-alt);border-radius:10px;border:1px solid var(--border)">
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px">unitedmedicalexams.com</div>
+        <div style="font-size:13px;color:var(--text-secondary);line-height:1.6">Purpose-built conversion website with Calendly booking integration, trust-building design with emotional patient imagery, and mobile-first layout. 68% of all ad traffic arrives on mobile.</div>
+      </div>
+
+      <div style="padding:1rem;background:var(--surface-alt);border-radius:10px;border:1px solid var(--border)">
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px">15 City-Specific SEO Pages</div>
+        <div style="font-size:13px;color:var(--text-secondary);line-height:1.6">Individual landing pages targeting immigration medical exam searches in Clifton, Passaic, Paterson, Garfield, Hackensack, Wayne, Paramus, Fort Lee, Elmwood Park, Fair Lawn, Totowa, Little Falls, Woodland Park, West Paterson, and Nutley. Each page is optimized for local search intent — so when a patient in any of these cities searches for an immigration exam, United Medical Exams appears.</div>
+      </div>
+
+      <div style="padding:1rem;background:var(--surface-alt);border-radius:10px;border:1px solid var(--border)">
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px">Google Business Profile & Maps Optimization</div>
+        <div style="font-size:13px;color:var(--text-secondary);line-height:1.6">The practice now appears in Google Maps and local pack results for immigration medical exam searches across North Jersey. Patients who find the practice through Maps often call directly — these show up as traditional appointments, not web bookings.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+        <div style="padding:1rem;background:var(--surface-alt);border-radius:10px;border:1px solid var(--border)">
+          <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px">Brand Identity</div>
+          <div style="font-size:13px;color:var(--text-secondary);line-height:1.6">"United Medical Exams" — a patient-facing brand name, logo, and visual identity built specifically for immigration exam patients.</div>
+        </div>
+        <div style="padding:1rem;background:var(--surface-alt);border-radius:10px;border:1px solid var(--border)">
+          <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px">Call Tracking + AI Agent</div>
+          <div style="font-size:13px;color:var(--text-secondary);line-height:1.6">Dedicated phone number with Quo call tracking and Sona AI answering agent handling after-hours calls — 179 tracked calls since December.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- CHART: Traditional growth isolation -->
+<div class="section animate d5">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Traditional Appointments Grew 6.3× — That's the Brand<small>Walk-in and phone bookings climbed steadily even during weeks with $0 ad spend. These patients found the practice through SEO, Google Maps, and word of mouth — all created by the system.</small></div>
+      <div class="legend">
+        <span><span class="legend-dot" style="background:var(--trad-bar)"></span>Traditional/mo</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:0;border-top:2px dashed var(--red)"></span>Old baseline (2.7)</span>
+      </div>
+    </div>
+    <div class="chart-wrap" style="height:240px"><canvas id="chartHaloTrad"></canvas></div>
+  </div>
+</div>
+
+<!-- PROOF POINT: Ads off vs Traditional -->
+<div class="section animate d5">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Ads Control Website Bookings. Branding Controls Everything Else.<small>When Google paused ads, web bookings dropped to zero — but traditional appointments didn't flinch. That growth is coming from the brand presence, SEO pages, and Google Maps visibility.</small></div>
+      <div class="legend">
+        <span><span class="legend-dot" style="background:var(--web-bar)"></span>Website appts</span>
+        <span><span class="legend-dot" style="background:var(--trad-bar)"></span>Traditional appts</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:0;border-top:2px dashed var(--red)"></span>Ad spend</span>
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="chartProof"></canvas></div>
+  </div>
+</div>
+
+<!-- Attribution flow diagram -->
+<div class="section animate d5">
+  <div class="card">
+    <div class="card-title" style="text-align:center;margin-bottom:1.5rem">How the Brand Creates Compounding Growth</div>
+    <div id="flowDiagram"></div>
+  </div>
+</div>
+
+<!-- What's attributed insight cards -->
+<div class="insight-row animate d5">
+  <div class="insight-card">
+    <div class="ic-num green">15</div>
+    <div class="ic-label">City-specific SEO pages ranking in local search. When someone in Passaic, Paterson, or Hackensack searches for an immigration medical exam, <strong>United Medical Exams appears</strong> — without paying for a single click.</div>
+  </div>
+  <div class="insight-card">
+    <div class="ic-num" style="color:var(--text)">2.7 → 17</div>
+    <div class="ic-label">Average traditional appointments per month — up from 2.7 before the system to 17 after. That's <strong>14 extra patients/month</strong> finding the practice through the brand, SEO, and Google Maps — not through ads. And April was the best month yet at <strong>23 total appointments, despite ads being paused for two full weeks</strong>.</div>
+  </div>
+</div>
+
+<!-- CALLOUT merged into the new baseline section above -->
+
+<!-- ADS DETAIL TABLE -->
+<div class="section animate d5">
+  <div class="card">
+    <div class="card-title">Google Ads Summary<small>Account 531-955-7543 · Nov 1, 2025 – Apr 29, 2026</small></div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr><th>Metric</th><th>Search</th><th>Campaign #1</th><th>Total</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Cost</td><td>$4,785</td><td>$53</td><td><strong>$4,838</strong></td></tr>
+          <tr><td>Clicks</td><td>2,062</td><td>123</td><td><strong>2,185</strong></td></tr>
+          <tr><td>Impressions</td><td>—</td><td>—</td><td><strong>32,200</strong></td></tr>
+          <tr><td>GA4 Conversions</td><td>21</td><td>3</td><td><strong>24</strong></td></tr>
+          <tr><td>EHR-Verified Bookings</td><td colspan="2" style="text-align:center;color:var(--text-dim)">—</td><td class="highlight-cell"><strong>35</strong></td></tr>
+          <tr><td>Devices</td><td colspan="3" style="text-align:right">Mobile 68% · Desktop 31%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  FX3 Media · Weiss Medical Group EHR · Google Ads · Quo Call Tracking · April 2026
+</div>
+
+</div><!-- end #content -->
+
+<script>
+function unlock(){
+  const input = document.getElementById('pw');
+  if(input.value === 'cardiacare'){
+    document.getElementById('gate').classList.add('hidden');
+    document.getElementById('content').classList.add('visible');
+    setTimeout(() => { initCharts(); initHaloCharts(); }, 100);
+  } else {
+    input.classList.add('error');
+    input.value = '';
+    input.placeholder = 'Incorrect password';
+    setTimeout(() => input.classList.remove('error'), 400);
+  }
+}
+document.getElementById('pw').addEventListener('keydown', e => {
+  if(e.key === 'Enter') unlock();
+});
+</script>
+
+<script>
+function initCharts(){
+const isMobile = window.innerWidth < 640;
+window._isMobile = isMobile; // share with haloCharts
+Chart.defaults.font.family = "'Libre Franklin', system-ui, sans-serif";
+Chart.defaults.font.size = isMobile ? 10 : 12;
+
+// ========== CHART 1: Before vs After ==========
+(() => {
+  const labels = isMobile
+    ? ['Base','','Nov','Dec','Jan','Feb','Mar','Apr']
+    : ['Baseline\navg','','Nov\n2025','Dec\n2025','Jan\n2026','Feb\n2026','Mar\n2026','Apr\n2026'];
+  const trad = [2.7, null, 6, 6, 7, 12, 17, 17];
+  const web  = [0.7, null, 1, 10, 7, 9, 2, 6];
+  const totals = [3.4, 0, 7, 16, 14, 21, 19, 23];
+
+  new Chart(document.getElementById('chartMain'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Traditional', data: trad,
+          backgroundColor: c => c.dataIndex === 0 ? 'rgba(158,155,148,0.4)' : '#9e9b94',
+          borderRadius: isMobile?4:5, borderSkipped: false,
+          barPercentage: isMobile?0.7:0.58, categoryPercentage: isMobile?0.8:0.72, stack: 'a'
+        },
+        {
+          label: 'Website', data: web,
+          backgroundColor: c => c.dataIndex === 0 ? 'rgba(13,122,85,0.25)' : '#0d7a55',
+          borderRadius: {topLeft:isMobile?4:5,topRight:isMobile?4:5}, borderSkipped: false,
+          barPercentage: isMobile?0.7:0.58, categoryPercentage: isMobile?0.8:0.72, stack: 'a'
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      layout: { padding: { top: isMobile?24:30, left: isMobile?0:0 } },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor:'#1a1a18',titleColor:'#fff',bodyColor:'#ddd',
+          borderColor:'#333',borderWidth:1,cornerRadius:8,padding:isMobile?10:14,
+          titleFont:{size:isMobile?11:13},bodyFont:{size:isMobile?11:13},
+          callbacks: {
+            afterBody: ctx => {
+              const i = ctx[0].dataIndex;
+              if (i===0) return ['','Total: 3.4/mo','Rev: $2,033/mo'];
+              if (i===1) return [];
+              return ['','Total: '+totals[i],'Rev: $'+(totals[i]*599).toLocaleString()];
+            }
+          }
+        }
+      },
+      scales: {
+        x:{stacked:true,grid:{display:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?10:11},padding:6}},
+        y:{stacked:true,beginAtZero:true,max:28,grid:{color:'rgba(0,0,0,0.04)',drawTicks:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?9:11},padding:isMobile?6:12,stepSize:5}}
+      }
+    },
+    plugins: [{
+      id:'divider',
+      beforeDraw(chart){
+        const ctx=chart.ctx,xA=chart.scales.x,yA=chart.scales.y;
+        const x=(xA.getPixelForValue(1)+xA.getPixelForValue(2))/2;
+        ctx.save();ctx.beginPath();ctx.strokeStyle='#e8e5df';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+        ctx.moveTo(x,yA.top-16);ctx.lineTo(x,yA.bottom);ctx.stroke();ctx.setLineDash([]);
+        const fs=isMobile?9:10;
+        ctx.font=`600 ${fs}px 'Libre Franklin'`;
+        ctx.fillStyle='#a09d96';ctx.textAlign='center';
+        ctx.fillText('BEFORE',xA.getPixelForValue(0),yA.top-(isMobile?20:28));
+        ctx.fillStyle='#0d7a55';
+        ctx.fillText('AFTER',(xA.getPixelForValue(2)+xA.getPixelForValue(7))/2,yA.top-(isMobile?20:28));
+        ctx.restore();
+      }
+    },{
+      id:'baseline',
+      afterDraw(chart){
+        const ctx=chart.ctx,xA=chart.scales.x,yA=chart.scales.y;
+        const y=yA.getPixelForValue(3.4);
+        const x1=xA.getPixelForValue(2)-6,x2=xA.getPixelForValue(7)+(isMobile?6:20);
+        ctx.save();ctx.beginPath();ctx.strokeStyle='rgba(196,75,63,0.35)';ctx.lineWidth=1;ctx.setLineDash([5,4]);
+        ctx.moveTo(x1,y);ctx.lineTo(x2,y);ctx.stroke();ctx.setLineDash([]);
+        if(!isMobile){
+          ctx.font="400 10px 'Libre Franklin'";ctx.fillStyle='rgba(196,75,63,0.6)';ctx.textAlign='left';
+          ctx.fillText('baseline 3.4',x2+4,y+4);
+        }
+        ctx.restore();
+      }
+    },{
+      id:'totals',
+      afterDatasetsDraw(chart){
+        const ctx=chart.ctx,m1=chart.getDatasetMeta(1),m0=chart.getDatasetMeta(0);
+        m1.data.forEach((bar,i)=>{
+          if(i===1||totals[i]===0)return;
+          const top=web[i]>0?bar:m0.data[i];
+          const fs=isMobile?(i===0?10:12):(i===0?13:14);
+          ctx.font=(i===0?'400':'500')+` ${fs}px 'Libre Franklin'`;
+          ctx.fillStyle=i===0?'#a09d96':'#1a1a18';
+          ctx.textAlign='center';
+          ctx.fillText(i===0?'3.4':totals[i],top.x,top.y-(isMobile?6:10));
+        });
+      }
+    }]
+  });
+})();
+
+// ========== CHART 2: Full Funnel ==========
+(() => {
+  const allLabels=['10/27','11/3','11/10','11/17','11/24','12/1','12/8','12/15','12/22','12/29','1/5','1/12','1/19','1/26','2/2','2/9','2/16','2/23','3/2','3/9','3/16','3/23','3/30','4/6','4/13','4/20','4/27'];
+  const adSpend=[73.68,222.60,238.36,211.42,207.27,215.36,206.18,110.36,303.61,205.26,201.61,157.95,33.12,363.13,204.24,258.07,222.54,203.93,171.77,229.91,220.53,181.24,116.52,0,0,111.73,167.99];
+  const trad=[0,2,0,2,2,2,0,3,1,0,4,0,3,0,0,6,3,3,3,5,5,4,2,4,4,6,1];
+  const web=[0,0,0,1,0,5,2,1,1,1,0,3,2,2,2,1,1,5,1,0,1,0,0,0,3,3,0];
+  const calls=[0,0,0,0,0,0,0,19,19,15,15,13,5,6,9,8,5,11,5,5,3,8,3,5,9,13,3];
+
+  new Chart(document.getElementById('chartFunnel'), {
+    type:'bar',
+    data:{
+      labels:allLabels,
+      datasets:[
+        {label:'Traditional',data:trad,backgroundColor:'#9e9b94',borderRadius:isMobile?2:3,barPercentage:0.85,categoryPercentage:0.82,stack:'stack1',yAxisID:'y'},
+        {label:'Website',data:web,backgroundColor:'#0d7a55',borderRadius:{topLeft:isMobile?2:3,topRight:isMobile?2:3},barPercentage:0.85,categoryPercentage:0.82,stack:'stack1',yAxisID:'y'},
+        {label:'Calls',data:calls,type:'line',borderColor:'#2d5fa5',borderWidth:isMobile?1.5:2,pointRadius:isMobile?1.5:2,pointBackgroundColor:'#2d5fa5',fill:false,tension:0.3,yAxisID:'y',order:1},
+        {label:'Ad spend',data:adSpend,type:'line',borderColor:'#c44b3f',borderWidth:isMobile?1:1.5,pointRadius:isMobile?1:2,pointBackgroundColor:'#c44b3f',fill:false,tension:0.2,yAxisID:'y3',order:1}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{stacked:true,grid:{display:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?7:9},maxRotation:isMobile?60:50,minRotation:isMobile?60:50,autoSkip:isMobile,maxTicksLimit:isMobile?14:27}},
+        y:{stacked:true,beginAtZero:true,max:21,position:'left',grid:{color:'rgba(0,0,0,0.04)',drawTicks:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?9:10},stepSize:isMobile?5:3,padding:isMobile?4:8}},
+        y3:{position:'right',beginAtZero:true,max:420,grid:{display:false},border:{display:false},ticks:{color:'#c44b3f',font:{size:isMobile?8:10},stepSize:isMobile?200:100,padding:isMobile?4:8,callback:v=>'$'+v}}
+      }
+    },
+    plugins:[{
+      id:'pauseZones',
+      beforeDraw(chart){
+        const ctx=chart.ctx,xA=chart.scales.x,yA=chart.scales.y;
+        [[12,12],[23,24]].forEach(([s,e])=>{
+          const gap=(xA.getPixelForValue(1)-xA.getPixelForValue(0))*0.45;
+          const x1=xA.getPixelForValue(s)-gap,x2=xA.getPixelForValue(e)+gap;
+          ctx.save();ctx.fillStyle='rgba(196,75,63,0.07)';
+          ctx.fillRect(x1,yA.top,x2-x1,yA.bottom-yA.top);
+          const fs=isMobile?7:9;
+          ctx.font=`500 ${fs}px 'Libre Franklin'`;ctx.fillStyle='rgba(196,75,63,0.5)';ctx.textAlign='center';
+          ctx.fillText('PAUSED',(x1+x2)/2,yA.top+(isMobile?10:14));
+          ctx.restore();
+        });
+      }
+    }]
+  });
+})();
+
+// ========== CHART 3: Revenue ==========
+(() => {
+  const labels = isMobile
+    ? ['Base','Nov','Dec','Jan','Feb','Mar','Apr']
+    : ['Baseline\navg','Nov\n2025','Dec\n2025','Jan\n2026','Feb\n2026','Mar\n2026','Apr\n2026'];
+  const rev=[2033,4193,9584,8386,12579,11381,13777];
+
+  new Chart(document.getElementById('chartRevenue'), {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[{
+        data:rev,
+        backgroundColor:c=>c.dataIndex===0?'rgba(158,155,148,0.35)':'#0d7a55',
+        borderRadius:isMobile?4:5,borderSkipped:false,
+        barPercentage:isMobile?0.65:0.55,categoryPercentage:isMobile?0.8:0.7
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      layout:{padding:{top:isMobile?22:28}},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#1a1a18',titleColor:'#fff',bodyColor:'#ddd',
+          cornerRadius:8,padding:isMobile?8:12,
+          callbacks:{label:ctx=>'$'+ctx.raw.toLocaleString()}
+        }
+      },
+      scales:{
+        x:{grid:{display:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?10:11},padding:6}},
+        y:{beginAtZero:true,max:16000,grid:{color:'rgba(0,0,0,0.04)',drawTicks:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?9:10},padding:isMobile?6:12,callback:v=>'$'+(v/1000)+'K',stepSize:isMobile?4000:4000}}
+      }
+    },
+    plugins:[{
+      id:'baselineRev',
+      afterDraw(chart){
+        const ctx=chart.ctx,xA=chart.scales.x,yA=chart.scales.y;
+        const y=yA.getPixelForValue(2033);
+        const x1=xA.getPixelForValue(1)-6,x2=xA.getPixelForValue(6)+(isMobile?6:20);
+        ctx.save();ctx.beginPath();ctx.strokeStyle='rgba(196,75,63,0.35)';ctx.lineWidth=1;ctx.setLineDash([5,4]);
+        ctx.moveTo(x1,y);ctx.lineTo(x2,y);ctx.stroke();ctx.setLineDash([]);
+        if(!isMobile){
+          ctx.font="400 10px 'Libre Franklin'";ctx.fillStyle='rgba(196,75,63,0.55)';ctx.textAlign='left';
+          ctx.fillText('$2,033 baseline',x2+4,y+4);
+        }
+        ctx.restore();
+      }
+    },{
+      id:'revLabels',
+      afterDatasetsDraw(chart){
+        const ctx=chart.ctx,meta=chart.getDatasetMeta(0);
+        meta.data.forEach((bar,i)=>{
+          const fs=isMobile?(i===0?9:10):(i===0?12:13);
+          ctx.font=(i===0?'400':'500')+` ${fs}px 'Libre Franklin'`;
+          ctx.fillStyle=i===0?'#a09d96':'#1a1a18';
+          ctx.textAlign='center';
+          ctx.fillText('$'+(rev[i]/1000).toFixed(1)+'K',bar.x,bar.y-(isMobile?6:10));
+        });
+      }
+    }]
+  });
+})();
+
+} // end initCharts
+
+// ========== HALO CHARTS (initialized inside initCharts would cause issues with IIFE scope, so separate) ==========
+function initHaloCharts(){
+const isMobile = window._isMobile;
+
+// ========== CHART: Traditional growth isolation ==========
+(() => {
+  const labels = isMobile
+    ? ['Base','Nov','Dec','Jan','Feb','Mar','Apr']
+    : ['Baseline\navg','Nov\n2025','Dec\n2025','Jan\n2026','Feb\n2026','Mar\n2026','Apr\n2026'];
+  const trad = [2.7, 6, 6, 7, 12, 17, 17];
+
+  new Chart(document.getElementById('chartHaloTrad'), {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[{
+        data:trad,
+        backgroundColor:c=>c.dataIndex===0?'rgba(158,155,148,0.35)':'#9e9b94',
+        borderRadius:isMobile?4:5,borderSkipped:false,
+        barPercentage:isMobile?0.65:0.55,categoryPercentage:isMobile?0.8:0.7
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      layout:{padding:{top:isMobile?22:28}},
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1a18',titleColor:'#fff',bodyColor:'#ddd',cornerRadius:8,padding:10}},
+      scales:{
+        x:{grid:{display:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?10:11},padding:6}},
+        y:{beginAtZero:true,max:22,grid:{color:'rgba(0,0,0,0.04)',drawTicks:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?9:10},padding:isMobile?6:12,stepSize:5}}
+      }
+    },
+    plugins:[{
+      id:'tradBaseline',
+      afterDraw(chart){
+        const ctx=chart.ctx,xA=chart.scales.x,yA=chart.scales.y;
+        const y=yA.getPixelForValue(2.7);
+        const x1=xA.getPixelForValue(1)-6,x2=xA.getPixelForValue(6)+(isMobile?6:20);
+        ctx.save();ctx.beginPath();ctx.strokeStyle='rgba(196,75,63,0.4)';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);
+        ctx.moveTo(x1,y);ctx.lineTo(x2,y);ctx.stroke();ctx.setLineDash([]);
+        if(!isMobile){ctx.font="400 10px 'Libre Franklin'";ctx.fillStyle='rgba(196,75,63,0.6)';ctx.textAlign='left';ctx.fillText('old baseline: 2.7',x2+4,y+4);}
+        // Shade the growth area
+        const barMeta=chart.getDatasetMeta(0);
+        ctx.fillStyle='rgba(13,122,85,0.06)';
+        for(let i=1;i<barMeta.data.length;i++){
+          const bar=barMeta.data[i];
+          if(trad[i]>2.7){
+            const baseY=yA.getPixelForValue(2.7);
+            ctx.fillRect(bar.x-bar.width/2,bar.y,bar.width,baseY-bar.y);
+          }
+        }
+        ctx.restore();
+      }
+    },{
+      id:'tradLabels',
+      afterDatasetsDraw(chart){
+        const ctx=chart.ctx,meta=chart.getDatasetMeta(0);
+        meta.data.forEach((bar,i)=>{
+          const fs=isMobile?(i===0?9:11):(i===0?12:14);
+          ctx.font=(i===0?'400':'500')+` ${fs}px 'Libre Franklin'`;
+          ctx.fillStyle=i===0?'#a09d96':'#1a1a18';
+          ctx.textAlign='center';
+          ctx.fillText(trad[i],bar.x,bar.y-(isMobile?6:10));
+        });
+      }
+    }]
+  });
+})();
+
+// ========== CHART: Proof — ads vs channels ==========
+(() => {
+  const labels = isMobile
+    ? ['Nov','Dec','Jan','Feb','Mar','Apr']
+    : ['Nov\n2025','Dec\n2025','Jan\n2026','Feb\n2026','Mar\n2026','Apr\n2026'];
+  const webAppts = [1, 10, 7, 9, 2, 6];
+  const tradAppts = [6, 6, 7, 12, 17, 17];
+  const adSpendMonthly = [880, 841, 756, 889, 920, 280];
+
+  new Chart(document.getElementById('chartProof'), {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {
+          label:'Traditional',data:tradAppts,backgroundColor:'#9e9b94',
+          borderRadius:isMobile?4:5,borderSkipped:false,
+          barPercentage:isMobile?0.65:0.55,categoryPercentage:isMobile?0.8:0.7,
+          stack:'stack1',yAxisID:'y'
+        },
+        {
+          label:'Website',data:webAppts,backgroundColor:'#0d7a55',
+          borderRadius:{topLeft:isMobile?4:5,topRight:isMobile?4:5},borderSkipped:false,
+          barPercentage:isMobile?0.65:0.55,categoryPercentage:isMobile?0.8:0.7,
+          stack:'stack1',yAxisID:'y'
+        },
+        {
+          label:'Ad spend',data:adSpendMonthly,type:'line',
+          borderColor:'#c44b3f',borderWidth:2,pointRadius:isMobile?3:4,
+          pointBackgroundColor:'#c44b3f',fill:false,tension:0.3,
+          yAxisID:'y2',order:1
+        }
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      layout:{padding:{top:isMobile?22:28}},
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1a18',titleColor:'#fff',bodyColor:'#ddd',cornerRadius:8,padding:10}},
+      scales:{
+        x:{stacked:true,grid:{display:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?10:11},padding:6}},
+        y:{stacked:true,beginAtZero:true,max:28,grid:{color:'rgba(0,0,0,0.04)',drawTicks:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?9:10},padding:isMobile?6:12,stepSize:5},title:{display:!isMobile,text:'Appointments',color:'#a09d96',font:{size:10}}},
+        y2:{position:'right',beginAtZero:true,max:1100,grid:{display:false},border:{display:false},ticks:{color:'#c44b3f',font:{size:isMobile?8:10},stepSize:isMobile?500:250,padding:isMobile?4:8,callback:v=>'$'+v},title:{display:!isMobile,text:'Ad spend',color:'#c44b3f',font:{size:10}}}
+      }
+    },
+    plugins:[{
+      id:'proofAnnotations',
+      afterDraw(chart){
+        const ctx=chart.ctx,xA=chart.scales.x,yA=chart.scales.y;
+        // Highlight Mar + Apr where ads dropped but trad stayed high
+        [4,5].forEach(idx=>{
+          if(idx >= xA.ticks.length) return;
+          const x=xA.getPixelForValue(idx);
+          const gap=isMobile?18:22;
+          ctx.save();
+          ctx.fillStyle='rgba(196,75,63,0.05)';
+          ctx.fillRect(x-gap,yA.top,gap*2,yA.bottom-yA.top);
+          ctx.restore();
+        });
+      }
+    },{
+      id:'proofLabels',
+      afterDatasetsDraw(chart){
+        const ctx=chart.ctx;
+        const mWeb=chart.getDatasetMeta(1); // website is on top
+        const mTrad=chart.getDatasetMeta(0);
+        webAppts.forEach((v,i)=>{
+          const topBar = v > 0 ? mWeb.data[i] : mTrad.data[i];
+          const total=webAppts[i]+tradAppts[i];
+          const fs=isMobile?10:13;
+          ctx.font=`500 ${fs}px 'Libre Franklin'`;
+          ctx.fillStyle='#1a1a18';
+          ctx.textAlign='center';
+          ctx.fillText(total,topBar.x,topBar.y-(isMobile?5:8));
+        });
+      }
+    }]
+  });
+})();
+
+// ========== FLOW DIAGRAM ==========
+(() => {
+  const container = document.getElementById('flowDiagram');
+  if(!container) return;
+  
+  const m = isMobile;
+  container.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:${m?'0.5rem':'0.75rem'};max-width:600px;margin:0 auto;font-family:var(--sans);">
+      
+      <div style="text-align:center;padding:${m?'0.75rem':'1rem'};background:var(--surface-alt);border-radius:10px;border:1px solid var(--border)">
+        <div style="font-size:${m?'10px':'11px'};text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);margin-bottom:4px">The brand that was built</div>
+        <div style="font-size:${m?'13px':'15px'};font-weight:500;color:var(--text);line-height:1.5">United Medical Exams website · 15 city SEO pages · Google Business Profile · Google Maps presence · Brand identity · Call tracking · AI phone agent</div>
+      </div>
+      
+      <div style="text-align:center;color:var(--text-dim);font-size:18px">↓</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:${m?'0.4rem':'0.75rem'}">
+        <div style="padding:${m?'0.6rem':'1rem'};background:rgba(13,122,85,0.06);border-radius:10px;border:1px solid rgba(13,122,85,0.15);text-align:center">
+          <div style="font-family:var(--serif);font-size:${m?'20px':'26px'};color:var(--green);margin-bottom:2px">35</div>
+          <div style="font-size:${m?'10px':'12px'};color:var(--text-secondary)">Web bookings</div>
+        </div>
+        <div style="padding:${m?'0.6rem':'1rem'};background:rgba(13,122,85,0.06);border-radius:10px;border:1px solid rgba(13,122,85,0.15);text-align:center">
+          <div style="font-family:var(--serif);font-size:${m?'20px':'26px'};color:var(--green);margin-bottom:2px">179</div>
+          <div style="font-size:${m?'10px':'12px'};color:var(--text-secondary)">Website calls</div>
+        </div>
+        <div style="padding:${m?'0.6rem':'1rem'};background:rgba(13,122,85,0.06);border-radius:10px;border:1px solid rgba(13,122,85,0.15);text-align:center">
+          <div style="font-family:var(--serif);font-size:${m?'20px':'26px'};color:var(--green);margin-bottom:2px">65</div>
+          <div style="font-size:${m?'10px':'12px'};color:var(--text-secondary)">Walk-ins / referrals</div>
+        </div>
+      </div>
+      
+      <div style="text-align:center;color:var(--text-dim);font-size:18px">↓</div>
+      
+      <div style="padding:${m?'0.75rem':'1rem'};background:var(--surface-alt);border-radius:10px;border:1px solid var(--border);text-align:center">
+        <div style="font-size:${m?'11px':'12px'};text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:6px">The branding flywheel</div>
+        <div style="font-size:${m?'12px':'13px'};color:var(--text-secondary);line-height:1.7;max-width:460px;margin:0 auto">
+          Patient finds practice online → books or calls → leaves a Google review → tells family going through immigration process → they search → find the SEO pages and website → book → leave a review → cycle continues
+        </div>
+      </div>
+      
+      <div style="text-align:center;color:var(--text-dim);font-size:14px;margin:${m?'0.25rem':'0.5rem'} 0">
+        <span style="display:inline-block;background:var(--surface-alt);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:${m?'11px':'12px'};color:var(--text-secondary)">↻ Each cycle strengthens the next</span>
+      </div>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:${m?'0.5rem':'0.75rem'}">
+        <div style="padding:${m?'0.75rem':'1rem'};background:rgba(45,95,165,0.05);border-radius:10px;border:1px solid rgba(45,95,165,0.15);text-align:center">
+          <div style="font-size:${m?'10px':'11px'};text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:4px;font-weight:500">Google Ads</div>
+          <div style="font-size:${m?'12px':'13px'};color:var(--text-secondary);line-height:1.5">Accelerates the flywheel. Turns it on = web bookings flow. Turns it off = web bookings stop. But the brand keeps spinning.</div>
+        </div>
+        <div style="padding:${m?'0.75rem':'1rem'};background:rgba(13,122,85,0.04);border-radius:10px;border:1px solid rgba(13,122,85,0.15);text-align:center">
+          <div style="font-size:${m?'10px':'11px'};text-transform:uppercase;letter-spacing:1px;color:var(--green);margin-bottom:4px;font-weight:500">Brand & SEO</div>
+          <div style="font-size:${m?'12px':'13px'};color:var(--text-secondary);line-height:1.5">Is the flywheel. 15 SEO pages, Google Maps, word of mouth. Drives 65 traditional appts even when ads are off.</div>
+        </div>
+      </div>
+
+    </div>
+  `;
+})();
+
+} // end initHaloCharts
+</script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpsh-oh'},{'server':'p3plzcpnl508117'},{'dcenter':'p3'},{'cp_id':'6632244'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>
