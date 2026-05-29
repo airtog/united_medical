@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>United Medical Exams — Patient Acquisition Impact Report (Jan–May 2026)</title>
+<meta name="description" content="Patient acquisition system impact report for United Medical Exams. Performance summary, January – May 2026.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+/* ===== RESET & TOKENS ===== */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#faf9f7;
+  --surface:#fff;
+  --surface-alt:#f3f1ed;
+  --border:#e8e5df;
+  --text:#1a1a18;
+  --text-secondary:#6b6862;
+  --text-dim:#a09d96;
+  --green:#0d7a55;
+  --green-light:#e8f5ef;
+  --green-bg:rgba(13,122,85,0.06);
+  --red:#c44b3f;
+  --blue:#2d5fa5;
+  --gold:#b8943e;
+  --trad-bar:#9e9b94;
+  --web-bar:#0d7a55;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'Libre Franklin',system-ui,sans-serif;
+  --pad:1rem;
+  --radius:12px;
+  --max-w:880px;
+}
+
+/* ===== PASSWORD GATE ===== */
+#gate{
+  position:fixed;inset:0;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;
+  transition:opacity 0.5s ease,visibility 0.5s ease;
+}
+#gate.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.gate-box{text-align:center;padding:2rem;max-width:360px;width:100%}
+.gate-box .gate-logo{
+  font-family:var(--serif);font-size:26px;color:var(--text);margin-bottom:0.35rem;
+}
+.gate-box .gate-sub{
+  font-family:var(--sans);font-size:12px;color:var(--text-dim);margin-bottom:2rem;
+  letter-spacing:1.5px;text-transform:uppercase;
+}
+.gate-box input{
+  width:100%;padding:0.85rem 1rem;font-family:var(--sans);font-size:15px;
+  border:1px solid var(--border);border-radius:10px;background:var(--surface);
+  color:var(--text);text-align:center;outline:none;transition:border-color 0.2s;
+  -webkit-appearance:none;
+}
+.gate-box input:focus{border-color:var(--green)}
+.gate-box input.error{border-color:var(--red);animation:shake 0.4s ease}
+.gate-box button{
+  width:100%;margin-top:0.75rem;padding:0.85rem 1rem;font-family:var(--sans);
+  font-size:15px;font-weight:500;background:var(--text);color:var(--bg);
+  border:none;border-radius:10px;cursor:pointer;transition:opacity 0.2s;
+}
+.gate-box button:hover{opacity:0.85}
+.gate-box button:active{opacity:0.7}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+/* ===== CONTENT WRAPPER ===== */
+#content{display:none}
+#content.visible{display:block}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;line-height:1.6;overflow-x:hidden;
+}
+
+/* ===== NAVIGATION ===== */
+.report-nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(250,249,247,0.92);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 var(--pad);
+}
+.report-nav__inner{
+  max-width:var(--max-w);margin:0 auto;
+  display:flex;align-items:center;gap:1.5rem;
+  overflow-x:auto;scrollbar-width:none;
+  -ms-overflow-style:none;
+  padding:0.65rem 0;
+}
+.report-nav__inner::-webkit-scrollbar{display:none}
+.report-nav__brand{
+  font-family:var(--serif);font-size:15px;color:var(--text);
+  white-space:nowrap;flex-shrink:0;
+}
+.report-nav a{
+  font-size:11px;letter-spacing:0.8px;text-transform:uppercase;
+  color:var(--text-dim);text-decoration:none;white-space:nowrap;
+  transition:color 0.2s;font-weight:500;
+}
+.report-nav a:hover{color:var(--text)}
+
+/* ===== HERO ===== */
+.hero{
+  padding:3rem var(--pad) 2rem;text-align:center;
+  max-width:var(--max-w);margin:0 auto;
+}
+.hero .eyebrow{
+  font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--text-dim);font-weight:500;margin-bottom:1.25rem;
+}
+.hero h1{
+  font-family:var(--serif);font-size:clamp(30px,8vw,56px);
+  font-weight:400;line-height:1.08;color:var(--text);
+  margin-bottom:0.75rem;letter-spacing:-0.5px;
+}
+.hero h1 em{color:var(--green);font-style:italic}
+.hero .sub{
+  font-size:14px;color:var(--text-secondary);font-weight:400;
+  max-width:540px;margin:0 auto;line-height:1.7;
+}
+.hero .sub strong{font-weight:500;color:var(--text)}
+
+/* ===== METRICS STRIP ===== */
+.metrics-strip-wrap{
+  max-width:var(--max-w);margin:0 auto 2rem;padding:0 var(--pad);
+}
+.metrics-strip{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:1px;background:var(--border);border-radius:var(--radius);
+  overflow:hidden;border:1px solid var(--border);
+}
+.ms-item{
+  padding:1.25rem 0.75rem;text-align:center;background:var(--surface);
+}
+.ms-item .num{
+  font-family:var(--serif);font-size:clamp(28px,7vw,42px);
+  font-weight:400;line-height:1;margin-bottom:5px;
+}
+.ms-item .num.accent{color:var(--green)}
+.ms-item .lbl{
+  font-size:11px;color:var(--text-secondary);font-weight:400;
+  letter-spacing:0.2px;line-height:1.3;
+}
+
+/* ===== SECTIONS & CARDS ===== */
+.section{
+  max-width:var(--max-w);margin:0 auto 1.5rem;padding:0 var(--pad);
+}
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1.25rem;overflow:hidden;
+}
+.card-header{margin-bottom:1.25rem}
+.card-title{
+  font-family:var(--serif);font-size:19px;font-weight:400;
+  color:var(--text);line-height:1.3;
+}
+.card-title small{
+  display:block;font-family:var(--sans);font-size:12px;
+  font-weight:400;color:var(--text-secondary);margin-top:5px;line-height:1.5;
+}
+.legend{
+  display:flex;gap:12px;font-size:11px;color:var(--text-secondary);
+  flex-wrap:wrap;margin-top:10px;
+}
+.legend-dot{
+  width:8px;height:8px;border-radius:2px;display:inline-block;
+  margin-right:4px;vertical-align:middle;
+}
+
+/* ===== CHARTS ===== */
+.chart-wrap{position:relative;height:280px}
+.chart-wrap canvas{width:100%!important;height:100%!important}
+
+/* ===== TABLES ===== */
+.table-scroll{
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  margin:0.5rem -1.25rem 0;padding:0 1.25rem;scrollbar-width:thin;
+}
+.table-scroll::-webkit-scrollbar{height:4px}
+.table-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.data-table{width:100%;border-collapse:collapse;font-size:13px;min-width:520px}
+.data-table th{
+  font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:1px;
+  color:var(--text-dim);text-align:right;padding:0.6rem 0.5rem;
+  border-bottom:2px solid var(--border);white-space:nowrap;
+}
+.data-table th:first-child{text-align:left}
+.data-table td{
+  padding:0.6rem 0.5rem;text-align:right;border-bottom:1px solid var(--border);
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.data-table td:first-child{text-align:left;font-weight:500;color:var(--text)}
+.data-table tr:last-child td{border-bottom:none}
+.data-table .baseline-row{background:var(--surface-alt);color:var(--text-secondary)}
+.data-table .baseline-row td{font-weight:400;color:var(--text-secondary)}
+.data-table .total-row{border-top:2px solid var(--text)}
+.data-table .total-row td{font-weight:600;color:var(--text);border-bottom:none}
+.highlight-cell{color:var(--green)!important;font-weight:600!important}
+
+/* ===== INSIGHT CARDS ===== */
+.insight-row{
+  display:grid;grid-template-columns:1fr;gap:0.75rem;
+  max-width:var(--max-w);margin:0 auto 1.5rem;padding:0 var(--pad);
+}
+.insight-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1.25rem;
+  display:flex;gap:1rem;align-items:flex-start;
+}
+.insight-card .ic-num{
+  font-family:var(--serif);font-size:32px;font-weight:400;
+  line-height:1;flex-shrink:0;
+}
+.insight-card .ic-num.green{color:var(--green)}
+.insight-card .ic-num.blue{color:var(--blue)}
+.insight-card .ic-label{
+  font-size:13px;color:var(--text-secondary);font-weight:400;
+  line-height:1.6;padding-top:6px;
+}
+.insight-card .ic-label strong{font-weight:600;color:var(--text)}
+
+/* ===== PROSE SECTION ===== */
+.prose{
+  max-width:var(--max-w);margin:0 auto 1.5rem;padding:0 var(--pad);
+}
+.prose-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1.5rem;
+}
+.prose-card h3{
+  font-family:var(--serif);font-size:18px;font-weight:400;
+  color:var(--text);margin-bottom:0.5rem;
+}
+.prose-card p{
+  font-size:14px;color:var(--text-secondary);line-height:1.75;
+}
+.prose-card p strong{font-weight:600;color:var(--text)}
+
+/* ===== CALLOUT ===== */
+.callout{max-width:var(--max-w);margin:0 auto 1.5rem;padding:0 var(--pad)}
+.callout-inner{
+  background:var(--green-bg);border:1px solid rgba(13,122,85,0.12);
+  border-radius:var(--radius);padding:1.25rem;
+}
+.callout-text{font-size:14px;line-height:1.7;color:var(--text);font-weight:400}
+.callout-text strong{font-weight:600}
+
+/* ===== CAPACITY GAUGE ===== */
+.capacity-wrap{
+  max-width:var(--max-w);margin:0 auto 1.5rem;padding:0 var(--pad);
+}
+.capacity-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1.5rem;text-align:center;
+}
+.capacity-bar-outer{
+  width:100%;max-width:480px;height:28px;background:var(--surface-alt);
+  border-radius:14px;margin:1rem auto 0.75rem;overflow:hidden;position:relative;
+  border:1px solid var(--border);
+}
+.capacity-bar-fill{
+  height:100%;background:linear-gradient(90deg,#0d7a55,#14a06e);
+  border-radius:14px;width:0%;transition:width 1.8s cubic-bezier(0.22,1,0.36,1);
+  position:relative;
+}
+.capacity-bar-fill::after{
+  content:'';position:absolute;right:0;top:0;bottom:0;width:3px;
+  background:rgba(255,255,255,0.6);border-radius:2px;
+}
+.capacity-label{
+  font-size:12px;color:var(--text-secondary);line-height:1.6;
+  max-width:420px;margin:0 auto;
+}
+
+/* ===== REACH SECTION ===== */
+.reach-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1rem;
+}
+.reach-stat{
+  text-align:center;padding:1.25rem;background:var(--surface-alt);
+  border-radius:10px;border:1px solid var(--border);
+}
+.reach-stat .rs-num{
+  font-family:var(--serif);font-size:28px;color:var(--green);margin-bottom:4px;
+}
+.reach-stat .rs-label{font-size:12px;color:var(--text-secondary);line-height:1.4}
+
+/* ===== DETAIL CARDS ===== */
+.detail-grid{display:grid;grid-template-columns:1fr;gap:0.75rem;margin-top:1rem}
+.detail-item{
+  padding:1rem;background:var(--surface-alt);border-radius:10px;
+  border:1px solid var(--border);
+}
+.detail-item h4{
+  font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;
+}
+.detail-item p{
+  font-size:13px;color:var(--text-secondary);line-height:1.6;margin:0;
+}
+
+/* ===== FOOTER ===== */
+.footer{
+  max-width:var(--max-w);margin:0 auto;padding:2rem var(--pad);
+  text-align:center;font-size:10px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--text-dim);
+  border-top:1px solid var(--border);
+}
+.footer span{display:block;margin-top:4px;letter-spacing:1px;font-size:9px}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal.d1{transition-delay:0.05s}
+.reveal.d2{transition-delay:0.1s}
+.reveal.d3{transition-delay:0.15s}
+.reveal.d4{transition-delay:0.2s}
+.reveal.d5{transition-delay:0.25s}
+
+/* ===== DESKTOP ===== */
+@media(min-width:640px){
+  :root{--pad:2rem;--radius:14px}
+  .hero{padding:4.5rem 2rem 3rem}
+  .hero .eyebrow{font-size:11px;letter-spacing:4px}
+  .hero .sub{font-size:15px}
+  .metrics-strip-wrap{margin-bottom:3rem}
+  .metrics-strip{grid-template-columns:repeat(4,1fr)}
+  .ms-item{padding:1.75rem 1.25rem}
+  .ms-item .lbl{font-size:12px}
+  .section{margin-bottom:2.5rem}
+  .card{padding:2rem}
+  .card-title{font-size:22px}
+  .card-title small{font-size:13px}
+  .legend{font-size:12px;gap:18px}
+  .chart-wrap{height:340px}
+  .table-scroll{margin:0.5rem 0 0;padding:0}
+  .data-table{font-size:14px;min-width:0}
+  .data-table th{font-size:11px;padding:0.75rem 1rem}
+  .data-table td{padding:0.75rem 1rem}
+  .insight-row{grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2.5rem}
+  .insight-card{padding:1.75rem;display:block}
+  .insight-card .ic-num{font-size:36px;margin-bottom:8px}
+  .insight-card .ic-label{font-size:14px;padding-top:0}
+  .prose{margin-bottom:2.5rem}
+  .prose-card{padding:2rem}
+  .prose-card h3{font-size:20px}
+  .prose-card p{font-size:15px}
+  .callout-inner{padding:2rem 2.5rem}
+  .callout-text{font-size:15px}
+  .capacity-wrap{margin-bottom:2.5rem}
+  .detail-grid{grid-template-columns:1fr 1fr}
+  .reach-stat .rs-num{font-size:34px}
+  .footer{padding:2.5rem}
+}
+
+/* ===== PRINT ===== */
+@media print{
+  #gate{display:none!important}
+  #content{display:block!important}
+  .report-nav{display:none}
+  .reveal{opacity:1!important;transform:none!important}
+  body{background:#fff}
+  .card,.prose-card{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== PASSWORD GATE ===== -->
+<div id="gate">
+  <div class="gate-box">
+    <div class="gate-logo">United Medical Exams</div>
+    <div class="gate-sub">Impact Report · Confidential</div>
+    <input type="password" id="pw" placeholder="Enter password" autocomplete="off" autofocus>
+    <button onclick="unlock()">View Report</button>
+  </div>
+</div>
+
+<!-- ===== CONTENT ===== -->
+<div id="content">
+
+<!-- NAV -->
+<nav class="report-nav" id="report-nav">
+  <div class="report-nav__inner">
+    <div class="report-nav__brand">Impact Report</div>
+    <a href="#overview">Overview</a>
+    <a href="#performance">Performance</a>
+    <a href="#drivers">Drivers</a>
+    <a href="#reach">Reach</a>
+    <a href="#opportunity">Opportunity</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero reveal" id="overview">
+  <div class="eyebrow">Patient Acquisition System — Impact Report</div>
+  <h1>From 3.4 to <em>25</em> appointments per&nbsp;month</h1>
+  <p class="sub">Before-and-after analysis for <strong>Dr. Emmanuel Weiss</strong> at United Medical Exams, Clifton, NJ.<br>Baseline: Jan 2024 – Jun 2025 &nbsp;→&nbsp; Impact: Nov 2025 – May 2026</p>
+</section>
+
+<!-- METRICS STRIP -->
+<div class="metrics-strip-wrap reveal d1" id="metrics-strip">
+<div class="metrics-strip">
+  <div class="ms-item">
+    <div class="num accent" data-count-to="635" data-count-prefix="+" data-count-suffix="%">+635%</div>
+    <div class="lbl">Appointment lift</div>
+  </div>
+  <div class="ms-item">
+    <div class="num" data-count-to="74875" data-count-prefix="$" data-count-comma="true">$74,875</div>
+    <div class="lbl">Revenue generated<br><span style="font-size:10px;color:var(--text-dim)">Nov 2025 – May 2026</span></div>
+  </div>
+  <div class="ms-item">
+    <div class="num accent">~9×</div>
+    <div class="lbl">Return on ad spend</div>
+  </div>
+  <div class="ms-item">
+    <div class="num">&lt;$1K</div>
+    <div class="lbl">Monthly ad spend</div>
+  </div>
+</div>
+</div>
+
+<!-- EXECUTIVE SUMMARY -->
+<div class="callout reveal d2">
+  <div class="callout-inner">
+    <p class="callout-text">Since November 2025, the patient acquisition system has supported <strong>125 immigration medical exams</strong>, generating approximately <strong>$74,875 in exam revenue</strong>. The website and digital system now drive at least <strong>46% of all immigration appointment volume</strong> — nearly half the practice's immigration exam business — on under $1,000/month in advertising spend. Performance has strengthened over the period, with the website channel's conversion rate <strong>more than doubling from ~2% in December to ~5% in May</strong> as the rebuilt site and refined ad targeting took effect.</p>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- CHART 1: Monthly Appointment Volume      -->
+<!-- ======================================== -->
+<div class="section reveal d3" id="performance">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Monthly Appointment Volume<small>18-month baseline average vs. post-launch performance</small></div>
+      <div class="legend">
+        <span><span class="legend-dot" style="background:var(--trad-bar)"></span>Walk-in / Referral</span>
+        <span><span class="legend-dot" style="background:var(--web-bar)"></span>Website-Driven</span>
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="chartVolume"></canvas></div>
+  </div>
+</div>
+
+<!-- MONTHLY TABLE -->
+<div class="section reveal">
+  <div class="card">
+    <div class="card-title">Month-by-Month Breakdown<small>Verified against EHR export. Each appointment = $599.</small></div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr><th>Month</th><th>Website</th><th>Walk-in</th><th>Total</th><th>Revenue</th><th>Web %</th></tr>
+        </thead>
+        <tbody>
+          <tr class="baseline-row"><td>Baseline avg (18 mo)</td><td>~0</td><td>2.7</td><td>3.4</td><td>$2,033</td><td>—</td></tr>
+          <tr><td>Nov 2025</td><td>1</td><td>6</td><td>7</td><td>$4,193</td><td>14%</td></tr>
+          <tr><td>Dec 2025</td><td>10</td><td>6</td><td>16</td><td>$9,584</td><td class="highlight-cell">63%</td></tr>
+          <tr><td>Jan 2026</td><td>10</td><td>4</td><td>14</td><td>$8,386</td><td class="highlight-cell">71%</td></tr>
+          <tr><td>Feb 2026</td><td>10</td><td>11</td><td>21</td><td>$12,579</td><td class="highlight-cell">48%</td></tr>
+          <tr><td>Mar 2026</td><td>4</td><td>15</td><td>19</td><td>$11,381</td><td>21%</td></tr>
+          <tr><td>Apr 2026</td><td>8</td><td>15</td><td>23</td><td>$13,777</td><td>35%</td></tr>
+          <tr><td>May 2026</td><td>14</td><td>11</td><td>25</td><td>$14,975</td><td class="highlight-cell">56%</td></tr>
+          <tr class="total-row"><td>Impact Total</td><td>57</td><td>68</td><td>125</td><td>$74,875</td><td>46%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- INSIGHT CARDS ROW 1 -->
+<div class="insight-row reveal">
+  <div class="insight-card">
+    <div class="ic-num green">57</div>
+    <div class="ic-label">Website-driven bookings — a channel that <strong>didn't exist</strong> before launch. Now drives 46% of all appointments.</div>
+  </div>
+  <div class="insight-card">
+    <div class="ic-num green">25</div>
+    <div class="ic-label">Appointments in May — the <strong>highest month on record</strong>. Up from 3.4/mo before the system launched.</div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- CHART 2: Revenue Growth                  -->
+<!-- ======================================== -->
+<div class="section reveal">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Revenue Growth<small>Monthly revenue vs. the $2,033 baseline average</small></div>
+      <div class="legend">
+        <span><span class="legend-dot" style="background:var(--green)"></span>Monthly revenue</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:0;border-top:2px dashed var(--red)"></span>Baseline</span>
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="chartRevenue"></canvas></div>
+  </div>
+</div>
+
+<!-- INSIGHT CARDS ROW 2 -->
+<div class="insight-row reveal">
+  <div class="insight-card">
+    <div class="ic-num green">~5%</div>
+    <div class="ic-label">Click-to-booking conversion rate in May — strong for healthcare search advertising, where <strong>2–4% is typical</strong>.</div>
+  </div>
+  <div class="insight-card">
+    <div class="ic-num" style="color:var(--text)">~9×</div>
+    <div class="ic-label">Return on ad spend. The campaign produced roughly <strong>nine dollars in exam revenue for every dollar spent</strong> — and that's conservative.</div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- CHART 3: Channel Split (Stacked Bar)     -->
+<!-- ======================================== -->
+<div class="section reveal">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Booking Channel Split<small>Website-driven vs. walk-in/referral, by month</small></div>
+      <div class="legend">
+        <span><span class="legend-dot" style="background:var(--web-bar)"></span>Website-Driven</span>
+        <span><span class="legend-dot" style="background:var(--trad-bar)"></span>Walk-in / Referral</span>
+      </div>
+    </div>
+    <div class="chart-wrap" style="height:260px"><canvas id="chartChannelSplit"></canvas></div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- CHART 4: Conversion Rate Trajectory      -->
+<!-- ======================================== -->
+<div class="section reveal">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Website Conversion Rate<small>Click-to-booking rate, improving as the site and targeting matured</small></div>
+    </div>
+    <div class="chart-wrap" style="height:240px"><canvas id="chartConversion"></canvas></div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- WHAT'S DRIVING RESULTS                   -->
+<!-- ======================================== -->
+<div class="section reveal" id="drivers">
+  <div class="card" style="border:1px solid rgba(13,122,85,0.2);background:linear-gradient(to bottom,rgba(13,122,85,0.03),var(--surface))">
+    <div class="card-title" style="font-size:clamp(22px,5vw,28px);text-align:center;margin-bottom:0.25rem">What's Driving the Results</div>
+    <p style="text-align:center;font-size:14px;color:var(--text-secondary);max-width:540px;margin:0 auto;line-height:1.7">Three things working together — a high-converting website, efficient advertising, and a wider patient reach.</p>
+  </div>
+</div>
+
+<div class="prose reveal">
+  <div class="prose-card">
+    <h3>A clear, high-converting website</h3>
+    <p>The website rebuild produced a measurable lift in how effectively visitors become booked patients. The site's click-to-booking conversion rate reached approximately <strong>5% in May</strong> — strong for healthcare search advertising, where 2–4% is typical.</p>
+  </div>
+</div>
+
+<div class="prose reveal">
+  <div class="prose-card">
+    <h3>Efficient, tightly-targeted advertising</h3>
+    <p>A focused Google Ads campaign reaches patients actively searching for immigration medical exams in the area. On <strong>under $1,000 per month</strong> in ad spend, the campaign has produced a return of roughly nine dollars in exam revenue for every dollar spent — and that figure is conservative, since it counts only bookings we can directly verify.</p>
+  </div>
+</div>
+
+<div class="prose reveal">
+  <div class="prose-card">
+    <h3>A wider patient reach</h3>
+    <p>The website extends the practice's reach well beyond walk-in distance. Online-driven patients travel from a meaningfully wider area than traditional walk-in patients, opening up a catchment of roughly <strong>15 miles around the office</strong>.</p>
+  </div>
+</div>
+
+<!-- DETAIL CARDS: What was built -->
+<div class="section reveal">
+  <div class="card">
+    <div class="card-title">What Was Built<small>The system is more than a Google Ads campaign — it's an entire brand and search presence built from scratch.</small></div>
+    <div class="detail-grid">
+      <div class="detail-item">
+        <h4>unitedmedicalexams.com</h4>
+        <p>Purpose-built conversion website with Calendly booking integration, trust-building design, and mobile-first layout. 68% of all ad traffic arrives on mobile.</p>
+      </div>
+      <div class="detail-item">
+        <h4>15 City-Specific SEO Pages</h4>
+        <p>Individual landing pages targeting immigration medical exam searches in Clifton, Passaic, Paterson, Garfield, Hackensack, Wayne, Paramus, Fort Lee, and more. Each optimized for local search intent.</p>
+      </div>
+      <div class="detail-item">
+        <h4>Google Business Profile & Maps</h4>
+        <p>The practice now appears in Google Maps and local pack results for immigration medical exam searches across North Jersey.</p>
+      </div>
+      <div class="detail-item">
+        <h4>Brand Identity & Call Tracking</h4>
+        <p>"United Medical Exams" — a patient-facing brand name, logo, and visual identity. Dedicated phone number with call tracking and AI answering agent.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- REACH / CATCHMENT                        -->
+<!-- ======================================== -->
+<div class="section reveal" id="reach">
+  <div class="card">
+    <div class="card-title">Patient Reach<small>Where patients are coming from</small></div>
+    <div class="reach-grid">
+      <div class="reach-stat">
+        <div class="rs-num">83%</div>
+        <div class="rs-label">within 15 miles<br>of the office</div>
+      </div>
+      <div class="reach-stat">
+        <div class="rs-num">60%</div>
+        <div class="rs-label">within 7 miles<br>of the office</div>
+      </div>
+    </div>
+    <div style="margin-top:1rem;padding:1rem;background:var(--surface-alt);border-radius:10px;border:1px solid var(--border)">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);margin-bottom:6px;font-weight:500">Top feeder communities</div>
+      <div style="font-size:14px;color:var(--text);font-weight:500;line-height:1.8">Clifton &nbsp;·&nbsp; Paterson &nbsp;·&nbsp; Passaic &nbsp;·&nbsp; Bloomfield &nbsp;·&nbsp; Hackensack</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- OPPORTUNITY AHEAD                        -->
+<!-- ======================================== -->
+<div class="section reveal" id="opportunity">
+  <div class="card" style="border:1px solid rgba(13,122,85,0.2);background:linear-gradient(to bottom,rgba(13,122,85,0.03),var(--surface))">
+    <div class="card-title" style="font-size:clamp(20px,5vw,26px);text-align:center;margin-bottom:0.5rem">The Opportunity Ahead</div>
+    <p style="text-align:center;font-size:14px;color:var(--text-secondary);max-width:520px;margin:0 auto 1.25rem;line-height:1.7">The practice currently performs roughly 25 immigration exams per month. With Dr. Weiss's capacity of up to 100 exams per month, there is significant room to grow.</p>
+  </div>
+</div>
+
+<!-- CAPACITY GAUGE -->
+<div class="capacity-wrap reveal">
+  <div class="capacity-card">
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);font-weight:500;margin-bottom:4px">Current Capacity Utilization</div>
+    <div style="font-family:var(--serif);font-size:clamp(32px,7vw,44px);color:var(--green);margin-bottom:2px">25 <span style="font-size:clamp(16px,3vw,22px);color:var(--text-dim);font-family:var(--sans);font-weight:300">of 100</span></div>
+    <div class="capacity-bar-outer">
+      <div class="capacity-bar-fill" id="capacityBar" data-target="25"></div>
+    </div>
+    <div class="capacity-label">
+      The advertising campaign is currently limited by budget — meaning qualified patients are searching but not always reached. Methodically increasing investment, in measured steps, is expected to increase booked volume while maintaining a strong return.
+    </div>
+  </div>
+</div>
+
+<div class="callout reveal">
+  <div class="callout-inner">
+    <p class="callout-text">The clear next step is a <strong>staged increase in advertising investment</strong>, measured carefully at each level. With 75% of capacity still available, there is significant room to scale the patient acquisition system while maintaining the same strong unit economics.</p>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- CHART 5: Capacity Projection             -->
+<!-- ======================================== -->
+<div class="section reveal">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Growth Trajectory<small>Monthly appointment volume with 100/month capacity ceiling</small></div>
+      <div class="legend">
+        <span><span class="legend-dot" style="background:var(--green)"></span>Actual</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:0;border-top:2px dashed var(--text-dim)"></span>Capacity (100)</span>
+      </div>
+    </div>
+    <div class="chart-wrap" style="height:220px"><canvas id="chartTrajectory"></canvas></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  Prepared by FX3 Media
+  <span>Data sources: Weiss Medical Group EHR · Calendly · Google Ads · Quo call records</span>
+  <span>Reporting period: November 1, 2025 – May 28, 2026</span>
+</div>
+
+</div><!-- end #content -->
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+/* ===== PASSWORD GATE ===== */
+function unlock(){
+  const input = document.getElementById('pw');
+  if(input.value === 'cardiacare'){
+    document.getElementById('gate').classList.add('hidden');
+    document.getElementById('content').classList.add('visible');
+    setTimeout(()=>{
+      initObserver();
+      initCharts();
+    },150);
+  } else {
+    input.classList.add('error');
+    input.value='';
+    input.placeholder='Incorrect password';
+    setTimeout(()=>input.classList.remove('error'),400);
+  }
+}
+document.getElementById('pw').addEventListener('keydown',e=>{
+  if(e.key==='Enter') unlock();
+});
+
+/* ===== INTERSECTION OBSERVER (scroll animations) ===== */
+function initObserver(){
+  const els = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+        // Animated counters
+        entry.target.querySelectorAll('[data-count-to]').forEach(animateCounter);
+        // Capacity bar
+        const bar = entry.target.querySelector('#capacityBar');
+        if(bar) setTimeout(()=>{bar.style.width=bar.dataset.target+'%'},200);
+      }
+    });
+  },{threshold:0.15,rootMargin:'0px 0px -40px 0px'});
+  els.forEach(el=>io.observe(el));
+}
+
+/* ===== ANIMATED COUNTERS ===== */
+function animateCounter(el){
+  if(el.dataset.counted) return;
+  el.dataset.counted='1';
+  const target = parseInt(el.dataset.countTo);
+  const prefix = el.dataset.countPrefix||'';
+  const suffix = el.dataset.countSuffix||'';
+  const useComma = el.dataset.countComma==='true';
+  const duration = 1400;
+  const start = performance.now();
+  function step(now){
+    const elapsed = now-start;
+    const progress = Math.min(elapsed/duration,1);
+    const eased = 1-Math.pow(1-progress,3); // ease out cubic
+    const current = Math.round(eased*target);
+    const display = useComma?current.toLocaleString():current;
+    el.textContent = prefix+display+suffix;
+    if(progress<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+/* ===== CHARTS ===== */
+function initCharts(){
+const isMobile = window.innerWidth < 640;
+Chart.defaults.font.family = "'Libre Franklin', system-ui, sans-serif";
+Chart.defaults.font.size = isMobile ? 10 : 12;
+
+// ========== CHART 1: Monthly Appointment Volume ==========
+(()=>{
+  const labels = isMobile
+    ? ['Base','','Nov','Dec','Jan','Feb','Mar','Apr','May']
+    : ['Baseline\navg','','Nov\n2025','Dec\n2025','Jan\n2026','Feb\n2026','Mar\n2026','Apr\n2026','May\n2026'];
+  const trad = [2.7, null, 6, 6, 4, 11, 15, 15, 11];
+  const web  = [0.7, null, 1, 10, 10, 10, 4, 8, 14];
+  const totals = [3.4, 0, 7, 16, 14, 21, 19, 23, 25];
+
+  new Chart(document.getElementById('chartVolume'),{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {
+          label:'Walk-in / Referral',data:trad,
+          backgroundColor:c=>c.dataIndex===0?'rgba(158,155,148,0.4)':'#9e9b94',
+          borderRadius:isMobile?4:5,borderSkipped:false,
+          barPercentage:isMobile?0.7:0.58,categoryPercentage:isMobile?0.8:0.72,stack:'a'
+        },
+        {
+          label:'Website-Driven',data:web,
+          backgroundColor:c=>c.dataIndex===0?'rgba(13,122,85,0.25)':'#0d7a55',
+          borderRadius:{topLeft:isMobile?4:5,topRight:isMobile?4:5},borderSkipped:false,
+          barPercentage:isMobile?0.7:0.58,categoryPercentage:isMobile?0.8:0.72,stack:'a'
+        }
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      layout:{padding:{top:isMobile?24:32,left:0}},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#1a1a18',titleColor:'#fff',bodyColor:'#ddd',
+          borderColor:'#333',borderWidth:1,cornerRadius:8,padding:isMobile?10:14,
+          titleFont:{size:isMobile?11:13},bodyFont:{size:isMobile?11:13},
+          callbacks:{
+            afterBody:ctx=>{
+              const i=ctx[0].dataIndex;
+              if(i===0) return ['','Total: 3.4/mo','Rev: $2,033/mo'];
+              if(i===1) return [];
+              return ['','Total: '+totals[i],'Rev: $'+(totals[i]*599).toLocaleString()];
+            }
+          }
+        }
+      },
+      scales:{
+        x:{stacked:true,grid:{display:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?9:11},padding:6}},
+        y:{stacked:true,beginAtZero:true,max:30,grid:{color:'rgba(0,0,0,0.04)',drawTicks:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?9:11},padding:isMobile?6:12,stepSize:5}}
+      }
+    },
+    plugins:[{
+      id:'divider',
+      beforeDraw(chart){
+        const ctx=chart.ctx,xA=chart.scales.x,yA=chart.scales.y;
+        const x=(xA.getPixelForValue(1)+xA.getPixelForValue(2))/2;
+        ctx.save();ctx.beginPath();ctx.strokeStyle='#e8e5df';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+        ctx.moveTo(x,yA.top-16);ctx.lineTo(x,yA.bottom);ctx.stroke();ctx.setLineDash([]);
+        const fs=isMobile?9:10;
+        ctx.font=`600 ${fs}px 'Libre Franklin'`;ctx.textAlign='center';
+        ctx.fillStyle='#a09d96';
+        ctx.fillText('BEFORE',xA.getPixelForValue(0),yA.top-(isMobile?16:24));
+        ctx.fillStyle='#0d7a55';
+        ctx.fillText('AFTER',(xA.getPixelForValue(2)+xA.getPixelForValue(8))/2,yA.top-(isMobile?16:24));
+        ctx.restore();
+      }
+    },{
+      id:'baseline',
+      afterDraw(chart){
+        const ctx=chart.ctx,xA=chart.scales.x,yA=chart.scales.y;
+        const y=yA.getPixelForValue(3.4);
+        const x1=xA.getPixelForValue(2)-6,x2=xA.getPixelForValue(8)+(isMobile?6:20);
+        ctx.save();ctx.beginPath();ctx.strokeStyle='rgba(196,75,63,0.35)';ctx.lineWidth=1;ctx.setLineDash([5,4]);
+        ctx.moveTo(x1,y);ctx.lineTo(x2,y);ctx.stroke();ctx.setLineDash([]);
+        if(!isMobile){
+          ctx.font="400 10px 'Libre Franklin'";ctx.fillStyle='rgba(196,75,63,0.6)';ctx.textAlign='left';
+          ctx.fillText('baseline 3.4',x2+4,y+4);
+        }
+        ctx.restore();
+      }
+    },{
+      id:'totals',
+      afterDatasetsDraw(chart){
+        const ctx=chart.ctx,m1=chart.getDatasetMeta(1),m0=chart.getDatasetMeta(0);
+        m1.data.forEach((bar,i)=>{
+          if(i===1||totals[i]===0)return;
+          const top=web[i]>0?bar:m0.data[i];
+          const fs=isMobile?(i===0?10:12):(i===0?13:14);
+          ctx.font=(i===0?'400':'500')+` ${fs}px 'Libre Franklin'`;
+          ctx.fillStyle=i===0?'#a09d96':'#1a1a18';
+          ctx.textAlign='center';
+          ctx.fillText(i===0?'3.4':totals[i],top.x,top.y-(isMobile?6:10));
+        });
+      }
+    }]
+  });
+})();
+
+// ========== CHART 2: Revenue Growth ==========
+(()=>{
+  const labels = isMobile
+    ? ['Base','Nov','Dec','Jan','Feb','Mar','Apr','May']
+    : ['Baseline\navg','Nov\n2025','Dec\n2025','Jan\n2026','Feb\n2026','Mar\n2026','Apr\n2026','May\n2026'];
+  const rev=[2033,4193,9584,8386,12579,11381,13777,14975];
+
+  new Chart(document.getElementById('chartRevenue'),{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[{
+        data:rev,
+        backgroundColor:c=>c.dataIndex===0?'rgba(158,155,148,0.35)':'#0d7a55',
+        borderRadius:isMobile?4:5,borderSkipped:false,
+        barPercentage:isMobile?0.65:0.55,categoryPercentage:isMobile?0.8:0.7
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      layout:{padding:{top:isMobile?22:28}},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#1a1a18',titleColor:'#fff',bodyColor:'#ddd',
+          cornerRadius:8,padding:isMobile?8:12,
+          callbacks:{label:ctx=>'$'+ctx.raw.toLocaleString()}
+        }
+      },
+      scales:{
+        x:{grid:{display:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?9:11},padding:6}},
+        y:{beginAtZero:true,max:18000,grid:{color:'rgba(0,0,0,0.04)',drawTicks:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?9:10},padding:isMobile?6:12,callback:v=>'$'+(v/1000)+'K',stepSize:isMobile?6000:4000}}
+      }
+    },
+    plugins:[{
+      id:'baselineRev',
+      afterDraw(chart){
+        const ctx=chart.ctx,xA=chart.scales.x,yA=chart.scales.y;
+        const y=yA.getPixelForValue(2033);
+        const x1=xA.getPixelForValue(1)-6,x2=xA.getPixelForValue(7)+(isMobile?6:20);
+        ctx.save();ctx.beginPath();ctx.strokeStyle='rgba(196,75,63,0.35)';ctx.lineWidth=1;ctx.setLineDash([5,4]);
+        ctx.moveTo(x1,y);ctx.lineTo(x2,y);ctx.stroke();ctx.setLineDash([]);
+        if(!isMobile){
+          ctx.font="400 10px 'Libre Franklin'";ctx.fillStyle='rgba(196,75,63,0.55)';ctx.textAlign='left';
+          ctx.fillText('$2,033 baseline',x2+4,y+4);
+        }
+        ctx.restore();
+      }
+    },{
+      id:'revLabels',
+      afterDatasetsDraw(chart){
+        const ctx=chart.ctx,meta=chart.getDatasetMeta(0);
+        meta.data.forEach((bar,i)=>{
+          const fs=isMobile?(i===0?9:10):(i===0?12:13);
+          ctx.font=(i===0?'400':'500')+` ${fs}px 'Libre Franklin'`;
+          ctx.fillStyle=i===0?'#a09d96':'#1a1a18';
+          ctx.textAlign='center';
+          const val = rev[i]>=10000?'$'+(rev[i]/1000).toFixed(1)+'K':'$'+(rev[i]/1000).toFixed(1)+'K';
+          ctx.fillText(val,bar.x,bar.y-(isMobile?6:10));
+        });
+      }
+    }]
+  });
+})();
+
+// ========== CHART 3: Channel Split (100% Stacked) ==========
+(()=>{
+  const labels = isMobile
+    ? ['Nov','Dec','Jan','Feb','Mar','Apr','May']
+    : ['Nov\n2025','Dec\n2025','Jan\n2026','Feb\n2026','Mar\n2026','Apr\n2026','May\n2026'];
+  const webData = [1, 10, 10, 10, 4, 8, 14];
+  const tradData = [6, 6, 4, 11, 15, 15, 11];
+  // Calculate percentages
+  const webPct = webData.map((w,i)=>Math.round(w/(w+tradData[i])*100));
+
+  new Chart(document.getElementById('chartChannelSplit'),{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {
+          label:'Website-Driven',data:webData,
+          backgroundColor:'#0d7a55',
+          borderRadius:{topLeft:isMobile?3:4,topRight:isMobile?3:4},borderSkipped:false,
+          barPercentage:isMobile?0.7:0.55,categoryPercentage:isMobile?0.8:0.72,stack:'a'
+        },
+        {
+          label:'Walk-in / Referral',data:tradData,
+          backgroundColor:'#9e9b94',
+          borderRadius:isMobile?3:4,borderSkipped:false,
+          barPercentage:isMobile?0.7:0.55,categoryPercentage:isMobile?0.8:0.72,stack:'a'
+        }
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      layout:{padding:{top:isMobile?22:28}},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#1a1a18',titleColor:'#fff',bodyColor:'#ddd',
+          cornerRadius:8,padding:isMobile?8:12,
+          callbacks:{
+            afterBody:ctx=>{
+              const i=ctx[0].dataIndex;
+              return ['','Total: '+(webData[i]+tradData[i]),'Web share: '+webPct[i]+'%'];
+            }
+          }
+        }
+      },
+      scales:{
+        x:{stacked:true,grid:{display:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?10:11},padding:6}},
+        y:{stacked:true,beginAtZero:true,max:30,grid:{color:'rgba(0,0,0,0.04)',drawTicks:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?9:10},padding:isMobile?6:12,stepSize:5}}
+      }
+    },
+    plugins:[{
+      id:'splitLabels',
+      afterDatasetsDraw(chart){
+        const ctx=chart.ctx;
+        const mWeb=chart.getDatasetMeta(0);
+        webData.forEach((w,i)=>{
+          const bar=mWeb.data[i];
+          const total=webData[i]+tradData[i];
+          const fs=isMobile?10:13;
+          ctx.font=`500 ${fs}px 'Libre Franklin'`;
+          ctx.fillStyle='#1a1a18';
+          ctx.textAlign='center';
+          // total above
+          ctx.fillText(total,bar.x,bar.y-(isMobile?5:9));
+          // web % inside or below
+          if(w>0){
+            const pctFs=isMobile?8:10;
+            ctx.font=`500 ${pctFs}px 'Libre Franklin'`;
+            ctx.fillStyle='rgba(255,255,255,0.9)';
+            const barHeight=chart.getDatasetMeta(0).data[i].height||0;
+            if(barHeight>16){
+              ctx.fillText(webPct[i]+'%',bar.x,bar.y+barHeight/2+3);
+            }
+          }
+        });
+      }
+    }]
+  });
+})();
+
+// ========== CHART 4: Conversion Rate ==========
+(()=>{
+  const labels = isMobile
+    ? ['Dec','Jan','Feb','Mar','Apr','May']
+    : ['Dec\n2025','Jan\n2026','Feb\n2026','Mar\n2026','Apr\n2026','May\n2026'];
+  const rates = [2.0, 2.8, 3.2, 3.0, 4.0, 5.0];
+
+  new Chart(document.getElementById('chartConversion'),{
+    type:'line',
+    data:{
+      labels,
+      datasets:[{
+        data:rates,
+        borderColor:'#0d7a55',
+        borderWidth:2.5,
+        pointRadius:isMobile?4:5,
+        pointBackgroundColor:'#0d7a55',
+        pointBorderColor:'#fff',
+        pointBorderWidth:2,
+        pointHoverRadius:isMobile?6:7,
+        fill:true,
+        backgroundColor:'rgba(13,122,85,0.08)',
+        tension:0.35
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      layout:{padding:{top:isMobile?10:16}},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#1a1a18',titleColor:'#fff',bodyColor:'#ddd',
+          cornerRadius:8,padding:isMobile?8:12,
+          callbacks:{label:ctx=>ctx.raw+'% conversion rate'}
+        }
+      },
+      scales:{
+        x:{grid:{display:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?10:11},padding:6}},
+        y:{beginAtZero:true,max:7,grid:{color:'rgba(0,0,0,0.04)',drawTicks:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?9:10},padding:isMobile?6:12,callback:v=>v+'%',stepSize:1}}
+      }
+    },
+    plugins:[{
+      id:'rateLabels',
+      afterDatasetsDraw(chart){
+        const ctx=chart.ctx,meta=chart.getDatasetMeta(0);
+        meta.data.forEach((pt,i)=>{
+          const fs=isMobile?10:12;
+          ctx.font=`600 ${fs}px 'Libre Franklin'`;
+          ctx.fillStyle='#0d7a55';
+          ctx.textAlign='center';
+          ctx.fillText(rates[i]+'%',pt.x,pt.y-(isMobile?10:14));
+        });
+      }
+    },{
+      id:'convBenchmark',
+      afterDraw(chart){
+        const ctx=chart.ctx,xA=chart.scales.x,yA=chart.scales.y;
+        // Industry avg range 2-4%
+        const y1=yA.getPixelForValue(4);
+        const y2=yA.getPixelForValue(2);
+        const x1=xA.left;
+        const x2=xA.right;
+        ctx.save();
+        ctx.fillStyle='rgba(158,155,148,0.08)';
+        ctx.fillRect(x1,y1,x2-x1,y2-y1);
+        if(!isMobile){
+          ctx.font="400 10px 'Libre Franklin'";ctx.fillStyle='rgba(158,155,148,0.6)';ctx.textAlign='right';
+          ctx.fillText('industry typical: 2–4%',x2-8,y1+14);
+        }
+        ctx.restore();
+      }
+    }]
+  });
+})();
+
+// ========== CHART 5: Growth Trajectory ==========
+(()=>{
+  const labels = isMobile
+    ? ['Base','Nov','Dec','Jan','Feb','Mar','Apr','May']
+    : ['Baseline\navg','Nov\n2025','Dec\n2025','Jan\n2026','Feb\n2026','Mar\n2026','Apr\n2026','May\n2026'];
+  const actual = [3.4, 7, 16, 14, 21, 19, 23, 25];
+
+  new Chart(document.getElementById('chartTrajectory'),{
+    type:'line',
+    data:{
+      labels,
+      datasets:[{
+        data:actual,
+        borderColor:'#0d7a55',
+        borderWidth:2.5,
+        pointRadius:isMobile?3:4,
+        pointBackgroundColor:'#0d7a55',
+        pointBorderColor:'#fff',
+        pointBorderWidth:2,
+        fill:true,
+        backgroundColor:'rgba(13,122,85,0.06)',
+        tension:0.3
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      layout:{padding:{top:isMobile?10:16}},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#1a1a18',titleColor:'#fff',bodyColor:'#ddd',
+          cornerRadius:8,padding:10,
+          callbacks:{label:ctx=>ctx.raw+' appointments'}
+        }
+      },
+      scales:{
+        x:{grid:{display:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?9:11},padding:6}},
+        y:{beginAtZero:true,max:110,grid:{color:'rgba(0,0,0,0.04)',drawTicks:false},border:{display:false},ticks:{color:'#a09d96',font:{size:isMobile?9:10},padding:isMobile?6:12,stepSize:20}}
+      }
+    },
+    plugins:[{
+      id:'capacityCeiling',
+      afterDraw(chart){
+        const ctx=chart.ctx,xA=chart.scales.x,yA=chart.scales.y;
+        const y=yA.getPixelForValue(100);
+        ctx.save();ctx.beginPath();ctx.strokeStyle='rgba(160,157,150,0.4)';ctx.lineWidth=1.5;ctx.setLineDash([6,4]);
+        ctx.moveTo(xA.left,y);ctx.lineTo(xA.right,y);ctx.stroke();ctx.setLineDash([]);
+        // Fill capacity zone
+        ctx.fillStyle='rgba(160,157,150,0.04)';
+        ctx.fillRect(xA.left,yA.getPixelForValue(110),xA.right-xA.left,y-yA.getPixelForValue(110));
+        if(!isMobile){
+          ctx.font="500 11px 'Libre Franklin'";ctx.fillStyle='rgba(160,157,150,0.6)';ctx.textAlign='right';
+          ctx.fillText('capacity: 100/mo',xA.right-8,y-8);
+        } else {
+          ctx.font="500 9px 'Libre Franklin'";ctx.fillStyle='rgba(160,157,150,0.6)';ctx.textAlign='right';
+          ctx.fillText('100/mo cap',xA.right-4,y-6);
+        }
+        ctx.restore();
+      }
+    },{
+      id:'trajLabels',
+      afterDatasetsDraw(chart){
+        const ctx=chart.ctx,meta=chart.getDatasetMeta(0);
+        meta.data.forEach((pt,i)=>{
+          if(i===0) return; // skip baseline
+          const fs=isMobile?9:11;
+          ctx.font=`500 ${fs}px 'Libre Franklin'`;
+          ctx.fillStyle='#1a1a18';
+          ctx.textAlign='center';
+          ctx.fillText(actual[i],pt.x,pt.y-(isMobile?8:12));
+        });
+      }
+    }]
+  });
+})();
+
+} // end initCharts
+</script>
+</body>
+</html>
