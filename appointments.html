@@ -21,6 +21,8 @@
   <!-- Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://assets.calendly.com">
+  <link rel="preconnect" href="https://calendly.com">
 
   <!-- Fonts -->
   <link
@@ -31,7 +33,7 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/nav.css?v=3">
-  <link rel="stylesheet" href="css/main.css?v=16">
+  <link rel="stylesheet" href="css/main.css?v=17">
 
   <!-- Calendly SDK (only on this page) -->
   <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
@@ -101,7 +103,7 @@
 
       <!-- Right: Calendly Embed -->
       <div class="appt-embed">
-        <div class="appt-embed__widget" id="calendly-embed" style="min-width:320px;"></div>
+        <div class="appt-embed__widget" id="calendly-embed" style="min-width:320px;height:700px;min-height:700px;"></div>
       </div>
 
     </div>
@@ -147,7 +149,9 @@
         });
       }
 
-      // Resize iframe + container whenever Calendly reports a new page height
+      // Resize iframe + container whenever Calendly reports a new page height.
+      // Enforce a 700px floor so the widget can never collapse to a sliver.
+      var CALENDLY_MIN_HEIGHT = 700;
       window.addEventListener('message', function(e) {
         if (!e.data || !e.data.event) return;
 
@@ -157,6 +161,8 @@
           // Ensure it's a number (Calendly sometimes sends a string like "932px")
           var px = parseFloat(h);
           if (isNaN(px) || px < 100) return;
+          // Never shrink below the hard floor
+          if (px < CALENDLY_MIN_HEIGHT) px = CALENDLY_MIN_HEIGHT;
 
           var embed = document.getElementById('calendly-embed');
           if (!embed) return;
@@ -164,6 +170,7 @@
           var widget = embed.querySelector('.calendly-inline-widget');
           if (iframe) iframe.style.height = px + 'px';
           if (widget) widget.style.height = px + 'px';
+          embed.style.height = px + 'px';
         }
       });
     });
@@ -174,7 +181,7 @@
   <script src="js/main.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>if (typeof lucide !== 'undefined') lucide.createIcons();</script>
-  <script src="js/tracking.js?v6"></script>
+  <script src="js/tracking.js?v7"></script>
 </body>
 
 </html>

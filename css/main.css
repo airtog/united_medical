@@ -1268,20 +1268,27 @@ p {
 .appt-embed {
   background: transparent;
   border-radius: 0;
-  overflow: hidden;
+  overflow: visible;
+  height: auto;
   padding: 0;
 }
 
 .appt-embed__widget {
   min-width: 320px;
+  height: 700px;
+  min-height: 700px;
 }
 
 .appt-embed__widget .calendly-inline-widget {
   width: 100% !important;
+  height: 100% !important;
+  min-height: 700px !important;
 }
 
 .appt-embed__widget .calendly-inline-widget iframe {
   width: 100% !important;
+  height: 100% !important;
+  min-height: 700px !important;
   border: none !important;
 }
 

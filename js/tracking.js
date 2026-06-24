@@ -8,18 +8,17 @@
   'use strict';
 
   let bookingTracked = false;
-  let callTracked = false;
   let scheduleTracked = false;
 
   function fire(name, params) {
     if (typeof gtag === 'function') gtag('event', name, params || {});
   }
 
-  // 1. click_to_call
+  // 1. click_to_call — fire on EVERY click (no one-shot guard)
+  //    so desktop clicks are always tracked, not just the first.
   document.addEventListener('click', function (e) {
     var link = e.target.closest('a[href^="tel:"]');
-    if (link && !callTracked) {
-      callTracked = true;
+    if (link) {
       fire('click_to_call', { event_category: 'conversion', event_label: link.href });
     }
   });
