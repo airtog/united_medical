@@ -1,7 +1,8 @@
 // ============================================================
-// tracking.js v6 — United Medical Exams
+// tracking.js v7 — United Medical Exams
 // GA4: G-M6D4QHH38F
-// 6 tracked events per v2 brief
+// Google Ads: AW- tag ready (uncomment when ID is obtained)
+// 7 tracked events per battle plan P1-6
 // ============================================================
 
 (function () {
@@ -13,6 +14,11 @@
   function fire(name, params) {
     if (typeof gtag === 'function') gtag('event', name, params || {});
   }
+
+  // --- Google Ads conversion tag (P1-6) ---
+  // Uncomment the next line once the AW- conversion ID is obtained from the Ads account.
+  // The gtag('config', 'AW-XXXXXXXXX') call must also be added to the GA4 snippet in the HTML <head>.
+  // if (typeof gtag === 'function') gtag('config', 'AW-XXXXXXXXX');
 
   // 1. click_to_call — fire on EVERY click (no one-shot guard)
   //    so desktop clicks are always tracked, not just the first.
@@ -67,6 +73,15 @@
     var link = e.target.closest('#google-reviews-link');
     if (link) {
       fire('google_reviews_click', { event_category: 'engagement', event_label: 'see_all_reviews_google' });
+    }
+  });
+
+  // 7. callback_request — fires when the fallback form on /appointments.html is submitted (P1-6 / C-2)
+  //    Wired as a Secondary conversion in GA4 (Primary = calendly_confirmed only)
+  document.addEventListener('submit', function (e) {
+    var form = e.target.closest('#callback-form');
+    if (form) {
+      fire('callback_request', { event_category: 'conversion', event_label: 'callback_form_submit' });
     }
   });
 

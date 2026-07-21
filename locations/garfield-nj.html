@@ -73,6 +73,19 @@
     }
   }
   </script>
+  
+  <!-- Structured Data: BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://unitedmedicalexams.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Locations", "item": "https://unitedmedicalexams.com/locations/" },
+      { "@type": "ListItem", "position": 3, "name": "Garfield", "item": "https://unitedmedicalexams.com/locations/garfield-nj.html" }
+    ]
+  }
+  </script>
   <!-- Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-M6D4QHH38F"></script>
   <script>
@@ -248,7 +261,7 @@
   <!-- Scripts -->
   <script src="/js/nav.js"></script>
   <script src="/js/main.js"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lucide@1.25.0"></script>
   <script>lucide.createIcons();</script>
   <script src="/js/tracking.js?v6"></script>
 </body>
