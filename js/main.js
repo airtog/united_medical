@@ -162,49 +162,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
 
-  // --- Social Proof Toast Notifications ---
-  const toast = document.createElement('div');
-  toast.className = 'social-toast';
-  toast.setAttribute('role', 'status');
-  toast.setAttribute('aria-live', 'polite');
-  document.body.appendChild(toast);
+  /* --- Social-proof toasts: REMOVED 2026-07-22 ---------------------------
+     This block injected rotating pop-ups reading "N people are finding times
+     right now" and "N people booked today". Both numbers were generated with
+     Math.random() and were not connected to any real booking or session data.
 
-  let bookedCount = Math.floor(Math.random() * 3) + 1; // start at 1–3
+     Removed at the client's direction. Presenting invented figures to patients
+     as fact is a deceptive-practice ("dark pattern") risk, and it contradicts
+     the project's own standing rule never to publish fabricated numbers — a
+     rule that matters more, not less, on a medical practice's website.
 
-  const toastMessages = [
-    () => {
-      const n = Math.floor(Math.random() * 3) + 1; // 1–3, fluctuates naturally
-      return {
-        icon: '<span class="social-toast__dot"></span>',
-        text: `${n} ${n === 1 ? 'person is' : 'people are'} finding times right now`
-      };
-    },
-    () => {
-      // Only increment (0 or 1), never decrease, cap at 5
-      if (bookedCount < 5) bookedCount += Math.round(Math.random());
-      return {
-        icon: '<span class="social-toast__icon">📅</span>',
-        text: `${bookedCount} ${bookedCount === 1 ? 'person' : 'people'} booked today`
-      };
-    }
-  ];
+     The site's real proof does this job honestly: verified Google reviews,
+     500+ completed exams, and the testimonial carousel.
 
-  let toastTimeout;
-  function showToast() {
-    const msg = toastMessages[Math.floor(Math.random() * toastMessages.length)]();
-    toast.innerHTML = `${msg.icon}<span>${msg.text}</span>`;
-    toast.classList.add('is-visible');
-
-    // Auto-hide after 4.5s
-    clearTimeout(toastTimeout);
-    toastTimeout = setTimeout(() => {
-      toast.classList.remove('is-visible');
-      // Schedule next toast 20–40s later
-      setTimeout(showToast, (Math.random() * 20000) + 20000);
-    }, 4500);
-  }
-
-  // First toast after 5 seconds
-  setTimeout(showToast, 5000);
+     Do not reinstate. If live booking activity is ever surfaced, it must be
+     driven by real data from the booking system.
+     ---------------------------------------------------------------------- */
 
 });
