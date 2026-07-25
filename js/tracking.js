@@ -1,7 +1,10 @@
 // ============================================================
-// tracking.js v7 — United Medical Exams
+// tracking.js v8 — United Medical Exams
 // GA4: G-M6D4QHH38F
-// Google Ads: AW- tag ready (uncomment when ID is obtained)
+// Conversions: GA4 -> Google Ads import. calendly_confirmed = Primary,
+//   meeting_scheduled = Secondary. No native AW- website tag by design
+//   (verified 2026-07-21: account is 100% GA4-import; adding a direct tag
+//    for the same booking would double-count and corrupt Smart Bidding).
 // 7 tracked events per battle plan P1-6
 // ============================================================
 
@@ -14,11 +17,6 @@
   function fire(name, params) {
     if (typeof gtag === 'function') gtag('event', name, params || {});
   }
-
-  // --- Google Ads conversion tag (P1-6) ---
-  // Uncomment the next line once the AW- conversion ID is obtained from the Ads account.
-  // The gtag('config', 'AW-XXXXXXXXX') call must also be added to the GA4 snippet in the HTML <head>.
-  // if (typeof gtag === 'function') gtag('config', 'AW-XXXXXXXXX');
 
   // 1. click_to_call — fire on EVERY click (no one-shot guard)
   //    so desktop clicks are always tracked, not just the first.
