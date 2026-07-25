@@ -68,11 +68,16 @@ function handleHashLink(e) {
 
 window.initNav = function () {
 
+    // Guard: nav may be inlined at build time AND main.js may also call
+    // this. Bind listeners exactly once.
+    if (window.__navInited) return;
+
     const nav = document.querySelector('.nav');
     const hamburger = document.querySelector('.nav__hamburger');
     const drawer = document.querySelector('.nav__drawer');
 
     if (!nav) return;
+    window.__navInited = true;
 
     // Remove CSS scroll-behavior to prevent conflicts with JS scroll
     document.documentElement.style.scrollBehavior = 'auto';
@@ -174,7 +179,9 @@ window.initNav = function () {
 
 };
 
-// If nav already exists in the DOM on load (fallback), init immediately
+// Nav is inlined into the static HTML by build.js, so it exists at
+// DOMContentLoaded. Init immediately. (If a legacy page still uses the
+// #nav-placeholder fetch path, main.js calls initNav after injecting.)
 document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('.nav') && !document.getElementById('nav-placeholder')) {
         window.initNav();

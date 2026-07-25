@@ -23,8 +23,12 @@ const loadComponent = async (placeholderId, componentPath) => {
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-  /* === 1. Load shared components === */
-  const navLoaded = await loadComponent('nav-placeholder', '/components/nav.html');
+  /* === 1. Shared components ===
+     These are now INLINED into the static HTML at build time by
+     build.js (so their ~20 internal links are crawlable, not
+     JS-injected). The fetch path below is a legacy fallback: it
+     only fires if a placeholder is still present — i.e. a page
+     that hasn't been run through build.js yet. */
   const ctaPlaceholder = document.getElementById('cta-placeholder');
   let ctaOverrides = {};
   if (ctaPlaceholder) {
@@ -38,10 +42,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       btn2Href: ctaPlaceholder.dataset.ctaBtn2Href,
     };
   }
+
+  await loadComponent('nav-placeholder', '/components/nav.html');
   await loadComponent('cta-placeholder', '/components/cta-banner.html');
   await loadComponent('footer-placeholder', '/components/footer.html');
 
-  /* === 2. Apply CTA overrides === */
+  /* === 2. Apply CTA overrides (fallback path only) === */
   if (ctaOverrides.heading || ctaOverrides.text) {
     const ctaHeading = document.querySelector('.cta-banner__heading');
     const ctaText = document.querySelector('.cta-banner__text');
@@ -56,8 +62,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (ctaOverrides.btn2Href && ctaBtn2) ctaBtn2.href = ctaOverrides.btn2Href;
   }
 
-  /* === 3. Init nav (after it's loaded into DOM) === */
-  if (navLoaded && typeof window.initNav === 'function') {
+  /* === 3. Init nav — whether it was inlined or fetched ===
+     Guarded so it never double-binds if nav.js already ran it. */
+  if (typeof window.initNav === 'function' && !window.__navInited) {
     window.initNav();
   }
 

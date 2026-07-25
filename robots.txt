@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
+# NOTE: /reports/ and /components/ are intentionally NOT Disallow'd.
+# They carry noindex (meta + X-Robots-Tag). Blocking the crawl would stop
+# Google from ever reading that noindex, stranding any already-indexed URL.
+
 Sitemap: https://unitedmedicalexams.com/sitemap.xml

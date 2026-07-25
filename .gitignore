@@ -1,3 +1,6 @@
 
 # Backup originals — not deployed
 assets/people/originals/
+.DS_Store
+**/.DS_Store
+node_modules/

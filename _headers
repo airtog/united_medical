@@ -1,31 +1,69 @@
 # Cloudflare Pages custom headers
-# P1-2: Fix caching — was max-age=0, must-revalidate on everything
+# ---------------------------------------------------------------
+# IMPORTANT — Cloudflare Pages MERGES all matching rules and JOINS
+# duplicate header values with a comma. It does NOT do "most specific
+# wins". So a `Cache-Control` on `/*` would be joined with the one on
+# `/css/*` (yielding "max-age=3600, ..., max-age=31536000, immutable",
+# where the FIRST max-age wins per RFC 9111) and would silently break
+# immutable asset caching.
+#
+# Therefore: Cache-Control rules below are deliberately NON-OVERLAPPING.
+# HTML paths are listed explicitly rather than via `/*`.
+#
+# Note also that a `/*.html` pattern does NOT work here — Pages treats
+# `*` as a trailing path wildcard, which is why /appointments.html and
+# /locations/*.html were previously falling through to max-age=0.
+# ---------------------------------------------------------------
 
-# HTML pages: short cache, always revalidate
-/*.html
-  Cache-Control: public, max-age=3600, must-revalidate
+# ---- Security headers: apply everywhere (same value, so a merge is a no-op) ----
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=()
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
 
+# ---- HTML pages: short cache + revalidate (explicit paths, no overlap) ----
 /
   Cache-Control: public, max-age=3600, must-revalidate
+/index.html
+  Cache-Control: public, max-age=3600, must-revalidate
+/appointments.html
+  Cache-Control: public, max-age=3600, must-revalidate
+/contact.html
+  Cache-Control: public, max-age=3600, must-revalidate
+/blog.html
+  Cache-Control: public, max-age=3600, must-revalidate
+/privacy-policy.html
+  Cache-Control: public, max-age=3600, must-revalidate
+/hipaa-notice.html
+  Cache-Control: public, max-age=3600, must-revalidate
+/locations/*
+  Cache-Control: public, max-age=3600, must-revalidate
 
-# CSS and JS: long-lived immutable (versioned via ?v= query strings)
+# ---- Immutable static assets (cache-busted by ?v=<contenthash> from build.js) ----
 /css/*
   Cache-Control: public, max-age=31536000, immutable
-
 /js/*
   Cache-Control: public, max-age=31536000, immutable
-
-# Images: long-lived (content-addressed or rarely changing)
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
-
-# Fonts served from our domain (if any)
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
 
-# Sitemap and robots: moderate cache
+# ---- Crawler files ----
 /sitemap.xml
   Cache-Control: public, max-age=86400, must-revalidate
-
 /robots.txt
   Cache-Control: public, max-age=86400, must-revalidate
+
+# ---- Not for indexing ----
+# Reports stay crawlable (no robots.txt Disallow) so Google can actually
+# READ this noindex; blocking the crawl would strand any indexed URL.
+/reports/*
+  X-Robots-Tag: noindex, nofollow
+
+# Component fragments are only a legacy runtime fallback now that build.js
+# inlines them — they must never be indexed as thin duplicate pages.
+/components/*
+  X-Robots-Tag: noindex, nofollow
