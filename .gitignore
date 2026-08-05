@@ -4,3 +4,11 @@ assets/people/originals/
 .DS_Store
 **/.DS_Store
 node_modules/
+
+# FX3 internal docs — not for public deploy
+UME-vs-LenoyMed-Battle-Plan.md
+ESTIMATE-TRAICKER-CONTEXT-HISTORY.md
+WEBSITE-DESIGN-AND-CMS-CONTEXT-HISTORY.md
+
+# Staging / scratch
+_to_delete/

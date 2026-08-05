@@ -69,7 +69,7 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/nav.css?v=21d77675">
-  <link rel="stylesheet" href="css/main.css?v=6fb82ef9">
+  <link rel="stylesheet" href="css/main.css?v=81cf60fb">
 
   <!-- Calendly SDK (only on this page) -->
   <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
@@ -212,7 +212,15 @@
 
       <!-- Right: Calendly Embed -->
       <div class="appt-embed">
-        <div class="appt-embed__widget" id="calendly-embed" style="min-width:320px;height:700px;min-height:700px;"></div>
+        <div class="appt-embed__widget" id="calendly-embed" style="min-width:320px;height:700px;min-height:700px;">
+          <!-- Shown until Calendly renders. If Calendly never loads (blocked by
+               an extension, network failure, slow third party), this degrades
+               into a phone fallback instead of a blank 700px box. -->
+          <div class="appt-embed__state" id="calendly-state">
+            <div class="appt-embed__spinner" aria-hidden="true"></div>
+            <p class="appt-embed__state-text">Loading the calendar…</p>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -293,15 +301,93 @@
 
   <!-- Calendly Init + Auto-resize -->
   <script>
-    window.addEventListener('load', function() {
-      if (typeof Calendly !== 'undefined') {
-        Calendly.initInlineWidget({
-          url: 'https://calendly.com/unitedmedicalexams-info/30min?primary_color=3b7dd8&hide_event_type_details=1&hide_gdpr_banner=1',
-          parentElement: document.getElementById('calendly-embed'),
-          prefill: {},
-          utm: {}
-        });
+    /* ------------------------------------------------------------------
+       Calendly boot — resilient.
+
+       The previous version did a ONE-SHOT `typeof Calendly !== 'undefined'`
+       check inside window.onload. The SDK is loaded `async`, so if it had
+       not finished (slow network) or never arrived at all (ad/privacy
+       blocker, third-party outage), the check silently failed, the widget
+       was never initialised, and the user sat looking at a blank 700px box
+       with no message and no way forward.
+
+       GA4 for July 2026 showed 73 users clicking "schedule" but only 46
+       reaching widget-loaded — 27 people (37%) never saw a calendar.
+
+       Now: poll for the SDK, retry, and if it genuinely never loads, fall
+       back to a phone/callback panel so booking intent isn't lost.
+       ------------------------------------------------------------------ */
+    (function () {
+      var EMBED_ID = 'calendly-embed';
+      var STATE_ID = 'calendly-state';
+      var CAL_URL = 'https://calendly.com/unitedmedicalexams-info/30min?primary_color=3b7dd8&hide_event_type_details=1&hide_gdpr_banner=1';
+      var POLL_MS = 200;
+      var GIVE_UP_MS = 12000;
+      var started = false, settled = false, waited = 0;
+
+      function el(id) { return document.getElementById(id); }
+
+      function clearState() {
+        var s = el(STATE_ID);
+        if (s && s.parentNode) s.parentNode.removeChild(s);
       }
+
+      function showFallback() {
+        if (settled) return;
+        settled = true;
+        var s = el(STATE_ID);
+        if (!s) return;
+        s.className = 'appt-embed__state appt-embed__state--error';
+        s.innerHTML =
+          '<p class="appt-embed__state-title">The online calendar didn\'t load</p>' +
+          '<p class="appt-embed__state-text">This is usually a browser extension or a network hiccup — not your booking. ' +
+          'Call or text us and we\'ll book you in about a minute, often same day.</p>' +
+          '<a href="tel:+18557551312" class="btn btn--blue" style="margin-top:4px;">Call / Text (855) 755-1312</a>' +
+          '<p class="appt-embed__state-text" style="margin-top:14px;">' +
+          '<a href="' + CAL_URL + '" target="_blank" rel="noopener">Or open the calendar in a new tab →</a></p>';
+        if (typeof gtag === 'function') {
+          gtag('event', 'calendly_load_failed', { event_category: 'error', event_label: 'sdk_unavailable' });
+        }
+      }
+
+      function boot() {
+        if (started) return;
+        var host = el(EMBED_ID);
+        if (!host || typeof Calendly === 'undefined' || !Calendly.initInlineWidget) return;
+        started = true;
+        try {
+          Calendly.initInlineWidget({ url: CAL_URL, parentElement: host, prefill: {}, utm: {} });
+        } catch (e) {
+          showFallback();
+          return;
+        }
+        // Clear the loading state once Calendly actually paints an iframe.
+        var checks = 0;
+        var t = setInterval(function () {
+          checks++;
+          if (host.querySelector('iframe')) {
+            clearInterval(t); settled = true; clearState();
+            if (typeof gtag === 'function') {
+              gtag('event', 'calendly_widget_rendered', { event_category: 'engagement' });
+            }
+          } else if (checks > 50) {           // ~10s with no iframe
+            clearInterval(t); showFallback();
+          }
+        }, POLL_MS);
+      }
+
+      // Poll for the async SDK rather than checking once.
+      var poll = setInterval(function () {
+        waited += POLL_MS;
+        if (typeof Calendly !== 'undefined') { clearInterval(poll); boot(); }
+        else if (waited >= GIVE_UP_MS) { clearInterval(poll); showFallback(); }
+      }, POLL_MS);
+
+      if (document.readyState === 'complete') boot();
+      else window.addEventListener('load', boot);
+    })();
+
+    window.addEventListener('load', function() {
 
       // Resize iframe + container whenever Calendly reports a new page height.
       // Enforce a 700px floor so the widget can never collapse to a sliver.

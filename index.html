@@ -37,36 +37,79 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/nav.css?v=21d77675">
-  <link rel="stylesheet" href="css/main.css?v=6fb82ef9">
+  <link rel="stylesheet" href="css/main.css?v=81cf60fb">
 
   <!-- Structured Data: MedicalBusiness -->
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "MedicalBusiness",
-    "name": "United Medical Immigration Exams",
-    "url": "https://unitedmedicalexams.com",
-    "telephone": "+18557551312",
-    "description": "USCIS-designated Civil Surgeon practice offering I-693 immigration medical exams serving the Tri-State Area.",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "842 Clifton Ave",
-      "addressLocality": "Clifton",
-      "addressRegion": "NJ",
-      "postalCode": "07013"
+  "@context": "https://schema.org",
+  "@type": "MedicalBusiness",
+  "name": "United Medical Immigration Exams",
+  "url": "https://unitedmedicalexams.com",
+  "telephone": "+18557551312",
+  "description": "USCIS-designated Civil Surgeon practice offering I-693 immigration medical exams serving the Tri-State Area.",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "842 Clifton Ave",
+    "addressLocality": "Clifton",
+    "addressRegion": "NJ",
+    "postalCode": "07013"
+  },
+  "areaServed": [
+    {
+      "@type": "State",
+      "name": "New Jersey"
     },
-    "areaServed": [
-      { "@type": "State", "name": "New Jersey" },
-      { "@type": "State", "name": "New York" },
-      { "@type": "State", "name": "Connecticut" }
-    ],
-    "priceRange": "$599",
-    "medicalSpecialty": "Immigration Medicine",
-    "openingHoursSpecification": [
-      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday"], "opens": "09:00", "closes": "17:00" },
-      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Friday"], "opens": "09:00", "closes": "15:00" }
-    ]
+    {
+      "@type": "State",
+      "name": "New York"
+    },
+    {
+      "@type": "State",
+      "name": "Connecticut"
+    }
+  ],
+  "priceRange": "$599",
+  "medicalSpecialty": "Immigration Medicine",
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday"
+      ],
+      "opens": "09:00",
+      "closes": "17:00"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Friday"
+      ],
+      "opens": "09:00",
+      "closes": "15:00"
+    }
+  ],
+  "makesOffer": {
+    "@type": "Offer",
+    "name": "I-693 Immigration Medical Exam",
+    "description": "Complete USCIS Form I-693 immigration medical examination including the physical exam, all required bloodwork and laboratory testing performed in-house, tuberculosis screening, and the completed sealed I-693 form. Vaccinations and chest x-rays, if required, are billed separately.",
+    "price": "599",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock",
+    "areaServed": {
+      "@type": "State",
+      "name": "New Jersey"
+    },
+    "itemOffered": {
+      "@type": "MedicalProcedure",
+      "name": "I-693 Immigration Medical Examination",
+      "procedureType": "https://schema.org/NoninvasiveProcedure"
+    }
   }
+}
   </script>
 
   <!-- Structured Data: Physician -->
@@ -166,6 +209,38 @@
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "This is common and it is not a problem. If records are unavailable, we can often perform blood testing to check whether you already carry immunity to certain diseases, which can avoid repeating vaccines unnecessarily. Where immunity can't be established and no record exists, the missing vaccines are administered according to USCIS requirements. Bring whatever you do have, in any language — partial records are still useful."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the immigration medical exam include a drug test?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A drug screen is not part of the routine I-693 laboratory panel. The required testing is tuberculosis screening, a blood test for syphilis and a urine test for gonorrhea, each within the age ranges CDC sets — that is the panel, and nothing in it is a drug test. What the civil surgeon is required to do is take a medical history and assess for drug use and for physical or mental disorders, then record findings accurately on the form. How any of that bears on your case is a legal question rather than a medical one. If it is a concern for you, speak with an immigration attorney before your appointment. We will not coach you on what to say, and you should be cautious with any provider who offers to."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if my TB test comes back positive?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A positive blood test does not mean you have active tuberculosis, and on its own it does not stop your application — this is one of the most common sources of unnecessary panic we see. A positive IGRA requires a chest x-ray. If that x-ray shows nothing suggestive of infectious tuberculosis disease, CDC's Technical Instructions classify the result as Class B2, latent tuberculosis infection. Because latent infection is not a Class A condition, CDC states directly that applicants \"do not have to complete treatment before they are medically cleared and their I-693 forms are completed.\" The result is reported to the local health department, and we will tell you honestly that treating latent infection is worthwhile for your own long-term health — but it is not a prerequisite for finishing your form. Chest x-rays are not performed in our office; if you need one we refer you, and it is billed separately from the $599."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Will a mental health diagnosis affect my green card?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For most people, no. USCIS states plainly that \"neither harmful behavior nor a physical or mental disorder alone renders an applicant inadmissible on this ground\" — the two have to occur together before that ground applies. A diagnosis you are living with or managing, including depression, anxiety, ADHD or a condition treated with medication, is not by itself a bar to a green card. The exam does include a brief mental status assessment, which is routine and covers things like mood, thought, judgment and behaviour. Bring your medication list and any relevant history: an accurate form is far safer than an incomplete one, and questions about how your particular history interacts with your case belong with an immigration attorney."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Will an existing health condition disqualify me? Do you test for HIV?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "HIV testing has not been part of the immigration medical exam since 2010, when HIV was removed from the list of communicable diseases of public health significance. More generally, the health-related grounds of inadmissibility are narrower than most people expect: a communicable disease of public health significance, missing required vaccinations, a physical or mental disorder with associated harmful behaviour, and drug abuse or addiction. Common chronic conditions — diabetes, high blood pressure, asthma, thyroid disease, a managed mental health condition — are not grounds for inadmissibility. Bring documentation of anything you are treated for so the form is accurate and complete."
       }
     },
     {
@@ -700,6 +775,54 @@
   <!-- ====================================================================
        SECTION 6: FAQ — Final Objection Handling (~20% of visitors)
        ==================================================================== -->
+
+  <!-- ====================================================================
+       SECTION 7: THE GUIDE — topical depth for organic search.
+       Content only. Sits between Steps and FAQ; conversion path above
+       is untouched.
+       ==================================================================== -->
+  <section class="guide" id="guide">
+    <div class="guide__inner">
+      <h2 class="fade-in">The Immigration Medical Exam, Explained</h2>
+
+      <p class="fade-in">United Medical Immigration Exams is a USCIS-designated civil surgeon practice at 842 Clifton Ave in Clifton, Passaic County. Completing Form I-693 is what this office does — not a service offered between urgent care visits or cosmetic treatments — and applicants come to us from across northern New Jersey, including <a href="/locations/paterson-nj.html">Paterson</a>, <a href="/locations/passaic-nj.html">Passaic</a>, <a href="/locations/totowa-nj.html">Totowa</a> and <a href="/locations/wayne-nj.html">Wayne</a> in Passaic County; <a href="/locations/hackensack-nj.html">Hackensack</a>, <a href="/locations/paramus-nj.html">Paramus</a>, <a href="/locations/fort-lee-nj.html">Fort Lee</a>, <a href="/locations/fair-lawn-nj.html">Fair Lawn</a> and <a href="/locations/garfield-nj.html">Garfield</a> in Bergen County; <a href="/locations/newark-nj.html">Newark</a> and <a href="/locations/east-orange-nj.html">East Orange</a> in Essex; <a href="/locations/jersey-city-nj.html">Jersey City</a>, <a href="/locations/union-city-nj.html">Union City</a> and <a href="/locations/north-bergen-nj.html">North Bergen</a> in Hudson; and <a href="/locations/elizabeth-nj.html">Elizabeth</a> in Union County.</p>
+
+      <h3 class="fade-in">What the I-693 is — and what it isn't</h3>
+
+      <p class="fade-in">Form I-693, the Report of Immigration Medical Examination and Vaccination Record, is the public-health screening U.S. Citizenship and Immigration Services requires from most people applying to adjust status to lawful permanent residence. Its scope is deliberately narrow: it establishes that you do not have a condition that would make you inadmissible on health grounds, that you have been screened for specific communicable diseases, and that your vaccination record meets the requirements published by the CDC.</p>
+
+      <p class="fade-in">It is not a general physical. It will not diagnose a sore knee, it does not replace your own doctor, and nothing in it is intended to treat you. It is a document written for exactly one reader — a USCIS adjudicator — and it does its job when that adjudicator accepts it without asking for anything more.</p>
+
+      <p class="fade-in">Only a physician USCIS has specifically designated as a civil surgeon may perform and sign it. That designation is separate from a medical licence, and an exam completed by any other doctor, however well qualified, will not be accepted. You can verify any civil surgeon's designation — including ours — through the official USCIS "Find a Doctor" tool.</p>
+
+      <h3 class="fade-in">What happens during your visit</h3>
+
+      <p class="fade-in">The appointment is more routine than most people expect, and it usually takes about thirty minutes in the office. We begin by checking your photo identification and going through whatever immunisation records you have brought. Dr. Weiss then performs the physical examination USCIS specifies — a general assessment covering eyes, ears, heart, lungs, abdomen, skin and neurological function.</p>
+
+      <p class="fade-in">Blood and urine samples are collected in our own office for the required laboratory testing, and tuberculosis screening is completed during the same visit. Nothing is sent to an outside draw station, so there is no second appointment and no separate laboratory invoice. Under the CDC's Technical Instructions, tuberculosis screening applies to every applicant aged two and over; syphilis testing applies to applicants aged 18 through 44, and gonorrhea testing to applicants aged 18 through 24, with testing outside those ranges where there is clinical reason for it. If a tuberculosis screen returns positive, a chest x-ray is required before the form can be completed.</p>
+
+      <p class="fade-in">We finish by reviewing which vaccinations USCIS requires at your age against what your records already show, and telling you what — if anything — is outstanding, along with what it costs, before anything is administered.</p>
+
+      <h3 class="fade-in">What to bring</h3>
+
+      <p class="fade-in">Bring an unexpired government-issued photo ID; a passport is ideal, though a driver's licence is accepted. Bring every vaccination or immunisation record you can find, in any language — foreign-language records are perfectly usable, partial records still help, and complete records frequently spare people from repeating vaccines they have already had. If you have ever had a positive tuberculosis test or been treated for TB, bring that documentation. Bring a written list of any medications you take, and documentation of any chronic condition.</p>
+
+      <p class="fade-in">If you have already printed Form I-693, bring it <em>unsigned</em> — USCIS requires that you sign it in the civil surgeon's presence, and a form signed in advance has to be redone. You are welcome to bring an interpreter or a family member, and families applying together are usually easier to schedule in a single visit.</p>
+
+      <h3 class="fade-in">After the exam, and how long it stays valid</h3>
+
+      <p class="fade-in">Your completed form is typically ready within five to seven business days, once all laboratory results have returned. It is placed in a sealed envelope marked for USCIS, and it matters that the envelope reaches USCIS intact — a seal broken before an adjudicator opens it is one of the more common reasons a case picks up an avoidable Request for Evidence. We also give you a copy of the completed form for your own records.</p>
+
+      <p class="fade-in">How long the form remains usable is where a great deal of published advice is now out of date. For any I-693 a civil surgeon signs on or after 1 November 2023, USCIS no longer applies a calendar expiry — but under policy effective 11 June 2025, the form is valid only for the specific application it was filed with. It cannot be carried across to a later filing, so a denied or withdrawn case means a completely new exam. Forms signed before 1 November 2023 keep the older two-year window. The practical consequence is simple: complete the exam in step with your filing rather than well ahead of it.</p>
+
+      <h3 class="fade-in">Getting here from across northern New Jersey</h3>
+
+      <p class="fade-in">Our office sits on Clifton Avenue, close to the junction of Routes 3 and 46 and a short drive from Route 21 and the Garden State Parkway, which puts most of Passaic, Bergen, Essex, Hudson and Union counties within a half-hour drive. Parking is straightforward, which matters more than it sounds when you are bringing a family. We are open Monday to Thursday from 9am to 5pm and Friday from 9am to 3pm, and same-day appointments are often available for applicants working against a filing deadline.</p>
+
+      <p class="fade-in">Our staff is bilingual in English and Spanish, and we see a great many patients entirely in Spanish, from the first phone call through to handing over the sealed form. <em>Se habla español.</em> If you would like directions and drive times from your own city, our <a href="/locations/">locations page</a> has a page for each of the communities we serve, and you can always <a href="/appointments.html">book online</a> or call <a href="tel:+18557551312">(855) 755-1312</a>.</p>
+    </div>
+  </section>
+
   <section class="faq" id="faq">
     <div class="faq__inner">
       <h2 class="fade-in">Immigration Medical Exam — Frequently Asked Questions</h2>
@@ -752,6 +875,26 @@
       <details class="faq-item">
         <summary>What if I don't have my vaccination records?</summary>
         <p>This is common and it is not a problem. If records are unavailable, we can often perform blood testing to check whether you already carry immunity to certain diseases, which can avoid repeating vaccines unnecessarily. Where immunity can't be established and no record exists, the missing vaccines are administered according to USCIS requirements. Bring whatever you do have, in any language — partial records are still useful.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Does the immigration medical exam include a drug test?</summary>
+        <p>A drug screen is not part of the routine I-693 laboratory panel. The required testing is tuberculosis screening, a blood test for syphilis and a urine test for gonorrhea, each within the age ranges CDC sets — that is the panel, and nothing in it is a drug test. What the civil surgeon is required to do is take a medical history and assess for drug use and for physical or mental disorders, then record findings accurately on the form. How any of that bears on your case is a legal question rather than a medical one. If it is a concern for you, speak with an immigration attorney before your appointment. We will not coach you on what to say, and you should be cautious with any provider who offers to.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>What happens if my TB test comes back positive?</summary>
+        <p>A positive blood test does not mean you have active tuberculosis, and on its own it does not stop your application — this is one of the most common sources of unnecessary panic we see. A positive IGRA requires a chest x-ray. If that x-ray shows nothing suggestive of infectious tuberculosis disease, CDC's Technical Instructions classify the result as Class B2, latent tuberculosis infection. Because latent infection is not a Class A condition, CDC states directly that applicants "do not have to complete treatment before they are medically cleared and their I-693 forms are completed." The result is reported to the local health department, and we will tell you honestly that treating latent infection is worthwhile for your own long-term health — but it is not a prerequisite for finishing your form. Chest x-rays are not performed in our office; if you need one we refer you, and it is billed separately from the $599.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Will a mental health diagnosis affect my green card?</summary>
+        <p>For most people, no. USCIS states plainly that "neither harmful behavior nor a physical or mental disorder alone renders an applicant inadmissible on this ground" — the two have to occur together before that ground applies. A diagnosis you are living with or managing, including depression, anxiety, ADHD or a condition treated with medication, is not by itself a bar to a green card. The exam does include a brief mental status assessment, which is routine and covers things like mood, thought, judgment and behaviour. Bring your medication list and any relevant history: an accurate form is far safer than an incomplete one, and questions about how your particular history interacts with your case belong with an immigration attorney.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Will an existing health condition disqualify me? Do you test for HIV?</summary>
+        <p>HIV testing has not been part of the immigration medical exam since 2010, when HIV was removed from the list of communicable diseases of public health significance. More generally, the health-related grounds of inadmissibility are narrower than most people expect: a communicable disease of public health significance, missing required vaccinations, a physical or mental disorder with associated harmful behaviour, and drug abuse or addiction. Common chronic conditions — diabetes, high blood pressure, asthma, thyroid disease, a managed mental health condition — are not grounds for inadmissibility. Bring documentation of anything you are treated for so the form is accurate and complete.</p>
       </details>
 
       <details class="faq-item">

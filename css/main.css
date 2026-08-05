@@ -1708,3 +1708,109 @@ p {
     white-space: nowrap;
   }
 }
+
+/* ============================================
+   SECTION 7: GUIDE — long-form editorial
+   Mirrors the .faq container exactly (same padding, width, background)
+   so it reads as part of the existing system, not a new one.
+   ============================================ */
+.guide {
+  padding: 80px 24px 40px;
+  background: var(--white);
+}
+
+.guide__inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.guide__inner h2 {
+  text-align: center;
+  margin-bottom: 32px;
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+}
+
+.guide__inner h3 {
+  font-size: 1.15rem;
+  margin-top: 36px;
+  margin-bottom: 12px;
+}
+
+.guide__inner p {
+  color: var(--text-light);
+  margin-bottom: 18px;
+}
+
+.guide__inner a {
+  color: var(--blue);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(59, 125, 216, 0.28);
+}
+
+.guide__inner a:hover {
+  border-bottom-color: var(--blue);
+}
+
+@media (max-width: 768px) {
+  .guide {
+    padding: 56px 20px 32px;
+  }
+  .guide__inner h3 {
+    margin-top: 28px;
+  }
+}
+
+/* ============================================
+   Calendly embed: loading + failure states
+   Prevents the blank 700px box when the third-party
+   SDK is slow or blocked. Only ever visible while the
+   widget is absent.
+   ============================================ */
+.appt-embed__state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  min-height: 420px;
+  padding: 32px 24px;
+  gap: 10px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md, 12px);
+}
+
+.appt-embed__spinner {
+  width: 26px;
+  height: 26px;
+  border: 3px solid var(--border);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: appt-spin 0.9s linear infinite;
+}
+
+@keyframes appt-spin { to { transform: rotate(360deg); } }
+
+.appt-embed__state-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--navy);
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.appt-embed__state-text {
+  color: var(--text-light);
+  font-size: 0.92rem;
+  margin: 0;
+  max-width: 40ch;
+}
+
+.appt-embed__state--error .appt-embed__state-text a {
+  color: var(--blue);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .appt-embed__spinner { animation: none; }
+}
