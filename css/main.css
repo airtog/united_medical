@@ -390,7 +390,8 @@ p {
 
 .trust-bar__photo {
   width: 72px;
-  height: 72px;
+  height: auto;
+  aspect-ratio: 1;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid var(--border);
