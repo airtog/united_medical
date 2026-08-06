@@ -303,6 +303,41 @@ p {
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
 }
 
+.hero__availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 100px;
+  padding: 10px 22px;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: 0.01em;
+  margin-bottom: 20px;
+}
+
+.hero__availability .icon {
+  color: var(--gold);
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.hero__availability a {
+  color: var(--gold);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.hero__availability a:hover {
+  color: var(--white);
+}
+
 .hero__sub {
   font-size: clamp(0.95rem, 2vw, 1.15rem);
   line-height: 1.7;
