@@ -1739,30 +1739,44 @@ p {
 
   .hero__content h1 {
     font-size: 1.65rem;
-    margin-bottom: 0;
+    margin-bottom: 14px;
     line-height: 1.2;
   }
 
+  .hero__availability {
+    font-size: 0.82rem;
+    padding: 7px 14px;
+    gap: 6px;
+    margin-bottom: 14px;
+    align-self: center;
+    max-width: fit-content;
+  }
+
+  .hero__availability .icon {
+    width: 15px;
+    height: 15px;
+  }
+
   .hero__sub {
-    margin-top: 40px;
-    font-size: 0.95rem;
-    margin-bottom: 32px;
+    margin-top: 0;
+    font-size: 0.9rem;
+    margin-bottom: 24px;
     opacity: 0.85;
-    line-height: 1.8;
+    line-height: 1.7;
   }
 
   .hero__ctas {
     flex-direction: column;
     width: 100%;
     max-width: 320px;
-    gap: 14px;
+    gap: 12px;
   }
 
   .hero__ctas .btn {
     width: 100%;
     max-width: 320px;
-    padding: 16px 24px;
-    font-size: 0.95rem;
+    padding: 14px 24px;
+    font-size: 0.93rem;
   }
 
   .hero__proof {
