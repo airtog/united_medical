@@ -25,7 +25,7 @@
   <!-- Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://player.vimeo.com">
+
 
   <!-- Fonts -->
   <link
@@ -408,13 +408,14 @@
        SECTION 1: HERO — The Conversion Machine (100% of visitors)
        ==================================================================== -->
   <section class="hero" id="hero">
-    <!-- Vimeo streaming background.
-         The iframe is injected after window load (see script at end of body)
-         rather than parsed inline, so the Vimeo player JS + video stream stay
-         off the critical path. The .hero gradient is the designed fallback and
-         the wrap already fades in via .is-loaded — so this is visually
-         identical, just no longer competing with first paint / LCP. -->
-    <div class="hero__video-wrap" data-video-src="https://player.vimeo.com/video/1101960595?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;quality=auto">
+    <!-- Crossfading hero background images (replaces Vimeo video, Aug 2026).
+         Three WebP images cycle with a CSS opacity crossfade. First image is
+         visible immediately (no JS needed for initial paint), the slideshow
+         script starts after load. Total payload: ~132KB vs multi-MB stream. -->
+    <div class="hero__slides" aria-hidden="true">
+      <img src="/assets/hero-1.webp" alt="" class="hero__slide hero__slide--active" width="1024" height="577" fetchpriority="high">
+      <img src="/assets/hero-2.webp" alt="" class="hero__slide" width="1024" height="528" loading="lazy">
+      <img src="/assets/hero-3.webp" alt="" class="hero__slide" width="1024" height="564" loading="lazy">
       <div class="hero__overlay"></div>
     </div>
 
@@ -1072,62 +1073,22 @@
   <script src="js/icons.js?v=493f8d23" defer></script>
   <script src="js/tracking.js?v=v9b-20260811" defer></script>
 
-  <!-- Hero background video: inject after load, then fade in -->
+  <!-- Hero crossfade slideshow -->
   <script>
     (function () {
-      var wrap = document.querySelector('.hero__video-wrap');
-      if (!wrap) return;
-      var src = wrap.getAttribute('data-video-src');
-      if (!src) return;
-
-      var done = false;
-      function reveal() {
-        if (done) return;
-        done = true;
-        wrap.classList.add('is-loaded');
-      }
-
-      function mount() {
-        // Respect users who asked for reduced motion — keep the static
-        // gradient, but still reveal the wrap so .hero__overlay renders.
-        try {
-          if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            reveal();
-            return;
-          }
-        } catch (e) {}
-
-        var iframe = document.createElement('iframe');
-        iframe.className = 'hero__video';
-        iframe.setAttribute('frameborder', '0');
-        iframe.setAttribute('allow', 'autoplay; fullscreen');
-        iframe.setAttribute('allowfullscreen', '');
-        iframe.setAttribute('tabindex', '-1');
-        iframe.setAttribute('aria-hidden', 'true');
-        iframe.setAttribute('title', 'Background video');
-        iframe.addEventListener('load', function () { setTimeout(reveal, 300); });
-        iframe.src = src;
-        wrap.insertBefore(iframe, wrap.firstChild);
-
-        // Vimeo postMessage as a secondary reveal trigger
-        window.addEventListener('message', function (e) {
-          if (e.origin && e.origin.indexOf('vimeo') !== -1) reveal();
-        });
-        // Safety net so the wrap never stays hidden
-        setTimeout(reveal, 2500);
-      }
-
-      // Wait until the page has finished loading so the player never competes
-      // with LCP, then mount on the next idle tick.
-      function schedule() {
-        if ('requestIdleCallback' in window) {
-          requestIdleCallback(mount, { timeout: 1200 });
-        } else {
-          setTimeout(mount, 200);
-        }
-      }
-      if (document.readyState === 'complete') schedule();
-      else window.addEventListener('load', schedule);
+      var slides = document.querySelectorAll('.hero__slide');
+      if (slides.length < 2) return;
+      // Respect reduced-motion: freeze on first image
+      try {
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      } catch (e) {}
+      var idx = 0;
+      var HOLD_MS = 5000;   // how long each image stays fully visible
+      setInterval(function () {
+        slides[idx].classList.remove('hero__slide--active');
+        idx = (idx + 1) % slides.length;
+        slides[idx].classList.add('hero__slide--active');
+      }, HOLD_MS);
     })();
   </script>
 
