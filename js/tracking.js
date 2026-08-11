@@ -1,17 +1,18 @@
 // ============================================================
-// tracking.js v8 — United Medical Exams
+// tracking.js v9 — United Medical Exams
 // GA4: G-M6D4QHH38F
 // Conversions: GA4 -> Google Ads import. calendly_confirmed = Primary,
 //   meeting_scheduled = Secondary. No native AW- website tag by design
 //   (verified 2026-07-21: account is 100% GA4-import; adding a direct tag
 //    for the same booking would double-count and corrupt Smart Bidding).
-// 7 tracked events per battle plan P1-6
+// v9 (Aug 2026): calendly_confirmed moved to /thank-you redirect landing
+//   (Tier 1 fix). postMessage listener removed to prevent double-counting.
+// 6 tracked events per battle plan P1-6 (calendly_confirmed now on /thank-you)
 // ============================================================
 
 (function () {
   'use strict';
 
-  let bookingTracked = false;
   let scheduleTracked = false;
 
   function fire(name, params) {
@@ -36,13 +37,6 @@
     }
   });
 
-  // 3. calendly_confirmed
-  window.addEventListener('message', function (e) {
-    if (e.data && e.data.event === 'calendly.event_scheduled' && !bookingTracked) {
-      bookingTracked = true;
-      fire('calendly_confirmed', { event_category: 'conversion', event_label: 'calendly_booking', value: 599 });
-    }
-  });
 
   // 4. scroll_depth (25%, 50%, 75%, 90%)
   var scrollMarks = { 25: false, 50: false, 75: false, 90: false };
