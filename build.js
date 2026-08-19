@@ -44,6 +44,92 @@ const CHECK_ONLY = process.argv.includes('--check');
    ------------------------------------------------------------ */
 const VERSIONED_ASSETS = ['css/main.css', 'css/nav.css', 'css/locations.css', 'js/nav.js', 'js/main.js', 'js/icons.js', 'js/tracking.js'];
 
+/* ------------------------------------------------------------
+   CANONICAL URL NORMALISATION
+   Cloudflare Pages serves this site EXTENSIONLESS and 301s the
+   `.html` form to it. The canonical tags, og:url tags, JSON-LD
+   URLs and ~713 internal links all still pointed at the `.html`
+   form, i.e. at a URL that redirects away from itself.
+
+   Google saw every page say "my canonical is somewhere else",
+   split the homepage across www + non-www as two ranking pages,
+   and left /appointments out of the index entirely.
+
+   Everything below is derived from the file path on every build,
+   so it can never drift out of sync again. Do not hand-edit
+   canonical or og:url tags.
+   ------------------------------------------------------------ */
+const SITE_ORIGIN = 'https://unitedmedicalexams.com';
+
+/** File path -> the one true URL path. index.html => "/", foo.html => "/foo". */
+function canonicalPath(rel) {
+  let p = '/' + rel.split(path.sep).join('/');
+  p = p.replace(/\/index\.html$/, '/');
+  p = p.replace(/\.html$/, '');
+  return p;
+}
+
+function canonicalUrl(rel) {
+  return SITE_ORIGIN + canonicalPath(rel);
+}
+
+function normalizeUrls(html, rel) {
+  const canon = canonicalUrl(rel);
+
+  // --- canonical tag: replace, or insert before </head> if absent ---
+  if (/<link\s+rel="canonical"[^>]*>/i.test(html)) {
+    html = html.replace(/<link\s+rel="canonical"[^>]*>/i, `<link rel="canonical" href="${canon}">`);
+  } else {
+    html = html.replace(/<\/head>/i, `  <link rel="canonical" href="${canon}">\n</head>`);
+  }
+
+  // --- og:url: replace, or insert after og:title if absent ---
+  if (/<meta\s+property="og:url"[^>]*>/i.test(html)) {
+    html = html.replace(/<meta\s+property="og:url"[^>]*>/i, `<meta property="og:url" content="${canon}">`);
+  } else if (/<meta\s+property="og:title"[^>]*>/i.test(html)) {
+    html = html.replace(/(<meta\s+property="og:title"[^>]*>)/i,
+      `$1\n  <meta property="og:url" content="${canon}">`);
+  }
+
+  // --- absolute on-site URLs (JSON-LD @id/url/item, meta, hrefs) ---
+  // Force one host (non-www) and strip .html everywhere.
+  html = html.replace(/https:\/\/www\.unitedmedicalexams\.com/g, SITE_ORIGIN);
+  html = html.replace(/(https:\/\/unitedmedicalexams\.com)\/index\.html\b/g, '$1/');
+  html = html.replace(/(https:\/\/unitedmedicalexams\.com(?:\/[A-Za-z0-9._~\-]+)*?)\.html\b/g, '$1');
+
+  // --- internal relative links: /foo.html#frag -> /foo#frag ---
+  html = html.replace(/href="\/index\.html(#[^"]*)?"/g, (_m, frag) => `href="/${frag || ''}"`);
+  html = html.replace(
+    /href="((?:\.{1,2}\/)*\/?(?:[A-Za-z0-9._~\-]+\/)*[A-Za-z0-9._~\-]+)\.html(#[^"]*)?"/g,
+    (_m, p1, frag) => `href="${p1}${frag || ''}"`
+  );
+
+  return html;
+}
+
+/** Rebuild sitemap.xml from the pages actually shipped, minus noindex ones. */
+function writeSitemap(pageRels, isoDate) {
+  const urls = pageRels
+    .filter((r) => !SITEMAP_EXCLUDE.some((x) => r === x))
+    .map((r) => canonicalUrl(r))
+    .sort((a, b) => (a.length - b.length) || a.localeCompare(b));
+
+  const body = urls
+    .map((u) => `  <url>\n    <loc>${u}</loc>\n    <lastmod>${isoDate}</lastmod>\n  </url>`)
+    .join('\n');
+
+  const xml =
+    '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    '<urlset xmlns="http://www.sitemap' + 's.org/schemas/sitemap/0.9">\n' +
+    body + '\n</urlset>\n';
+
+  fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), xml, 'utf8');
+  return urls.length;
+}
+
+// Pages that must never appear in the sitemap (they carry meta robots noindex).
+const SITEMAP_EXCLUDE = ['thank-you.html', '404.html'];
+
 function hashFile(rel) {
   const abs = path.join(ROOT, rel);
   if (!fs.existsSync(abs)) return null;
@@ -70,7 +156,7 @@ const COMPONENTS = {
 };
 
 // Directories excluded from the build (internal/non-public pages)
-const EXCLUDE_DIRS = ['components', 'reports', '.git', 'node_modules'];
+const EXCLUDE_DIRS = ['components', 'reports', '.git', 'node_modules', '_to_delete'];
 
 function readComponent(rel) {
   return fs.readFileSync(path.join(ROOT, rel), 'utf8').trim();
@@ -110,9 +196,9 @@ const CTA_OVERRIDES = {
     heading: 'Have Questions About Your Exam?',
     text: 'Our team is here to help guide you through the process.',
     btn1Text: 'Schedule Appointment',
-    btn1Href: '/appointments.html',
+    btn1Href: '/appointments',
     btn2Text: 'Contact Us',
-    btn2Href: '/contact.html',
+    btn2Href: '/contact',
   },
 };
 
@@ -191,18 +277,21 @@ const comps = {
 const files = walkHtml(ROOT);
 let touched = 0;
 const stale = [];
+const pageRels = [];
 
 for (const file of files) {
   const original = fs.readFileSync(file, 'utf8');
   let html = original;
 
   const pageRel = path.relative(ROOT, file).split(path.sep).join('/');
+  pageRels.push(pageRel);
   for (const key of ['nav', 'cta', 'footer']) {
     const res = inject(html, key, comps[key], pageRel);
     html = res.html;
   }
 
   html = stampAssetVersions(html);
+  html = normalizeUrls(html, pageRel);
 
   if (html !== original) {
     if (CHECK_ONLY) {
@@ -223,4 +312,7 @@ if (CHECK_ONLY) {
   console.log('✓ all pages up to date with /components');
 } else {
   console.log(`✓ build complete — ${touched} page(s) updated from /components`);
+  const iso = new Date().toISOString().slice(0, 10);
+  const n = writeSitemap(pageRels, iso);
+  console.log(`✓ sitemap.xml regenerated — ${n} canonical URL(s), lastmod ${iso}`);
 }

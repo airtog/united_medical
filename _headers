@@ -38,6 +38,27 @@
   Cache-Control: public, max-age=3600, must-revalidate
 /hipaa-notice.html
   Cache-Control: public, max-age=3600, must-revalidate
+/thank-you.html
+  Cache-Control: public, max-age=3600, must-revalidate
+
+# Extensionless twins — Cloudflare Pages serves these; the `.html` forms above
+# only ever see the pre-redirect request, so without these the real HTML URLs
+# fall through to the default cache policy.
+/appointments
+  Cache-Control: public, max-age=3600, must-revalidate
+/contact
+  Cache-Control: public, max-age=3600, must-revalidate
+/blog
+  Cache-Control: public, max-age=3600, must-revalidate
+/privacy-policy
+  Cache-Control: public, max-age=3600, must-revalidate
+/hipaa-notice
+  Cache-Control: public, max-age=3600, must-revalidate
+/thank-you
+  Cache-Control: public, max-age=3600, must-revalidate
+/404.html
+  Cache-Control: public, max-age=300, must-revalidate
+
 /locations/*
   Cache-Control: public, max-age=3600, must-revalidate
 

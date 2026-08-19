@@ -1942,8 +1942,14 @@ p {
     display: block;
   }
 
+  /* These two cards used to be display:none here. Google indexes mobile-first,
+     so hiding them removed ~150 of the page's ~390 words from what the crawler
+     actually sees — on the page carrying 95% of paid search intent, which was
+     sitting in "Crawled - currently not indexed". They now render below the
+     calendar (order: 5 in the 968px block), so the booking widget still comes
+     first and the content is visible to users and crawlers alike. */
   .appt-info .appt-sidebar__card {
-    display: none;
+    text-align: left;
   }
 
   .social-toast {

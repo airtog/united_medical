@@ -24,7 +24,7 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/nav.css?v=21d77675">
-  <link rel="stylesheet" href="css/main.css?v=bb8c7fad">
+  <link rel="stylesheet" href="css/main.css?v=f4cb5371">
 
   <!-- Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-M6D4QHH38F"></script>
@@ -42,6 +42,7 @@
   });
 </script>
 
+  <link rel="canonical" href="https://unitedmedicalexams.com/thank-you">
 </head>
 
 <body>
@@ -50,18 +51,18 @@
   <!-- BUILD:nav:start -->
 <nav class="nav" id="main-nav" role="navigation" aria-label="Main navigation">
     <div class="nav__inner">
-      <a href="/index.html" class="nav__logo"><img src="/assets/unitedmedicalexams_logo.png"
+      <a href="/" class="nav__logo"><img src="/assets/unitedmedicalexams_logo.png"
           alt="United Medical Immigration Exams" class="nav__logo-img"><span>United Immigration<br>Medical
           Exams</span></a>
 
       <ul class="nav__links">
-        <li><a href="/index.html#pricing">Pricing</a></li>
-        <li><a href="/index.html#faq">FAQs</a></li>
+        <li><a href="/#pricing">Pricing</a></li>
+        <li><a href="/#faq">FAQs</a></li>
         <li><a href="/locations/">Locations Served</a></li>
       </ul>
 
       <div class="nav__cta">
-        <a href="/appointments.html" class="btn btn--blue nav__schedule-btn">Schedule →</a>
+        <a href="/appointments" class="btn btn--blue nav__schedule-btn">Schedule →</a>
         <a href="tel:+18557551312" class="nav__phone-link">Call (855) 755-1312</a>
       </div>
 
@@ -75,18 +76,18 @@
     <!-- Mobile Drawer -->
     <div class="nav__drawer" id="nav-drawer">
       <div class="nav__drawer-header">
-        <a href="/index.html" class="nav__drawer-logo">
+        <a href="/" class="nav__drawer-logo">
           <img src="/assets/unitedmedicalexams_logo.png" alt="United Medical Immigration Exams" class="nav__logo-img">
           <span>United Immigration<br>Medical Exams</span>
         </a>
       </div>
       <ul>
-        <li><a href="/index.html#pricing">Pricing</a></li>
-        <li><a href="/index.html#faq">FAQs</a></li>
+        <li><a href="/#pricing">Pricing</a></li>
+        <li><a href="/#faq">FAQs</a></li>
         <li><a href="/locations/">Locations Served</a></li>
       </ul>
       <div class="btn-group" style="flex-direction:column;gap:10px;padding:0 20px;">
-        <a href="/appointments.html" class="btn btn--blue" style="width:100%;">Schedule Appointment</a>
+        <a href="/appointments" class="btn btn--blue" style="width:100%;">Schedule Appointment</a>
         <a href="tel:+18557551312" class="btn btn--outline-blue" style="width:100%;">Call (855) 755-1312</a>
       </div>
     </div>
@@ -133,15 +134,15 @@
 <footer class="site-footer">
     <div class="footer__grid">
       <div class="footer__brand">
-        <a href="/index.html"><img src="/assets/unitedmedicalexams_logo_lockup.png" alt="United Medical Immigration Exams"
+        <a href="/"><img src="/assets/unitedmedicalexams_logo_lockup.png" alt="United Medical Immigration Exams"
             class="footer__logo-img"></a>
         <p>Trusted I-693 Immigration Medical Exams serving the Tri-State Area.</p>
       </div>
       <div class="footer__col">
         <h4>Quick Links</h4>
         <ul>
-          <li><a href="/index.html#pricing">Pricing</a></li>
-          <li><a href="/index.html#faq">FAQs</a></li>
+          <li><a href="/#pricing">Pricing</a></li>
+          <li><a href="/#faq">FAQs</a></li>
           <li><a href="/locations/">Locations Served</a></li>
         </ul>
       </div>
@@ -155,13 +156,13 @@
       <div class="footer__col">
         <h4>Serving</h4>
         <p style="line-height:1.8;">
-          <a href="/index.html">Clifton</a> ·
-          <a href="/locations/paterson-nj.html">Paterson</a> ·
-          <a href="/locations/passaic-nj.html">Passaic</a> ·
-          <a href="/locations/newark-nj.html">Newark</a> ·
-          <a href="/locations/jersey-city-nj.html">Jersey City</a> ·
-          <a href="/locations/elizabeth-nj.html">Elizabeth</a> ·
-          <a href="/locations/hackensack-nj.html">Hackensack</a>
+          <a href="/">Clifton</a> ·
+          <a href="/locations/paterson-nj">Paterson</a> ·
+          <a href="/locations/passaic-nj">Passaic</a> ·
+          <a href="/locations/newark-nj">Newark</a> ·
+          <a href="/locations/jersey-city-nj">Jersey City</a> ·
+          <a href="/locations/elizabeth-nj">Elizabeth</a> ·
+          <a href="/locations/hackensack-nj">Hackensack</a>
           and the greater Tri-State Area
         </p>
       </div>
@@ -169,8 +170,8 @@
     <div class="footer__bottom">
       <span>© 2026 United Medical Immigration Exams</span>
       <div class="footer__bottom-links">
-        <a href="/privacy-policy.html">Privacy Policy</a>
-        <a href="/hipaa-notice.html">HIPAA Notice</a>
+        <a href="/privacy-policy">Privacy Policy</a>
+        <a href="/hipaa-notice">HIPAA Notice</a>
       </div>
       <span class="footer__credit">Crafted by <a href="https://fx3media.com" target="_blank" rel="noopener">FX3 Media</a></span>
     </div>
@@ -179,32 +180,66 @@
 
   <!-- Conversion fire for Calendly redirect landings -->
   <script>
-  // Conversion fire for Calendly redirect landings — v1 (Tier 1 fix, Aug 2026)
+  // Conversion fire for Calendly redirect landings — v2 (Aug 19 2026)
   // Fires calendly_confirmed exactly once per booking, keyed on Calendly's
   // invitee_uuid query param (present because "Pass event details" is ON).
   // Does NOT fire on direct/organic landings on this page (no uuid = no event).
+  //
+  // WHY v2: v1 wrapped the WHOLE block — including localStorage.getItem — in a
+  // single try/catch. In Safari private browsing, and anywhere storage access
+  // throws, getItem threw BEFORE gtag ever ran, the catch swallowed it, and the
+  // booking conversion was silently lost. Mobile Safari is the weakest leg of
+  // this funnel, so the failure landed exactly where it hurt most.
+  //
+  // v2 rules: storage is ADVISORY. If it is unavailable we still fire and just
+  // lose the cross-reload dedupe. An in-memory guard prevents a double fire
+  // within a page load, and the gtag retry is now bounded instead of infinite.
   (function () {
     'use strict';
+
+    var fired = false;
+
+    function seen(key) {
+      try { return !!window.localStorage.getItem(key); }
+      catch (e) { return false; }      // fail OPEN — fire rather than lose it
+    }
+    function remember(key) {
+      try { window.localStorage.setItem(key, '1'); }
+      catch (e) { /* advisory only; never block the conversion */ }
+    }
+
+    var uuid = null;
     try {
-      var params = new URLSearchParams(window.location.search);
-      var uuid = params.get('invitee_uuid');
-      if (!uuid) return;                                // not a booking landing
-      var key = 'cal_conf_' + uuid;
-      if (localStorage.getItem(key)) return;            // refresh / revisit dedup
-      var send = function () {
-        if (typeof gtag === 'function') {
-          gtag('event', 'calendly_confirmed', {
-            event_category: 'conversion',
-            event_label: 'calendly_booking',
-            value: 599
-          });
-          localStorage.setItem(key, '1');
-        } else {
-          setTimeout(send, 200);                        // gtag not ready yet
-        }
-      };
-      send();
-    } catch (e) { /* never break the page */ }
+      uuid = new URLSearchParams(window.location.search).get('invitee_uuid');
+    } catch (e) { uuid = null; }
+    if (!uuid) return;                                // not a booking landing
+
+    var key = 'cal_conf_' + uuid;
+    if (seen(key)) return;                            // refresh / revisit dedupe
+
+    var attempts = 0;
+    (function send() {
+      if (fired) return;
+      if (typeof gtag === 'function') {
+        fired = true;
+        gtag('event', 'calendly_confirmed', {
+          event_category: 'conversion',
+          event_label: 'calendly_booking',
+          value: 599
+        });
+        remember(key);                                // record AFTER the fire
+        // Storage-independent dedupe: drop the uuid from the URL so a refresh
+        // cannot re-fire even when localStorage is unavailable. Pairs with
+        // setting the Ads action's Count to "One" (see the Aug 18 audit).
+        try {
+          if (window.history && history.replaceState) {
+            history.replaceState({}, '', location.pathname);
+          }
+        } catch (e) { /* cosmetic only */ }
+      } else if (++attempts < 50) {                   // ~10s ceiling, then stop
+        setTimeout(send, 200);
+      }
+    })();
   })();
   </script>
 
