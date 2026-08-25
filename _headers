@@ -40,6 +40,14 @@
   Cache-Control: public, max-age=3600, must-revalidate
 /thank-you.html
   Cache-Control: public, max-age=3600, must-revalidate
+/immigration-exam-near-me.html
+  Cache-Control: public, max-age=3600, must-revalidate
+/i-693-medical-exam.html
+  Cache-Control: public, max-age=3600, must-revalidate
+/green-card-medical-exam.html
+  Cache-Control: public, max-age=3600, must-revalidate
+/civil-surgeon-clifton-nj.html
+  Cache-Control: public, max-age=3600, must-revalidate
 
 # Extensionless twins — Cloudflare Pages serves these; the `.html` forms above
 # only ever see the pre-redirect request, so without these the real HTML URLs
@@ -55,6 +63,14 @@
 /hipaa-notice
   Cache-Control: public, max-age=3600, must-revalidate
 /thank-you
+  Cache-Control: public, max-age=3600, must-revalidate
+/immigration-exam-near-me
+  Cache-Control: public, max-age=3600, must-revalidate
+/i-693-medical-exam
+  Cache-Control: public, max-age=3600, must-revalidate
+/green-card-medical-exam
+  Cache-Control: public, max-age=3600, must-revalidate
+/civil-surgeon-clifton-nj
   Cache-Control: public, max-age=3600, must-revalidate
 /404.html
   Cache-Control: public, max-age=300, must-revalidate
