@@ -89,10 +89,15 @@
   Cache-Control: public, max-age=31536000, immutable
 
 # ---- Crawler files ----
+# Short TTL on purpose. These are tiny, are fetched only by crawlers, and get
+# hand-edited (robots.txt) or regenerated on every deploy (sitemap.xml by
+# build.js). At the previous max-age=86400 an edit stayed invisible at the edge
+# for up to a day — `must-revalidate` does NOT help, since it only forces a
+# revalidation once the entry is already stale. 5 minutes costs nothing here.
 /sitemap.xml
-  Cache-Control: public, max-age=86400, must-revalidate
+  Cache-Control: public, max-age=300, must-revalidate
 /robots.txt
-  Cache-Control: public, max-age=86400, must-revalidate
+  Cache-Control: public, max-age=300, must-revalidate
 
 # ---- Not for indexing ----
 # Reports stay crawlable (no robots.txt Disallow) so Google can actually
