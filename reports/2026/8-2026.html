@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>United Medical Exams — August 2026 Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f7f9fc; --surface:#fff; --surface-alt:#eef3fa; --border:#dfe6f0;
+  --text:#141a24; --text-secondary:#5b6675; --text-dim:#96a0af;
+  --blue:#2d5fa5; --blue-bright:#3b7dd8; --blue-bg:rgba(45,95,165,0.07);
+  --green:#0d7a55; --red:#c44b3f; --trad-bar:#9aa6b8; --web-bar:#3b7dd8;
+  --serif:'Instrument Serif',Georgia,serif; --sans:'Libre Franklin',system-ui,sans-serif;
+  --radius:12px;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+#gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .4s,visibility .4s}
+#gate.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.gate-box{text-align:center;padding:2rem;max-width:360px;width:100%}
+.gate-logo{font-family:var(--serif);font-size:24px;margin-bottom:.5rem}
+.gate-sub{font-size:13px;color:var(--text-dim);margin-bottom:2rem}
+.gate-box input{width:100%;padding:.85rem 1rem;font-size:15px;border:1px solid var(--border);border-radius:10px;background:#fff;text-align:center;outline:none;-webkit-appearance:none}
+.gate-box input:focus{border-color:var(--blue)}
+.gate-box input.error{border-color:var(--red);animation:shake .4s}
+.gate-box button{width:100%;margin-top:.75rem;padding:.85rem;font-family:var(--sans);font-weight:600;font-size:15px;color:#fff;background:var(--blue);border:none;border-radius:10px;cursor:pointer}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.wrap{max-width:900px;margin:0 auto;padding:2.5rem 1rem 4rem}
+.masthead{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--border);padding-bottom:1rem;margin-bottom:2.5rem}
+.masthead .brand{font-family:var(--serif);font-size:20px}
+.masthead .tag{font-size:12px;color:var(--text-dim);letter-spacing:.04em}
+.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(30px,5.4vw,46px);line-height:1.12;margin-bottom:.6rem}
+.hero h1 .big{color:var(--blue)}
+.hero .sub{font-size:14px;color:var(--text-secondary);margin-bottom:2rem}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1.6rem 0 2.6rem}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1rem}
+.kpi .v{font-family:var(--serif);font-size:31px;color:var(--blue)}
+.kpi .l{font-size:12px;color:var(--text-secondary);margin-top:.25rem;line-height:1.35}
+.kpi .d{font-size:11px;color:var(--text-dim);margin-top:.2rem}
+.kpi.pos .v{color:var(--green)}
+section{margin-bottom:2.8rem}
+.sec-title{font-family:var(--serif);font-size:24px;margin-bottom:.25rem}
+.sec-sub{font-size:12.5px;color:var(--text-dim);margin-bottom:1rem}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem}
+.chart-wrap{position:relative;height:300px}
+.chart-wrap.short{height:230px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);font-weight:600;text-align:right;padding:.5rem .6rem;border-bottom:1px solid var(--border)}
+th:first-child,td:first-child{text-align:left}
+td{padding:.5rem .6rem;text-align:right;border-bottom:1px solid var(--surface-alt)}
+tr.hl td{background:var(--blue-bg);font-weight:600}
+tr.dim td{color:var(--text-dim)}
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.8rem}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem}
+.stat .v{font-family:var(--serif);font-size:34px;color:var(--blue)}
+.stat p{font-size:13px;color:var(--text-secondary);margin-top:.3rem;line-height:1.45}
+.footnote{font-size:11px;color:var(--text-dim);border-top:1px solid var(--border);padding-top:1rem;line-height:1.6}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-box">
+    <div class="gate-logo">United Medical Exams</div>
+    <div class="gate-sub">Monthly Report · Confidential</div>
+    <input id="pw" type="password" placeholder="Password" autocomplete="off">
+    <button onclick="unlock()">View Report</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="masthead">
+    <div class="brand">United Medical Exams</div>
+    <div class="tag">AUGUST 2026 · PREPARED AUG 31</div>
+  </div>
+
+  <div class="hero">
+    <h1><span class="big">24 exams booked</span> in August — second-best month on record</h1>
+    <div class="sub">20 in AdvancedMD (created Aug 1–31) + 4 Calendly bookings entered at their Sept 1 visits · 1 cancellation excluded</div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="v">24</div><div class="l">Exams booked</div><div class="d">Aug 2025: 5 (+380%)</div></div>
+    <div class="kpi"><div class="v">$14,376</div><div class="l">Booked revenue</div><div class="d">24 × $599</div></div>
+    <div class="kpi"><div class="v">9</div><div class="l">Booked online</div><div class="d">38% · each with $25 deposit</div></div>
+    <div class="kpi"><div class="v">$1,395</div><div class="l">Ad spend</div><div class="d">$58 / booked exam</div></div>
+  </div>
+
+  <section>
+    <div class="sec-title">Monthly Volume — 2026</div>
+    <div class="sec-sub">Bookings by month created · EHR-verified · dashed line = 2024–25 baseline (3.4/mo)</div>
+    <div class="card"><div class="chart-wrap"><canvas id="cVol"></canvas></div></div>
+  </section>
+
+  <section>
+    <div class="sec-title">Month-by-Month</div>
+    <div class="sec-sub">Each exam = $599</div>
+    <div class="card" style="padding:.4rem .6rem">
+      <table>
+        <tr><th>Month</th><th>Trad</th><th>Web</th><th>Total</th><th>Revenue</th><th>Web %</th></tr>
+        <tr class="dim"><td>Baseline avg (18 mo)</td><td>2.7</td><td>~0</td><td>3.4</td><td>$2,033</td><td>—</td></tr>
+        <tr><td>Jan</td><td>6</td><td>9</td><td>15</td><td>$8,985</td><td>60%</td></tr>
+        <tr><td>Feb</td><td>13</td><td>8</td><td>21</td><td>$12,579</td><td>38%</td></tr>
+        <tr><td>Mar</td><td>19</td><td>2</td><td>21</td><td>$12,579</td><td>10%</td></tr>
+        <tr><td>Apr</td><td>14</td><td>6</td><td>20</td><td>$11,980</td><td>30%</td></tr>
+        <tr><td>May</td><td>11</td><td>14</td><td>25</td><td>$14,975</td><td>56%</td></tr>
+        <tr><td>Jun</td><td>14</td><td>5</td><td>19</td><td>$11,381</td><td>26%</td></tr>
+        <tr><td>Jul</td><td>6</td><td>11</td><td>17</td><td>$10,183</td><td>65%</td></tr>
+        <tr class="hl"><td>Aug</td><td>15</td><td>9</td><td>24</td><td>$14,376</td><td>38%</td></tr>
+        <tr class="hl"><td>2026 total</td><td>98</td><td>64</td><td>162</td><td>$97,038</td><td>40%</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-title">August, Day by Day</div>
+    <div class="sec-sub">Bookings by date created · Aug 29 = family of four, booked online on a Saturday</div>
+    <div class="card"><div class="chart-wrap short"><canvas id="cDaily"></canvas></div></div>
+  </section>
+
+  <section>
+    <div class="sec-title">Google Ads</div>
+    <div class="sec-sub">Aug 1–31 · Search campaign · $50/day</div>
+    <div class="kpis" style="margin:0 0 .8rem">
+      <div class="kpi"><div class="v">3,325</div><div class="l">Ad impressions</div></div>
+      <div class="kpi"><div class="v">260</div><div class="l">Clicks</div><div class="d">7.82% CTR — year high</div></div>
+      <div class="kpi"><div class="v">$5.36</div><div class="l">Avg. cost per click</div></div>
+      <div class="kpi pos"><div class="v">18</div><div class="l">Conversions recorded</div><div class="d">2× July (9)</div></div>
+    </div>
+    <div class="card"><div class="chart-wrap short"><canvas id="cShare"></canvas></div>
+    <div class="sec-sub" style="margin:.6rem 0 0">Share of market ad impressions, Aug 1–31 — <b style="color:var(--blue)">#1 for the first time</b></div></div>
+  </section>
+
+  <section>
+    <div class="sec-title">Phones & After-Hours</div>
+    <div class="statgrid">
+      <div class="stat"><div class="v">6 of 8</div><p>phone-booked households verified as callers to the tracked marketing line</p></div>
+      <div class="stat"><div class="v">$100</div><p>in deposits collected Saturday Aug 29 while the office was closed — 4 exams self-booked</p></div>
+      <div class="stat"><div class="v">60s+</div><p>new call tracking: only calls over a minute count as conversions — short question calls are filtered out</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-title">Already Booked for September</div>
+    <div class="kpis" style="margin:0">
+      <div class="kpi"><div class="v">5</div><div class="l">Exams on the books</div><div class="d">Sept 1 ×4 · Sept 11 ×1</div></div>
+      <div class="kpi"><div class="v">$2,995</div><div class="l">Revenue banked</div></div>
+      <div class="kpi"><div class="v">Sept</div><div class="l">Seasonal demand rises</div><div class="d">best-performing setup to date</div></div>
+    </div>
+  </section>
+
+  <div class="footnote">
+    Counts use appointment creation dates in AdvancedMD (Aug 1–31) plus confirmed Calendly bookings awaiting EHR entry. Revenue = $599 exam fee per booking; deposits and additional services separate. Ad metrics from Google Ads, Aug 1–31. Prepared by Tog Samphel · FX3 Media.
+  </div>
+</div>
+
+<script>
+function unlock(){
+  var i=document.getElementById('pw');
+  if(i.value==='cardiacare'){document.getElementById('gate').classList.add('hidden');drawCharts();}
+  else{i.classList.remove('error');void i.offsetWidth;i.classList.add('error');}
+}
+document.getElementById('pw').addEventListener('keydown',function(e){if(e.key==='Enter')unlock();});
+
+var drawn=false;
+function drawCharts(){
+  if(drawn)return; drawn=true;
+  var sans="'Libre Franklin',sans-serif";
+  Chart.defaults.font.family=sans; Chart.defaults.font.size=11; Chart.defaults.color='#5b6675';
+
+  new Chart(document.getElementById('cVol'),{type:'bar',data:{
+    labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'],
+    datasets:[
+      {label:'Traditional',data:[6,13,19,14,11,14,6,15],backgroundColor:'#9aa6b8',stack:'s',borderRadius:3},
+      {label:'Website',data:[9,8,2,6,14,5,11,9],backgroundColor:'#3b7dd8',stack:'s',borderRadius:3},
+      {label:'2024–25 baseline (3.4)',data:[3.4,3.4,3.4,3.4,3.4,3.4,3.4,3.4],type:'line',borderColor:'#c44b3f',borderDash:[5,4],borderWidth:1.5,pointRadius:0}
+    ]},
+    options:{maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,boxHeight:10}}},
+      scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,beginAtZero:true,ticks:{stepSize:5},grid:{color:'#eef3fa'}}}}});
+
+  new Chart(document.getElementById('cDaily'),{type:'bar',data:{
+    labels:['4','6','7','10','11','12','17','18','24','25','26','27','29'],
+    datasets:[{label:'Bookings',data:[2,1,2,3,3,3,1,1,1,1,1,1,4],
+      backgroundColor:['#9aa6b8','#9aa6b8','#3b7dd8','#3b7dd8','#9aa6b8','#3b7dd8','#9aa6b8','#9aa6b8','#9aa6b8','#9aa6b8','#9aa6b8','#3b7dd8','#3b7dd8'],borderRadius:3}]},
+    options:{maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{title:function(c){return 'Aug '+c[0].label}}}},
+      scales:{x:{grid:{display:false},title:{display:true,text:'August date',font:{size:10}}},y:{beginAtZero:true,ticks:{stepSize:1},grid:{color:'#eef3fa'}}}}});
+
+  new Chart(document.getElementById('cShare'),{type:'bar',data:{
+    labels:['United Medical Exams','Lenoy Med','GreenCard Medical','Manhattan Medical Arts','Zocdoc','NAO Medical','EasyIME'],
+    datasets:[{data:[22.7,20.6,18.1,16.5,12.9,12.4,10.8],
+      backgroundColor:['#2d5fa5','#c3ccd8','#c3ccd8','#c3ccd8','#c3ccd8','#c3ccd8','#c3ccd8'],borderRadius:3}]},
+    options:{indexAxis:'y',maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.parsed.x+'% impression share'}}}},
+      scales:{x:{beginAtZero:true,max:25,ticks:{callback:function(v){return v+'%'}},grid:{color:'#eef3fa'}},y:{grid:{display:false}}}}});
+}
+</script>
+</body>
+</html>

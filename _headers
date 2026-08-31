@@ -98,7 +98,7 @@
 # Reports stay crawlable (no robots.txt Disallow) so Google can actually
 # READ this noindex; blocking the crawl would strand any indexed URL.
 /reports/*
-  X-Robots-Tag: noindex, nofollow
+  X-Robots-Tag: noindex, nofollow, noarchive
 
 # Component fragments are only a legacy runtime fallback now that build.js
 # inlines them — they must never be indexed as thin duplicate pages.
