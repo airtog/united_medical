@@ -44,10 +44,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .crumb .here{color:var(--text-secondary);font-weight:600}
 
 /* ---- year tabs ---- */
-.tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.4rem}
+.tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.1rem}
 .tab{font-family:var(--sans);font-size:12.5px;font-weight:500;color:var(--text-secondary);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:.4rem .95rem;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 .tab:hover{border-color:var(--blue-bright);color:var(--blue)}
 .tab.on{background:var(--blue);border-color:var(--blue);color:#fff}
+
+/* ---- month strip: the drill-down affordance under the year ---- */
+.mtabs-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);font-weight:600;margin-bottom:.45rem}
+.mtabs{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:1.9rem}
+.mtab{font-family:var(--sans);font-size:11.5px;font-weight:500;color:var(--blue);background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:.3rem 0;width:46px;text-align:center;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.mtab:hover{background:var(--blue-bg);border-color:var(--blue-bright)}
+.mtab.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.mtab[disabled]{color:var(--text-dim);background:var(--surface);border-color:var(--border);border-style:dashed;opacity:.6;cursor:default}
+.mtab[disabled]:hover{background:var(--surface);border-color:var(--border)}
 
 .hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(28px,5vw,42px);line-height:1.14;margin-bottom:.55rem}
 .hero h1 .big{color:var(--blue)}
@@ -271,6 +280,8 @@ function renderYear(y){
     return '<button class="tab' + (k===y?' on':'') + '" onclick="__go(\'#/' + k + '\')">' + k + '</button>';
   }).join('') + '</div>';
 
+  html += monthTabs(y, null);
+
   html += '<div class="hero"><h1><span class="big">' + exams + ' exams</span> booked in ' + y + '</h1>' +
           '<div class="sub">' + money(revenue) + ' in booked revenue' +
           (last ? ' · through ' + MON[+last] : '') +
@@ -402,6 +413,27 @@ function renderYear(y){
   setCrumb([{ label:y, here:true }]);
 }
 
+/* Month strip — the visible "you can drill into these" affordance.
+   Months with no data render disabled rather than vanishing, so a gap in the
+   year reads as a gap instead of looking like the month never existed. */
+function monthTabs(y, current){
+  var yr = D.years[y], out = '';
+  for (var i = 1; i <= 12; i++) {
+    var k = (i < 10 ? '0' : '') + i;
+    var m = yr.months && yr.months[k];
+    if (m) {
+      var t = total(m);
+      out += '<button class="mtab' + (k === current ? ' on' : '') + '"' +
+        ' title="' + MON[i] + ' ' + y + ' — ' + t + ' exam' + (t === 1 ? '' : 's') + '"' +
+        ' onclick="__go(\'#/' + y + '/' + k + '\')">' + MON3[i] + '</button>';
+    } else {
+      out += '<button class="mtab" disabled title="' + MON[i] + ' ' + y + ' — no data on record">' + MON3[i] + '</button>';
+    }
+  }
+  return '<div class="mtabs-label">Months in ' + y + ' — click to drill in</div>' +
+         '<div class="mtabs">' + out + '</div>';
+}
+
 function basisCaption(yr){
   return yr.countBasis === 'create-month' ? 'Counted by booking-creation month' : 'Counted by service month';
 }
@@ -432,6 +464,7 @@ function renderMonth(y, mk_){
   var delta = (pyT !== null && pyT > 0) ? Math.round((t - pyT) / pyT * 100) : null;
 
   var html = '';
+  html += monthTabs(y, mk_);
   html += '<div class="hero"><h1><span class="big">' + t + ' exam' + (t===1?'':'s') + '</span> booked in ' + name + ' ' + y + '</h1>' +
     '<div class="sub">' + money(rev) + ' in booked revenue · ' + basisCaption(yr).toLowerCase() +
     (has(m.cancels) ? '' : '') + '</div></div>';
