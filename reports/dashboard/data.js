@@ -57,57 +57,69 @@ window.UME_DATA = {
   // 2026-09-02, complete weeks through 2026-08-24). No rows exist before
   // 2025-12-16 despite the export's filename claiming coverage from
   // 2025-12-01 — see backlog.
+  //
+  // spend aggregated from a daily Google Ads export (pulled
+  // 2026-09-02, covers 2025-10-01–2026-09-02, complete weeks through
+  // 2026-08-24). The week of 2025-09-29 is excluded from the fill even
+  // though it is inside the export's own date math — the export itself
+  // starts 2025-10-01, so that week only has 5 of its 7 days represented
+  // and a total here would understate it. Two consecutive weeks land at
+  // exactly spend:0 (2026-04-06, 2026-04-13) — a real, verified pause, not
+  // a gap. The month note on 2026-03 says "verification pause ~Mar 9–Apr
+  // 5"; the actual zero-spend window per this export is Apr 3–23 (a 5-day
+  // dip Jan 17–21 doesn't align to a week boundary and isn't reflected as
+  // a full zero week). That discrepancy is unresolved — see backlog.
   weeklyFunnel: [
     { week: "2025-09-01", trad: 1, web: 1, calls: null, spend: null },
     { week: "2025-09-22", trad: 0, web: 2, calls: null, spend: null },
     { week: "2025-09-29", trad: 0, web: 2, calls: null, spend: null },
-    { week: "2025-10-06", trad: 1, web: 1, calls: null, spend: null },
-    { week: "2025-10-13", trad: 1, web: 0, calls: null, spend: null },
-    { week: "2025-10-20", trad: 1, web: 0, calls: null, spend: null },
-    { week: "2025-10-27", trad: 1, web: 0, calls: null, spend: null },
-    { week: "2025-11-03", trad: 2, web: 0, calls: null, spend: null },
-    { week: "2025-11-10", trad: 1, web: 0, calls: null, spend: null },
-    { week: "2025-11-17", trad: 1, web: 1, calls: null, spend: null },
-    { week: "2025-11-24", trad: 4, web: 0, calls: null, spend: null },
-    { week: "2025-12-01", trad: 0, web: 5, calls: null, spend: null },
-    { week: "2025-12-08", trad: 2, web: 3, calls: null, spend: null },
-    { week: "2025-12-15", trad: 2, web: 0, calls: 19, spend: null },
-    { week: "2025-12-22", trad: 0, web: 1, calls: 19, spend: null },
-    { week: "2025-12-29", trad: 1, web: 1, calls: 15, spend: null },
-    { week: "2026-01-05", trad: 4, web: 0, calls: 15, spend: null },
-    { week: "2026-01-12", trad: 2, web: 4, calls: 13, spend: null },
-    { week: "2026-01-19", trad: 0, web: 4, calls: 5, spend: null },
-    { week: "2026-01-26", trad: 0, web: 0, calls: 6, spend: null },
-    { week: "2026-02-02", trad: 4, web: 1, calls: 9, spend: null },
-    { week: "2026-02-09", trad: 3, web: 2, calls: 8, spend: null },
-    { week: "2026-02-16", trad: 3, web: 2, calls: 5, spend: null },
-    { week: "2026-02-23", trad: 3, web: 3, calls: 11, spend: null },
-    { week: "2026-03-02", trad: 2, web: 1, calls: 5, spend: null },
-    { week: "2026-03-09", trad: 4, web: 0, calls: 5, spend: null },
-    { week: "2026-03-16", trad: null, web: null, calls: 3, spend: null },
-    { week: "2026-03-23", trad: null, web: null, calls: 8, spend: null },
-    { week: "2026-03-30", trad: null, web: null, calls: 3, spend: null },
-    { week: "2026-04-06", trad: null, web: null, calls: 5, spend: null },
-    { week: "2026-04-13", trad: null, web: null, calls: 9, spend: null },
-    { week: "2026-04-20", trad: null, web: null, calls: 13, spend: null },
-    { week: "2026-04-27", trad: null, web: null, calls: 4, spend: null },
-    { week: "2026-05-04", trad: null, web: null, calls: 6, spend: null },
-    { week: "2026-05-11", trad: null, web: null, calls: 8, spend: null },
-    { week: "2026-05-18", trad: null, web: null, calls: 11, spend: null },
-    { week: "2026-05-25", trad: null, web: null, calls: 12, spend: null },
-    { week: "2026-06-01", trad: null, web: null, calls: 15, spend: null },
-    { week: "2026-06-08", trad: null, web: null, calls: 10, spend: null },
-    { week: "2026-06-15", trad: null, web: null, calls: 6, spend: null },
-    { week: "2026-06-22", trad: null, web: null, calls: 8, spend: null },
-    { week: "2026-06-29", trad: null, web: null, calls: 17, spend: null },
-    { week: "2026-07-06", trad: null, web: null, calls: 26, spend: null },
-    { week: "2026-07-13", trad: null, web: null, calls: 75, spend: null },
-    { week: "2026-07-20", trad: null, web: null, calls: 15, spend: null },
-    { week: "2026-07-27", trad: null, web: null, calls: 13, spend: null },
-    { week: "2026-08-03", trad: 4, web: 1, calls: 19, spend: null },
-    { week: "2026-08-10", trad: 6, web: 3, calls: 45, spend: null },
-    { week: "2026-08-17", trad: 2, web: 0, calls: 52, spend: null },
-    { week: "2026-08-24", trad: 3, web: 1, calls: 18, spend: null },
+    { week: "2025-10-06", trad: 1, web: 1, calls: null, spend: 261.92 },
+    { week: "2025-10-13", trad: 1, web: 0, calls: null, spend: 276.41 },
+    { week: "2025-10-20", trad: 1, web: 0, calls: null, spend: 202.98 },
+    { week: "2025-10-27", trad: 1, web: 0, calls: null, spend: 295.36 },
+    { week: "2025-11-03", trad: 2, web: 0, calls: null, spend: 222.59 },
+    { week: "2025-11-10", trad: 1, web: 0, calls: null, spend: 238.36 },
+    { week: "2025-11-17", trad: 1, web: 1, calls: null, spend: 211.41 },
+    { week: "2025-11-24", trad: 4, web: 0, calls: null, spend: 207.27 },
+    { week: "2025-12-01", trad: 0, web: 5, calls: null, spend: 215.36 },
+    { week: "2025-12-08", trad: 2, web: 3, calls: null, spend: 206.18 },
+    { week: "2025-12-15", trad: 2, web: 0, calls: 19, spend: 110.36 },
+    { week: "2025-12-22", trad: 0, web: 1, calls: 19, spend: 303.62 },
+    { week: "2025-12-29", trad: 1, web: 1, calls: 15, spend: 205.25 },
+    { week: "2026-01-05", trad: 4, web: 0, calls: 15, spend: 201.62 },
+    { week: "2026-01-12", trad: 2, web: 4, calls: 13, spend: 157.96 },
+    { week: "2026-01-19", trad: 0, web: 4, calls: 5, spend: 33.12 },
+    { week: "2026-01-26", trad: 0, web: 0, calls: 6, spend: 363.13 },
+    { week: "2026-02-02", trad: 4, web: 1, calls: 9, spend: 204.23 },
+    { week: "2026-02-09", trad: 3, web: 2, calls: 8, spend: 258.07 },
+    { week: "2026-02-16", trad: 3, web: 2, calls: 5, spend: 222.54 },
+    { week: "2026-02-23", trad: 3, web: 3, calls: 11, spend: 203.93 },
+    { week: "2026-03-02", trad: 2, web: 1, calls: 5, spend: 171.77 },
+    { week: "2026-03-09", trad: 4, web: 0, calls: 5, spend: 229.91 },
+    { week: "2026-03-16", trad: null, web: null, calls: 3, spend: 220.53 },
+    { week: "2026-03-23", trad: null, web: null, calls: 8, spend: 181.25 },
+    { week: "2026-03-30", trad: null, web: null, calls: 3, spend: 116.52 },
+    { week: "2026-04-06", trad: null, web: null, calls: 5, spend: 0 },
+    { week: "2026-04-13", trad: null, web: null, calls: 9, spend: 0 },
+    { week: "2026-04-20", trad: null, web: null, calls: 13, spend: 111.73 },
+    { week: "2026-04-27", trad: null, web: null, calls: 4, spend: 279.78 },
+    { week: "2026-05-04", trad: null, web: null, calls: 6, spend: 226.60 },
+    { week: "2026-05-11", trad: null, web: null, calls: 8, spend: 208.80 },
+    { week: "2026-05-18", trad: null, web: null, calls: 11, spend: 199.09 },
+    { week: "2026-05-25", trad: null, web: null, calls: 12, spend: 220.08 },
+    { week: "2026-06-01", trad: null, web: null, calls: 15, spend: 144.31 },
+    { week: "2026-06-08", trad: null, web: null, calls: 10, spend: 361.78 },
+    { week: "2026-06-15", trad: null, web: null, calls: 6, spend: 359.44 },
+    { week: "2026-06-22", trad: null, web: null, calls: 8, spend: 319.64 },
+    { week: "2026-06-29", trad: null, web: null, calls: 17, spend: 327.62 },
+    { week: "2026-07-06", trad: null, web: null, calls: 26, spend: 362.42 },
+    { week: "2026-07-13", trad: null, web: null, calls: 75, spend: 359.58 },
+    { week: "2026-07-20", trad: null, web: null, calls: 15, spend: 315.28 },
+    { week: "2026-07-27", trad: null, web: null, calls: 13, spend: 297.70 },
+    { week: "2026-08-03", trad: 4, web: 1, calls: 19, spend: 326.79 },
+    { week: "2026-08-10", trad: 6, web: 3, calls: 45, spend: 402.85 },
+    { week: "2026-08-17", trad: 2, web: 0, calls: 52, spend: 370.34 },
+    { week: "2026-08-24", trad: 3, web: 1, calls: 18, spend: 214.25 },
     { week: "2026-08-31", trad: 1, web: 4, calls: null, spend: null }
   ],
 
@@ -162,20 +174,22 @@ window.UME_DATA = {
         // trad/web = booked exams by EHR create month, cancellations excluded.
         // calls: null before Aug 2026 — the tracked line / call assets did not
         // exist yet, so there is nothing to report and nothing to zero.
-        "01": { trad: 6,  web: 9,  cancels: null, spend: null,    impressions: null, clicks: null, ctr: null, cpc: null, conv: null,
-                calls: null },
-        "02": { trad: 13, web: 8,  cancels: null, spend: null,    impressions: null, clicks: null, ctr: null, cpc: null, conv: null,
-                calls: null },
-        "03": { trad: 19, web: 2,  cancels: null, spend: null,    impressions: null, clicks: null, ctr: null, cpc: null, conv: null,
-                calls: null,
+        "01": { trad: 6,  web: 9,  cancels: null, spend: 839.52,  impressions: 3652, clicks: 263,  ctr: 7.20, cpc: 3.19, conv: 2,
+                calls: null, adsSrc: "Google Ads: daily performance export 2025-10-01–2026-09-02, pulled 2026-09-02",
+                note: "Ads paused Jan 17–21" },
+        "02": { trad: 13, web: 8,  cancels: null, spend: 892.73,  impressions: 3736, clicks: 296,  ctr: 7.92, cpc: 3.02, conv: 6,
+                calls: null, adsSrc: "Google Ads: daily performance export 2025-10-01–2026-09-02, pulled 2026-09-02" },
+        "03": { trad: 19, web: 2,  cancels: null, spend: 908.35,  impressions: 3311, clicks: 326,  ctr: 9.85, cpc: 2.79, conv: 1,
+                calls: null, adsSrc: "Google Ads: daily performance export 2025-10-01–2026-09-02, pulled 2026-09-02",
                 note: "Ads verification pause ~Mar 9–Apr 5 suppressed web bookings" },
-        "04": { trad: 14, web: 6,  cancels: null, spend: null,    impressions: null, clicks: null, ctr: null, cpc: null, conv: null,
-                calls: null },
+        "04": { trad: 14, web: 6,  cancels: null, spend: 381.35,  impressions: 1437, clicks: 108,  ctr: 7.52, cpc: 3.53, conv: 0,
+                calls: null, adsSrc: "Google Ads: daily performance export 2025-10-01–2026-09-02, pulled 2026-09-02",
+                note: "Ads paused Apr 3–23 (spend is real — only 9 days of the month had any activity)" },
         "05": { trad: 11, web: 14, cancels: null, spend: 914.57,  impressions: 4047, clicks: 297,  ctr: 7.17, cpc: 3.19, conv: null,
                 calls: null,
                 note: "record month (25)" },
-        "06": { trad: 14, web: 5,  cancels: null, spend: null,    impressions: null, clicks: null, ctr: null, cpc: null, conv: null,
-                calls: null,
+        "06": { trad: 14, web: 5,  cancels: null, spend: 1272.69, impressions: 3379, clicks: 303,  ctr: 8.97, cpc: 4.20, conv: 4,
+                calls: null, adsSrc: "Google Ads: daily performance export 2025-10-01–2026-09-02, pulled 2026-09-02",
                 note: "tracking fixed Jun 11; GBP→tracked line Jun 25" },
         "07": { trad: 6,  web: 11, cancels: null, spend: 1505,    impressions: 4757, clicks: null, ctr: 7.21, cpc: 4.39, conv: 9,
                 calls: null },
@@ -195,16 +209,23 @@ window.UME_DATA = {
                 ],
                 calls: {
                   quoInbound:   143,  // full-month, Quo export pulled 2026-09-02
-                  adCalls:      null,  // call asset live Aug 14 (5 calls its first morning); full-month total → Ads Call details
-                  siteCalls:    null,  // number-swap live Aug 13 (verified end-to-end); full-month total → Ads Call details
-                  callConv:     null,  // the month's 18 `conv` mixes web bookings + ≥60s calls; split → conversions summary
+                  adCalls:      31,   // Call source = Ad, Aug 13–31 (GFN log doesn't cover Aug 1–12)
+                  siteCalls:    8,    // Call source = Website, Aug 13–31
+                  // callConv counts raw rows with duration >= 60s (13). It runs
+                  // below the month's `conv` figure (18) on purpose, not by
+                  // error: Google Ads dedupes call conversions per ad click
+                  // ("one per click") before it reports `conv`, while callConv
+                  // counts every qualifying call. Both are correct for what
+                  // they measure — do not force them to reconcile.
+                  callConv:     13,
                   sonaAnswered: 23,   // full-month, Quo export pulled 2026-09-02
                   // days = calls by date, Quo export pulled 2026-09-02. Sum MUST equal quoInbound.
                   days: { "1":1,"2":1,"3":5,"4":2,"6":2,"7":7,"8":3,"10":5,"11":6,"12":11,"13":8,"14":14,"15":1,"17":9,"18":9,"19":9,"20":9,"21":9,"22":5,"23":2,"24":10,"25":4,"27":2,"28":2,"31":7 },
                   phoneMatch: { matched: 6, of: 8,
                     note: "mid-month audit (Aug 13): Marte, Taday, Elbanna, Holder, Silvestre, Wilson verified as tracked-line callers; late-month traditionals unaudited pending fresh EHR export" }
                 },
-                quoSrc: "Quo export 2025-12-01–2026-09-03, pulled 2026-09-02"
+                quoSrc: "Quo export 2025-12-01–2026-09-03, pulled 2026-09-02",
+                adsSrc: "Google Ads: daily performance export 2025-10-01–2026-09-02 + Call details (GFN log, since 2026-08-13), pulled 2026-09-02"
         }
       },
       banked_next: { label: "Booked for Sept", exams: 6, revenue: 3594 }
@@ -216,13 +237,12 @@ window.UME_DATA = {
 
   // Known gaps to backfill. Rendered nowhere — kept here as the working list.
   backlog: [
-    "Ads monthlies Jan–Apr + Jun 2026 (spend/impressions/clicks/CTR/CPC) — pull from Ads UI month-by-month",
     "Aug 2026 phone-match completion — re-run against a fresh EHR export now that full-month call data is in",
-    "Aug 2026 Call details pull (Aug 14–31) → adCalls, siteCalls; conversions summary → callConv split",
-    "Weekly spend backfill, Oct 2025 → present — Ads UI segmented by week (Claude/chat session, one pull)",
+    "March 2026 note says \"Ads verification pause ~Mar 9–Apr 5\" — verified daily spend shows real spend continued through Apr 2 and the actual zero-spend pause is Apr 3–23; reconcile the note against this",
     "Quo export Sep 2026 → present — continue the weekly calls series past 2026-08-24",
+    "Google Ads export Sep 2026 → present — continue weekly spend past 2026-08-24",
     "Confirm whether the tracked line existed before 2025-12-16 (current export's floor) → fill Dec 1–14 2025 if so",
-    "Re-import Jan–Jul 2026 EHR full export → fill weekly bookings gap Mar 16–Jul 27",
-    "Reconcile derived pause zones against remembered verification-pause ranges once spend series lands"
+    "GFN call log Aug 1–12 2026 if available → adCalls/siteCalls/callConv currently start 2026-08-13, the log's own floor",
+    "Re-import Jan–Jul 2026 EHR full export → fill weekly bookings gap Mar 16–Jul 27"
   ]
 };
