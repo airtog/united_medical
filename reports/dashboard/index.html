@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>UME Performance — Master Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f7f9fc; --surface:#fff; --surface-alt:#eef3fa; --border:#dfe6f0;
+  --text:#141a24; --text-secondary:#5b6675; --text-dim:#96a0af;
+  --blue:#2d5fa5; --blue-bright:#3b7dd8; --blue-bg:rgba(45,95,165,0.07);
+  --green:#0d7a55; --red:#c44b3f; --trad-bar:#9aa6b8; --web-bar:#3b7dd8;
+  --serif:'Instrument Serif',Georgia,serif; --sans:'Libre Franklin',system-ui,sans-serif;
+  --radius:12px;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+
+/* ---- gate (identical grammar to the monthly report) ---- */
+#gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .4s,visibility .4s}
+#gate.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.gate-box{text-align:center;padding:2rem;max-width:360px;width:100%}
+.gate-logo{font-family:var(--serif);font-size:24px;margin-bottom:.5rem}
+.gate-sub{font-size:13px;color:var(--text-dim);margin-bottom:2rem}
+.gate-box input{width:100%;padding:.85rem 1rem;font-size:15px;border:1px solid var(--border);border-radius:10px;background:#fff;text-align:center;outline:none;-webkit-appearance:none}
+.gate-box input:focus{border-color:var(--blue)}
+.gate-box input.error{border-color:var(--red);animation:shake .4s}
+.gate-box button{width:100%;margin-top:.75rem;padding:.85rem;font-family:var(--sans);font-weight:600;font-size:15px;color:#fff;background:var(--blue);border:none;border-radius:10px;cursor:pointer}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+.wrap{max-width:900px;margin:0 auto;padding:2.5rem 1rem 4rem}
+.masthead{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--border);padding-bottom:1rem;margin-bottom:1.25rem}
+.masthead .brand{font-family:var(--serif);font-size:20px}
+.masthead .tag{font-size:12px;color:var(--text-dim);letter-spacing:.04em}
+
+/* ---- breadcrumb ---- */
+.crumb{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;font-size:12.5px;color:var(--text-dim);margin-bottom:1.6rem;min-height:20px}
+.crumb a{color:var(--blue);text-decoration:none;cursor:pointer}
+.crumb a:hover{text-decoration:underline}
+.crumb .sep{color:var(--text-dim);opacity:.6}
+.crumb .here{color:var(--text-secondary);font-weight:600}
+
+/* ---- year tabs ---- */
+.tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.4rem}
+.tab{font-family:var(--sans);font-size:12.5px;font-weight:500;color:var(--text-secondary);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:.4rem .95rem;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.tab:hover{border-color:var(--blue-bright);color:var(--blue)}
+.tab.on{background:var(--blue);border-color:var(--blue);color:#fff}
+
+.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(28px,5vw,42px);line-height:1.14;margin-bottom:.55rem}
+.hero h1 .big{color:var(--blue)}
+.hero .sub{font-size:14px;color:var(--text-secondary);margin-bottom:.4rem;line-height:1.5}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1.6rem 0 2.6rem}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1rem}
+.kpi .v{font-family:var(--serif);font-size:31px;color:var(--blue)}
+.kpi .l{font-size:12px;color:var(--text-secondary);margin-top:.25rem;line-height:1.35}
+.kpi .d{font-size:11px;color:var(--text-dim);margin-top:.2rem;line-height:1.4}
+.kpi.pos .v{color:var(--green)}
+.kpi.none .v{color:var(--text-dim)}
+
+section{margin-bottom:2.8rem}
+.sec-title{font-family:var(--serif);font-size:24px;margin-bottom:.25rem}
+.sec-sub{font-size:12.5px;color:var(--text-dim);margin-bottom:1rem;line-height:1.5}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem}
+.card.warn{border-color:var(--red);box-shadow:0 0 0 1px var(--red) inset}
+.chart-wrap{position:relative;height:300px}
+.chart-wrap.short{height:230px}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);font-weight:600;text-align:right;padding:.5rem .6rem;border-bottom:1px solid var(--border)}
+th:first-child,td:first-child{text-align:left}
+td{padding:.5rem .6rem;text-align:right;border-bottom:1px solid var(--surface-alt)}
+tr.hl td{background:var(--blue-bg);font-weight:600}
+tr.dim td{color:var(--text-dim)}
+tr.go{cursor:pointer}
+tr.go:hover td{background:var(--surface-alt)}
+td.nd{color:var(--text-dim)}
+
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.8rem}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem}
+.stat .v{font-family:var(--serif);font-size:34px;color:var(--blue)}
+.stat p{font-size:13px;color:var(--text-secondary);margin-top:.3rem;line-height:1.45}
+
+/* ---- year-over-year mini bars ---- */
+.yoy{display:flex;flex-direction:column;gap:.6rem}
+.yoyrow{display:grid;grid-template-columns:52px 1fr 74px;align-items:center;gap:.7rem}
+.yoyrow .yr{font-size:12.5px;color:var(--text-secondary);font-weight:600}
+.yoyrow .track{background:var(--surface-alt);border-radius:4px;height:20px;overflow:hidden}
+.yoyrow .fill{height:100%;background:var(--trad-bar);border-radius:4px;transition:width .5s ease}
+.yoyrow.now .fill{background:var(--blue)}
+.yoyrow .n{font-family:var(--serif);font-size:19px;color:var(--text-secondary);text-align:right}
+.yoyrow.now .n{color:var(--blue)}
+.yoyrow .n small{font-family:var(--sans);font-size:10.5px;color:var(--text-dim);display:block;margin-top:-2px}
+
+/* ---- chips ---- */
+.chips{display:flex;flex-wrap:wrap;gap:.45rem;margin:.9rem 0 0}
+.chip{display:inline-block;font-size:11px;line-height:1.5;padding:.3rem .65rem;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text-dim)}
+.chip.warn{border-color:var(--red);background:rgba(196,75,63,.07);color:var(--red);font-weight:600}
+.chip.pos{border-color:rgba(13,122,85,.35);background:rgba(13,122,85,.07);color:var(--green)}
+.mismatch{border:1px solid var(--red);background:rgba(196,75,63,.06);border-radius:var(--radius);padding:.9rem 1rem;margin-bottom:1rem}
+.mismatch .h{font-size:12.5px;font-weight:700;color:var(--red);margin-bottom:.3rem}
+.mismatch ul{margin:0;padding-left:1.1rem;font-size:12px;color:var(--text-secondary);line-height:1.7}
+
+.prov{font-size:11.5px;color:var(--text-dim);margin-top:.7rem;line-height:1.6}
+.caption{font-size:12.5px;color:var(--text-secondary);background:var(--surface-alt);border-radius:8px;padding:.6rem .8rem;margin-top:.9rem;line-height:1.5}
+
+/* ---- week pager ---- */
+.pager{display:flex;justify-content:space-between;gap:.6rem;margin-top:1.6rem}
+.pgbtn{font-family:var(--sans);font-size:12.5px;font-weight:500;color:var(--blue);background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.6rem 1rem;cursor:pointer;text-align:left;max-width:48%}
+.pgbtn:hover{border-color:var(--blue-bright)}
+.pgbtn[disabled]{color:var(--text-dim);cursor:default;opacity:.5}
+.pgbtn small{display:block;font-size:10.5px;color:var(--text-dim);letter-spacing:.05em;text-transform:uppercase;margin-bottom:.15rem}
+.pgbtn.next{text-align:right;margin-left:auto}
+
+.empty{background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius);padding:2.2rem 1rem;text-align:center;color:var(--text-dim);font-size:13.5px}
+
+.footnote{font-size:11px;color:var(--text-dim);border-top:1px solid var(--border);padding-top:1rem;line-height:1.6;margin-top:2.5rem}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-box">
+    <div class="gate-logo">United Medical Exams</div>
+    <div class="gate-sub">Master Dashboard · Confidential</div>
+    <input id="pw" type="password" placeholder="Password" autocomplete="off">
+    <button onclick="unlock()">View Dashboard</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="masthead">
+    <div class="brand">United Medical Exams</div>
+    <div class="tag">PERFORMANCE · MASTER DASHBOARD</div>
+  </div>
+  <div class="crumb" id="crumb"></div>
+  <div id="view"></div>
+  <div class="footnote" id="foot"></div>
+</div>
+
+<script src="data.js"></script>
+<script>
+/* =========================================================================
+   UME Master Dashboard — view layer.
+   Built once. Never edit this file to change numbers; edit data.js.
+   ========================================================================= */
+(function(){
+"use strict";
+
+var D = window.UME_DATA;
+var MON  = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
+var MON3 = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var charts = [];
+var unlocked = false;
+
+/* ---------- helpers ------------------------------------------------------ */
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function has(v){ return v !== null && v !== undefined && v !== ''; }
+function money(n){ return '$' + Math.round(n).toLocaleString('en-US'); }
+function money2(n){ return '$' + n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function pct(n){ return Math.round(n) + '%'; }
+function dash(){ return '<span style="color:var(--text-dim)">—</span>'; }
+function total(m){ return (m.trad||0) + (m.web||0); }
+function sumDays(m){ return m.days ? Object.keys(m.days).reduce(function(a,k){ return a + m.days[k]; },0) : null; }
+function sumWeeks(m){ return m.weeks ? m.weeks.reduce(function(a,w){ return a + (w.web||0) + (w.phone||0); },0) : null; }
+function weekExams(w){ return (w.web||0) + (w.phone||0); }
+function yearTotal(y){ var yr=D.years[y]; if(!yr||!yr.months) return 0;
+  return Object.keys(yr.months).reduce(function(a,k){ return a + total(yr.months[k]); },0); }
+function yearWebTotal(y, fromMonth){ var yr=D.years[y];
+  return Object.keys(yr.months).reduce(function(a,k){ return (!fromMonth||k>=fromMonth) ? a + (yr.months[k].web||0) : a; },0); }
+function yearTotalFrom(y, fromMonth){ var yr=D.years[y];
+  return Object.keys(yr.months).reduce(function(a,k){ return (!fromMonth||k>=fromMonth) ? a + total(yr.months[k]) : a; },0); }
+function monthsWithData(y){ var yr=D.years[y];
+  return Object.keys(yr.months).filter(function(k){ return has(yr.months[k].trad) || has(yr.months[k].web); }).sort(); }
+function latestMonth(y){ var ks = monthsWithData(y); return ks.length ? ks[ks.length-1] : null; }
+
+/* The sanity rule the dashboard self-enforces. */
+function monthIssues(m){
+  var t = total(m), out = [], sd = sumDays(m), sw = sumWeeks(m);
+  if (sd !== null && sd !== t) out.push('daily entries sum to ' + sd + ' but trad + web = ' + t);
+  if (sw !== null && sw !== t) out.push('weekly entries sum to ' + sw + ' but trad + web = ' + t);
+  return out;
+}
+function yearIssues(y){
+  var yr = D.years[y], out = [];
+  Object.keys(yr.months).sort().forEach(function(k){
+    monthIssues(yr.months[k]).forEach(function(msg){ out.push(MON[+k] + ' ' + y + ': ' + msg); });
+  });
+  return out;
+}
+function mismatchBlock(list){
+  if (!list.length) return '';
+  return '<div class="mismatch"><div class="h">⚠ data mismatch</div><ul>' +
+    list.map(function(s){ return '<li>' + esc(s) + '</li>'; }).join('') +
+    '</ul></div>';
+}
+
+/* "Aug 1–9" -> {start:1, end:9}. Returns null if unparseable. */
+function weekRange(label){
+  var m = String(label).match(/(\d+)\s*[–—-]\s*(\d+)/);
+  return m ? { start:+m[1], end:+m[2] } : null;
+}
+
+/* ---------- routing ------------------------------------------------------ */
+function parseHash(){
+  var p = (location.hash || '').replace(/^#\/?/, '').split('/').filter(Boolean);
+  return { year: p[0] || null, month: p[1] || null, week: p[2] || null };
+}
+function go(hash){ location.hash = hash; }
+window.__go = go;
+
+/* ---------- chart plumbing ---------------------------------------------- */
+function killCharts(){ charts.forEach(function(c){ try{ c.destroy(); }catch(e){} }); charts = []; }
+function mk(id, cfg){
+  var el = document.getElementById(id);
+  if (!el) return;
+  charts.push(new Chart(el, cfg));
+}
+function baselineSet(len){
+  return { label:'2024–25 baseline (' + D.baselineMonthly + ')',
+    data: new Array(len).fill(D.baselineMonthly), type:'line',
+    borderColor:'#c44b3f', borderDash:[5,4], borderWidth:1.5, pointRadius:0 };
+}
+/* Click-through on a bar chart: cb receives the category index. */
+function barNav(cb){
+  return function(evt, els, chart){
+    var pts = chart.getElementsAtEventForMode(evt, 'index', { intersect:false }, true);
+    if (pts.length) cb(pts[0].index);
+  };
+}
+
+/* =========================================================================
+   ANNUAL VIEW  —  #/2026
+   ========================================================================= */
+function renderYear(y){
+  var yr = D.years[y];
+  if (!yr) return renderMissing('No data on record for ' + esc(y) + '.');
+
+  var keys      = Object.keys(yr.months).sort();
+  var withData  = monthsWithData(y);
+  var exams     = yearTotal(y);
+  var revenue   = exams * D.price;
+  var comparable= yr.webTagComparable;
+  var last      = latestMonth(y);
+
+  /* web share, honest about the Sep-2025 tag break */
+  var webVal, webLbl;
+  if (comparable === true) {
+    webVal = exams ? pct(yearWebTotal(y) / exams * 100) : dash();
+    webLbl = yearWebTotal(y) + ' of ' + exams + ' booked online';
+  } else if (comparable === 'from-09') {
+    var t9 = yearTotalFrom(y,'09'), w9 = yearWebTotal(y,'09');
+    webVal = t9 ? pct(w9 / t9 * 100) : dash();
+    webLbl = 'Sep–Dec only · ' + w9 + ' of ' + t9 + ' — online booking begins Sep 2025';
+  } else {
+    webVal = dash();
+    webLbl = 'not comparable — see note below';
+  }
+
+  /* ad spend across tracked months only */
+  var spendMonths = keys.filter(function(k){ return has(yr.months[k].spend); });
+  var spend       = spendMonths.reduce(function(a,k){ return a + yr.months[k].spend; }, 0);
+  var spendExams  = spendMonths.reduce(function(a,k){ return a + total(yr.months[k]); }, 0);
+
+  var html = '';
+
+  html += '<div class="tabs">' + Object.keys(D.years).sort().map(function(k){
+    return '<button class="tab' + (k===y?' on':'') + '" onclick="__go(\'#/' + k + '\')">' + k + '</button>';
+  }).join('') + '</div>';
+
+  html += '<div class="hero"><h1><span class="big">' + exams + ' exams</span> booked in ' + y + '</h1>' +
+          '<div class="sub">' + money(revenue) + ' in booked revenue' +
+          (last ? ' · through ' + MON[+last] : '') +
+          (yr.note ? ' · ' + esc(yr.note) : '') + '</div></div>';
+
+  html += mismatchBlock(yearIssues(y));
+
+  /* --- KPI row --- */
+  html += '<div class="kpis">' +
+    '<div class="kpi"><div class="v">' + exams + '</div><div class="l">Exams booked</div>' +
+      '<div class="d">' + withData.length + ' month' + (withData.length===1?'':'s') + ' on record</div></div>' +
+    '<div class="kpi"><div class="v">' + money(revenue) + '</div><div class="l">Booked revenue</div>' +
+      '<div class="d">' + exams + ' × ' + money(D.price) + '</div></div>' +
+    '<div class="kpi' + (comparable===true?'':' none') + '"><div class="v">' + webVal + '</div>' +
+      '<div class="l">Booked online</div><div class="d">' + esc(webLbl) + '</div></div>' +
+    '<div class="kpi' + (spendMonths.length?'':' none') + '"><div class="v">' +
+      (spendMonths.length ? money(spend) : dash()) + '</div><div class="l">Ad spend</div>' +
+      '<div class="d">' + (spendMonths.length ? spendMonths.length + ' tracked month' +
+        (spendMonths.length===1?'':'s') + ' (' + spendMonths.map(function(k){return MON3[+k];}).join(', ') + ')'
+        : 'no spend on record') + '</div></div>' +
+    '<div class="kpi' + (spendExams?'':' none') + '"><div class="v">' +
+      (spendExams ? money(spend/spendExams) : dash()) + '</div><div class="l">Cost per booked exam</div>' +
+      '<div class="d">' + (spendExams ? 'tracked months only · ' + spendExams + ' exams' : 'needs spend data') + '</div></div>' +
+  '</div>';
+
+  /* --- year over year --- */
+  var allYears = Object.keys(D.years).sort();
+  var maxY = Math.max.apply(null, allYears.map(yearTotal));
+  html += '<section><div class="sec-title">Year over Year</div>' +
+    '<div class="sec-sub">Total booked exams per year · every person counts as one exam</div>' +
+    '<div class="card"><div class="yoy">' +
+    allYears.map(function(k){
+      var t = yearTotal(k), lm = latestMonth(k);
+      var partial = (k === '2026' && lm && lm !== '12');
+      return '<div class="yoyrow' + (k===y?' now':'') + '">' +
+        '<div class="yr">' + k + '</div>' +
+        '<div class="track"><div class="fill" style="width:' + (maxY ? (t/maxY*100) : 0) + '%"></div></div>' +
+        '<div class="n">' + t + (partial ? '<small>thru ' + MON3[+lm] + '</small>' : '') + '</div></div>';
+    }).join('') +
+    '</div></div></section>';
+
+  /* --- monthly volume chart --- */
+  var labels = keys.map(function(k){ return MON3[+k]; });
+  var datasets;
+  if (comparable === true) {
+    datasets = [
+      { label:'Traditional', data: keys.map(function(k){ return yr.months[k].trad; }), backgroundColor:'#9aa6b8', stack:'s', borderRadius:3 },
+      { label:'Website',     data: keys.map(function(k){ return yr.months[k].web;  }), backgroundColor:'#3b7dd8', stack:'s', borderRadius:3 }
+    ];
+  } else if (comparable === 'from-09') {
+    datasets = [
+      { label:'Total (split not comparable)', stack:'s', backgroundColor:'#9aa6b8', borderRadius:3,
+        data: keys.map(function(k){ return k < '09' ? total(yr.months[k]) : null; }) },
+      { label:'Traditional', stack:'s', backgroundColor:'#9aa6b8', borderRadius:3,
+        data: keys.map(function(k){ return k >= '09' ? yr.months[k].trad : null; }) },
+      { label:'Website (online)', stack:'s', backgroundColor:'#3b7dd8', borderRadius:3,
+        data: keys.map(function(k){ return k >= '09' ? yr.months[k].web : null; }) }
+    ];
+  } else {
+    datasets = [
+      { label:'Total booked (split not comparable)', stack:'s', backgroundColor:'#9aa6b8', borderRadius:3,
+        data: keys.map(function(k){ return total(yr.months[k]); }) }
+    ];
+  }
+  datasets.push(baselineSet(keys.length));
+
+  html += '<section><div class="sec-title">Monthly Volume — ' + y + '</div>' +
+    '<div class="sec-sub">' + basisCaption(yr) + ' · dashed line = 2024–25 baseline (' + D.baselineMonthly + '/mo) · click a bar to open the month</div>' +
+    '<div class="card"><div class="chart-wrap"><canvas id="cVol"></canvas></div></div>' +
+    comparabilityChips(yr) +
+    '</section>';
+
+  /* --- month by month table --- */
+  var anySpend = spendMonths.length > 0;
+  html += '<section><div class="sec-title">Month by Month</div>' +
+    '<div class="sec-sub">Each exam = ' + money(D.price) + ' · click a row to open the month</div>' +
+    '<div class="card" style="padding:.4rem .6rem"><table>' +
+    '<tr><th>Month</th><th>Trad</th><th>Web</th><th>Total</th><th>Revenue</th><th>Web %</th>' +
+      (anySpend ? '<th>Spend</th><th>$/exam</th>' : '') + '</tr>';
+
+  html += '<tr class="dim"><td>Baseline avg (2024–25)</td><td>—</td><td>—</td><td>' + D.baselineMonthly +
+    '</td><td>' + money(D.baselineMonthly * D.price) + '</td><td>—</td>' + (anySpend ? '<td>—</td><td>—</td>' : '') + '</tr>';
+
+  keys.forEach(function(k){
+    var m = yr.months[k], t = total(m);
+    var splitOk = comparable === true || (comparable === 'from-09' && k >= '09');
+    var issue = monthIssues(m).length > 0;
+    html += '<tr class="go' + (k===last?' hl':'') + '" onclick="__go(\'#/' + y + '/' + k + '\')">' +
+      '<td>' + MON3[+k] + (issue ? ' <span class="chip warn" style="padding:.1rem .4rem">⚠</span>' : '') + '</td>' +
+      '<td' + (splitOk?'':' class="nd"') + '>' + m.trad + '</td>' +
+      '<td' + (splitOk?'':' class="nd"') + '>' + m.web + '</td>' +
+      '<td>' + t + '</td>' +
+      '<td>' + money(t * D.price) + '</td>' +
+      '<td' + (splitOk?'':' class="nd"') + '>' + (splitOk ? (t ? pct(m.web/t*100) : '0%') : '—') + '</td>' +
+      (anySpend ? '<td>' + (has(m.spend) ? money(m.spend) : dash()) + '</td>' +
+                  '<td>' + (has(m.spend) && t ? money(m.spend/t) : dash()) + '</td>' : '') +
+      '</tr>';
+  });
+
+  var webT = yearWebTotal(y);
+  html += '<tr class="hl"><td>' + y + ' total</td>' +
+    '<td>' + (exams - webT) + '</td><td>' + webT + '</td><td>' + exams + '</td>' +
+    '<td>' + money(revenue) + '</td>' +
+    '<td>' + (comparable === true && exams ? pct(webT/exams*100) : '—') + '</td>' +
+    (anySpend ? '<td>' + money(spend) + '</td><td>' + (spendExams ? money(spend/spendExams) : dash()) + '</td>' : '') +
+    '</tr>';
+  html += '</table></div><div class="prov">' + basisCaption(yr) + '.</div></section>';
+
+  /* --- banked next --- */
+  if (yr.banked_next) {
+    var b = yr.banked_next;
+    html += '<section><div class="sec-title">' + esc(b.label) + '</div>' +
+      '<div class="sec-sub">Already on the books — not counted in the ' + y + ' totals above</div>' +
+      '<div class="kpis" style="margin:0">' +
+      '<div class="kpi"><div class="v">' + b.exams + '</div><div class="l">Exams on the books</div></div>' +
+      '<div class="kpi"><div class="v">' + money(b.revenue) + '</div><div class="l">Revenue banked</div></div>' +
+      '</div></section>';
+  }
+
+  document.getElementById('view').innerHTML = html;
+
+  mk('cVol', { type:'bar', data:{ labels:labels, datasets:datasets },
+    options:{ maintainAspectRatio:false, onClick: barNav(function(i){ go('#/' + y + '/' + keys[i]); }),
+      onHover: function(e, els){ e.native.target.style.cursor = els.length ? 'pointer' : 'default'; },
+      plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, boxHeight:10 } } },
+      scales:{ x:{ stacked:true, grid:{ display:false } },
+               y:{ stacked:true, beginAtZero:true, ticks:{ stepSize:5 }, grid:{ color:'#eef3fa' } } } } });
+
+  setCrumb([{ label:y, here:true }]);
+}
+
+function basisCaption(yr){
+  return yr.countBasis === 'create-month' ? 'Counted by booking-creation month' : 'Counted by service month';
+}
+function comparabilityChips(yr){
+  if (yr.webTagComparable === true) return '';
+  var txt = yr.webTagComparable === 'from-09'
+    ? 'Web/traditional split is only meaningful from Sep 2025 — online booking (Calendly) begins then'
+    : 'Web/traditional split not comparable pre-Sep 2025';
+  return '<div class="chips"><span class="chip">' + esc(txt) + '</span></div>' +
+         '<div class="prov">' + esc(D.tagBreak) + '</div>';
+}
+
+/* =========================================================================
+   MONTHLY VIEW  —  #/2026/08
+   ========================================================================= */
+function renderMonth(y, mk_){
+  var yr = D.years[y];
+  if (!yr || !yr.months || !yr.months[mk_]) return renderMissing('No data on record for ' + esc(MON[+mk_] || mk_) + ' ' + esc(y) + '.');
+
+  var m = yr.months[mk_], t = total(m), rev = t * D.price;
+  var name = MON[+mk_];
+  var splitOk = yr.webTagComparable === true || (yr.webTagComparable === 'from-09' && mk_ >= '09');
+  var issues = monthIssues(m);
+
+  /* same month, prior year */
+  var py = String(+y - 1), pyM = D.years[py] && D.years[py].months && D.years[py].months[mk_];
+  var pyT = pyM ? total(pyM) : null;
+  var delta = (pyT !== null && pyT > 0) ? Math.round((t - pyT) / pyT * 100) : null;
+
+  var html = '';
+  html += '<div class="hero"><h1><span class="big">' + t + ' exam' + (t===1?'':'s') + '</span> booked in ' + name + ' ' + y + '</h1>' +
+    '<div class="sub">' + money(rev) + ' in booked revenue · ' + basisCaption(yr).toLowerCase() +
+    (has(m.cancels) ? '' : '') + '</div></div>';
+
+  html += mismatchBlock(issues.map(function(s){ return name + ' ' + y + ': ' + s; }));
+
+  /* --- KPI row --- */
+  html += '<div class="kpis">' +
+    '<div class="kpi"><div class="v">' + t + '</div><div class="l">Exams booked</div>' +
+      '<div class="d">' + (pyT !== null
+        ? name.slice(0,3) + ' ' + py + ': ' + pyT + (delta !== null ? ' (' + (delta>=0?'+':'') + delta + '%)' : '')
+        : 'no ' + py + ' comparison on record') + '</div></div>' +
+    '<div class="kpi"><div class="v">' + money(rev) + '</div><div class="l">Booked revenue</div>' +
+      '<div class="d">' + t + ' × ' + money(D.price) + '</div></div>' +
+    '<div class="kpi' + (splitOk?'':' none') + '"><div class="v">' + (splitOk && t ? pct(m.web/t*100) : dash()) + '</div>' +
+      '<div class="l">Booked online</div><div class="d">' +
+      (splitOk ? m.web + ' of ' + t + ' · ' + m.trad + ' traditional' : 'split not comparable this year') + '</div></div>' +
+    '<div class="kpi' + (has(m.spend)?'':' none') + '"><div class="v">' + (has(m.spend) ? money(m.spend) : dash()) + '</div>' +
+      '<div class="l">Ad spend</div><div class="d">' +
+      (has(m.spend) ? (t ? money(m.spend/t) + ' per booked exam' : 'no exams booked') : 'not on record') + '</div></div>' +
+    '<div class="kpi' + (has(m.conv)?' pos':' none') + '"><div class="v">' + (has(m.conv) ? m.conv : dash()) + '</div>' +
+      '<div class="l">Conversions recorded</div><div class="d">' + (has(m.conv) ? 'Google Ads' : 'not on record') + '</div></div>' +
+  '</div>';
+
+  var chips = [];
+  if (has(m.cancels)) chips.push('<span class="chip">' + m.cancels + ' cancellation' + (m.cancels===1?'':'s') + ' excluded</span>');
+  if (m.revised)      chips.push('<span class="chip">revised: ' + esc(m.revised) + '</span>');
+  if (chips.length)   html += '<div class="chips" style="margin:-1.6rem 0 2.2rem">' + chips.join('') + '</div>';
+  if (m.note)         html += '<div class="caption" style="margin:-1.2rem 0 2.4rem">' + esc(m.note) + '</div>';
+
+  /* --- daily chart --- */
+  html += '<section><div class="sec-title">' + name + ', Day by Day</div>';
+  if (m.days) {
+    var dk = Object.keys(m.days).map(Number).sort(function(a,b){ return a-b; });
+    html += '<div class="sec-sub">Bookings by date created · cancellations excluded' +
+      (m.weeks ? ' · click a bar to open its week' : '') + '</div>' +
+      '<div class="card' + (issues.length ? ' warn' : '') + '"><div class="chart-wrap short"><canvas id="cDaily"></canvas></div></div></section>';
+  } else {
+    html += '<div class="sec-sub">Day-level detail</div><div class="empty">No daily detail on record for this month.</div></section>';
+  }
+
+  /* --- ads strip --- */
+  var adsFields = [
+    ['impressions', 'Ad impressions',      function(v){ return v.toLocaleString('en-US'); }],
+    ['clicks',      'Clicks',              function(v){ return v.toLocaleString('en-US'); }],
+    ['ctr',         'Click-through rate',  function(v){ return v + '%'; }],
+    ['cpc',         'Avg. cost per click', function(v){ return money2(v); }]
+  ];
+  var anyAds = adsFields.some(function(f){ return has(m[f[0]]); }) || has(m.spend);
+  html += '<section><div class="sec-title">Google Ads</div>' +
+    '<div class="sec-sub">' + name + ' ' + y + (anyAds ? '' : ' · not yet backfilled from the Ads UI') + '</div>';
+  if (anyAds) {
+    html += '<div class="kpis" style="margin:0">' + adsFields.map(function(f){
+      return '<div class="kpi' + (has(m[f[0]])?'':' none') + '"><div class="v">' +
+        (has(m[f[0]]) ? f[2](m[f[0]]) : dash()) + '</div><div class="l">' + f[1] + '</div>' +
+        (has(m[f[0]]) ? '' : '<div class="d">not on record</div>') + '</div>';
+    }).join('') + '</div>';
+  } else {
+    html += '<div class="empty">No ad metrics on record for this month.</div>';
+  }
+  html += '</section>';
+
+  /* --- weeks table --- */
+  html += '<section><div class="sec-title">Week by Week</div>';
+  if (m.weeks && m.weeks.length) {
+    html += '<div class="sec-sub">Click a row to open the week</div>' +
+      '<div class="card" style="padding:.4rem .6rem"><table>' +
+      '<tr><th>Week</th><th>Web</th><th>Phone</th><th>Total</th><th>Spend</th><th style="text-align:left">Notes</th></tr>' +
+      m.weeks.map(function(w,i){
+        return '<tr class="go" onclick="__go(\'#/' + y + '/' + mk_ + '/W' + (i+1) + '\')">' +
+          '<td>' + esc(w.label) + '</td><td>' + (w.web||0) + '</td><td>' + (w.phone||0) + '</td>' +
+          '<td>' + weekExams(w) + '</td>' +
+          '<td>' + (has(w.spend) ? money(w.spend) : dash()) + '</td>' +
+          '<td style="text-align:left;color:var(--text-secondary);font-size:12px">' + (w.notes ? esc(w.notes) : dash()) + '</td></tr>';
+      }).join('') +
+      '<tr class="hl"><td>Total</td><td>' + m.weeks.reduce(function(a,w){return a+(w.web||0);},0) + '</td>' +
+      '<td>' + m.weeks.reduce(function(a,w){return a+(w.phone||0);},0) + '</td>' +
+      '<td>' + sumWeeks(m) + '</td><td>—</td><td style="text-align:left">—</td></tr>' +
+      '</table></div>';
+  } else {
+    html += '<div class="sec-sub">Week-level detail</div><div class="empty">No weekly detail on record for this month.</div>';
+  }
+  html += '</section>';
+
+  html += '<div class="prov">' + basisCaption(yr) + ' · source: ' +
+    (m.src ? esc(m.src) : '<span style="color:var(--text-dim)">EHR export date not recorded</span>') +
+    ' · ad metrics: ' + (m.adsSrc ? esc(m.adsSrc) : '<span style="color:var(--text-dim)">Ads pull date not recorded</span>') + '</div>';
+
+  document.getElementById('view').innerHTML = html;
+
+  if (m.days) {
+    var dks = Object.keys(m.days).map(Number).sort(function(a,b){ return a-b; });
+    var wkOf = dks.map(function(d){
+      if (!m.weeks) return null;
+      for (var i=0;i<m.weeks.length;i++){
+        var r = weekRange(m.weeks[i].label);
+        if (r && d >= r.start && d <= r.end) return i+1;
+      }
+      return null;
+    });
+    mk('cDaily', { type:'bar',
+      data:{ labels: dks.map(String),
+        datasets:[{ label:'Bookings', data: dks.map(function(d){ return m.days[d]; }),
+          backgroundColor:'#3b7dd8', borderRadius:3 }] },
+      options:{ maintainAspectRatio:false,
+        onClick: barNav(function(i){ if (wkOf[i]) go('#/' + y + '/' + mk_ + '/W' + wkOf[i]); }),
+        onHover: function(e, els){ e.native.target.style.cursor = (els.length && wkOf[els[0].index]) ? 'pointer' : 'default'; },
+        plugins:{ legend:{ display:false },
+          tooltip:{ callbacks:{ title:function(c){ return MON3[+mk_] + ' ' + c[0].label; } } } },
+        scales:{ x:{ grid:{ display:false }, title:{ display:true, text: name + ' date', font:{ size:10 } } },
+                 y:{ beginAtZero:true, ticks:{ stepSize:1 }, grid:{ color:'#eef3fa' } } } } });
+  }
+
+  setCrumb([{ label:y, hash:'#/'+y }, { label:name, here:true }]);
+}
+
+/* =========================================================================
+   WEEKLY VIEW  —  #/2026/08/W4
+   ========================================================================= */
+function renderWeek(y, mk_, wk){
+  var yr = D.years[y];
+  var m  = yr && yr.months && yr.months[mk_];
+  var idx = /^W(\d+)$/i.test(wk) ? (+wk.slice(1) - 1) : -1;
+  if (!m || !m.weeks || !m.weeks[idx]) {
+    return renderMissing('No data on record for ' + esc(wk) + ' of ' + esc(MON[+mk_] || mk_) + ' ' + esc(y) + '.');
+  }
+
+  var w = m.weeks[idx], name = MON[+mk_];
+  var exams = weekExams(w), rev = exams * D.price;
+  var r = weekRange(w.label);
+
+  /* days inside this week's parsed range */
+  var dayLabels = [], dayVals = [];
+  if (r && m.days) {
+    for (var d = r.start; d <= r.end; d++) { dayLabels.push(String(d)); dayVals.push(m.days[d] || 0); }
+  }
+  var daySum = dayVals.reduce(function(a,b){ return a+b; }, 0);
+
+  var html = '';
+  html += '<div class="hero"><h1><span class="big">' + exams + ' exam' + (exams===1?'':'s') + '</span> · week of ' + esc(w.label) + '</h1>' +
+    '<div class="sub">' + money(rev) + ' in booked revenue · ' + (w.web||0) + ' online, ' + (w.phone||0) + ' by phone</div></div>';
+
+  html += '<div class="kpis">' +
+    '<div class="kpi"><div class="v">' + exams + '</div><div class="l">Exams booked</div>' +
+      '<div class="d">' + (w.web||0) + ' web + ' + (w.phone||0) + ' phone</div></div>' +
+    '<div class="kpi"><div class="v">' + money(rev) + '</div><div class="l">Booked revenue</div>' +
+      '<div class="d">' + exams + ' × ' + money(D.price) + '</div></div>' +
+    '<div class="kpi' + (has(w.spend)?'':' none') + '"><div class="v">' + (has(w.spend) ? money(w.spend) : dash()) + '</div>' +
+      '<div class="l">Ad spend</div><div class="d">' +
+      (has(w.spend) ? (exams ? money(w.spend/exams) + ' per exam' : '') : 'not on record — weekly spend is not split out') + '</div></div>' +
+  '</div>';
+
+  if (w.notes) html += '<div class="caption" style="margin:-1.4rem 0 2.4rem">' + esc(w.notes) + '</div>';
+
+  html += '<section><div class="sec-title">Day by Day</div>';
+  if (dayLabels.length) {
+    html += '<div class="sec-sub">' + name + ' ' + r.start + '–' + r.end + ' · bookings by date created</div>' +
+      '<div class="card"><div class="chart-wrap short"><canvas id="cWeek"></canvas></div></div>';
+    if (daySum !== exams) {
+      html += '<div class="chips"><span class="chip">daily entries in this range total ' + daySum +
+        '; the week row records ' + exams + ' (web + phone)</span></div>';
+    }
+  } else {
+    html += '<div class="sec-sub">Day-level detail</div><div class="empty">No daily detail on record for this week.</div>';
+  }
+  html += '</section>';
+
+  /* --- prev / next --- */
+  var prev = m.weeks[idx-1], next = m.weeks[idx+1];
+  html += '<div class="pager">' +
+    (prev ? '<button class="pgbtn" onclick="__go(\'#/' + y + '/' + mk_ + '/W' + idx + '\')"><small>← Previous</small>' + esc(prev.label) + '</button>'
+          : '<button class="pgbtn" disabled><small>← Previous</small>start of month</button>') +
+    (next ? '<button class="pgbtn next" onclick="__go(\'#/' + y + '/' + mk_ + '/W' + (idx+2) + '\')"><small>Next →</small>' + esc(next.label) + '</button>'
+          : '<button class="pgbtn next" disabled><small>Next →</small>end of month</button>') +
+  '</div>';
+
+  document.getElementById('view').innerHTML = html;
+
+  if (dayLabels.length) {
+    mk('cWeek', { type:'bar',
+      data:{ labels: dayLabels, datasets:[{ label:'Bookings', data: dayVals, backgroundColor:'#3b7dd8', borderRadius:3 }] },
+      options:{ maintainAspectRatio:false,
+        plugins:{ legend:{ display:false },
+          tooltip:{ callbacks:{ title:function(c){ return MON3[+mk_] + ' ' + c[0].label; } } } },
+        scales:{ x:{ grid:{ display:false }, title:{ display:true, text: name + ' date', font:{ size:10 } } },
+                 y:{ beginAtZero:true, ticks:{ stepSize:1 }, grid:{ color:'#eef3fa' } } } } });
+  }
+
+  setCrumb([{ label:y, hash:'#/'+y }, { label:name, hash:'#/'+y+'/'+mk_ },
+            { label:'Week of ' + MON3[+mk_] + ' ' + (r ? r.start : wk), here:true }]);
+}
+
+/* ---------- shell -------------------------------------------------------- */
+function renderMissing(msg){
+  document.getElementById('view').innerHTML =
+    '<div class="empty" style="margin-top:1rem">' + msg + '</div>' +
+    '<div class="pager"><button class="pgbtn" onclick="__go(\'#/2026\')"><small>← Back</small>2026 overview</button></div>';
+  setCrumb([{ label:'not found', here:true }]);
+}
+
+function setCrumb(parts){
+  document.getElementById('crumb').innerHTML = parts.map(function(p, i){
+    var sep = i ? '<span class="sep">›</span>' : '';
+    return sep + (p.here ? '<span class="here">' + esc(p.label) + '</span>'
+                         : '<a onclick="__go(\'' + p.hash + '\')">' + esc(p.label) + '</a>');
+  }).join('');
+}
+
+function render(){
+  if (!unlocked) return;
+  killCharts();
+  var r = parseHash();
+  var y = r.year && D.years[r.year] ? r.year : null;
+  if (!y) { if (location.hash.replace(/^#\/?/,'')) return renderMissing('Unknown view: ' + esc(location.hash)); y = '2026'; }
+  if      (r.week)  renderWeek(y, r.month, r.week);
+  else if (r.month) renderMonth(y, r.month);
+  else              renderYear(y);
+  window.scrollTo(0, 0);
+}
+
+document.getElementById('foot').innerHTML =
+  'Booked exams verified against AdvancedMD; every person counts as one exam and cancellations are excluded. ' +
+  'Revenue = ' + money(D.price) + ' exam fee per booking; deposits and additional services separate. ' +
+  'Ad metrics from Google Ads. Years marked “counted by service month” come from service-date-bounded EHR exports; ' +
+  '2026 is counted by booking-creation month — the two bases are not interchangeable. ' +
+  'Prepared by Tog Samphel · FX3 Media. Confidential.';
+
+window.addEventListener('hashchange', render);
+
+window.unlock = function(){
+  var i = document.getElementById('pw');
+  if (i.value === 'cardiacare') {
+    document.getElementById('gate').classList.add('hidden');
+    unlocked = true;
+    Chart.defaults.font.family = "'Libre Franklin',sans-serif";
+    Chart.defaults.font.size = 11;
+    Chart.defaults.color = '#5b6675';
+    if (!location.hash) location.hash = '#/2026'; else render();
+  } else {
+    i.classList.remove('error'); void i.offsetWidth; i.classList.add('error');
+  }
+};
+document.getElementById('pw').addEventListener('keydown', function(e){ if (e.key === 'Enter') window.unlock(); });
+
+})();
+</script>
+</body>
+</html>
