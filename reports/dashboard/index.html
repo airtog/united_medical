@@ -36,18 +36,42 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font
 .masthead .brand{font-family:var(--serif);font-size:20px}
 .masthead .tag{font-size:12px;color:var(--text-dim);letter-spacing:.04em}
 
-/* ---- breadcrumb ---- */
-.crumb{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;font-size:12.5px;color:var(--text-dim);margin-bottom:1.6rem;min-height:20px}
+/* ---- breadcrumb: only earns its place at week level, where the tab rows
+       cannot express which week is open ---- */
+.crumb{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;font-size:12.5px;color:var(--text-dim);margin-bottom:1.6rem}
+.crumb[hidden]{display:none}
 .crumb a{color:var(--blue);text-decoration:none;cursor:pointer}
 .crumb a:hover{text-decoration:underline}
 .crumb .sep{color:var(--text-dim);opacity:.6}
 .crumb .here{color:var(--text-secondary);font-weight:600}
 
-/* ---- year tabs ---- */
-.tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.4rem}
-.tab{font-family:var(--sans);font-size:12.5px;font-weight:500;color:var(--text-secondary);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:.4rem .95rem;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+/* ---- year tabs: the one row that stays a segmented pill control ---- */
+.tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.6rem}
+.tab{font-family:var(--sans);font-size:12.5px;font-weight:500;color:var(--text-secondary);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:.4rem .95rem;cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;transition:background .15s,color .15s,border-color .15s}
 .tab:hover{border-color:var(--blue-bright);color:var(--blue)}
 .tab.on{background:var(--blue);border-color:var(--blue);color:#fff}
+
+/* ---- month row: plain text links, not a second row of pills. Pills on pills
+       read as two competing controls; text sits quietly under the year row
+       and lets the underline alone carry the selected state. ---- */
+.mtabs{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:.05rem;row-gap:.3rem;margin-bottom:2.2rem;font-size:12.5px}
+.mtab{font-family:var(--sans);font-weight:500;color:var(--text-dim);background:none;border:none;padding:.2rem .5rem;cursor:pointer;position:relative;display:inline-flex;align-items:center;gap:.25rem;transition:color .15s}
+.mtab:hover{color:var(--blue)}
+.mtab.on{color:var(--blue);font-weight:700}
+.mtab.on::after{content:'';position:absolute;left:.5rem;right:.5rem;bottom:0;height:2px;border-radius:1px;background:var(--blue)}
+.mtab.all{color:var(--text-secondary);font-weight:600;margin-right:.3rem;padding-right:.65rem;border-right:1px solid var(--border)}
+.mtab.all.on{color:var(--blue)}
+.mtab.all.on::after{right:1.15rem}
+.mtab[disabled]{color:var(--border);cursor:default}
+.mtab[disabled]:hover{color:var(--border)}
+
+/* ---- engagement-start flag: a small pennant marking when FX3 work began,
+       on the year pill and on its month link. Uses currentColor so it always
+       matches whatever state (selected/unselected) the control is already in. ---- */
+/* Inline with the label in both controls now (flex handles the centering) —
+   no more absolute corner badge floating outside the pill like a sticker. */
+.flag-badge{display:inline-flex;color:var(--blue-bright)}
+.tab.on .flag-badge,.mtab.on .flag-badge{color:currentColor}
 
 
 .hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(28px,5vw,42px);line-height:1.14;margin-bottom:.55rem}
@@ -69,6 +93,7 @@ section{margin-bottom:2.8rem}
 .card.warn{border-color:var(--red);box-shadow:0 0 0 1px var(--red) inset}
 .chart-wrap{position:relative;height:300px}
 .chart-wrap.short{height:230px}
+.chart-wrap.funnel{height:320px}
 
 table{width:100%;border-collapse:collapse;font-size:13.5px}
 th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);font-weight:600;text-align:right;padding:.5rem .6rem;border-bottom:1px solid var(--border)}
@@ -157,6 +182,22 @@ td.nd{color:var(--text-dim)}
 "use strict";
 
 var D = window.UME_DATA;
+
+/* If data.js failed to load (missing file, blocked request, wrong relative
+   path, whatever the cause) every top-level statement below that touches D —
+   including the footer copy near the bottom of this file, which runs BEFORE
+   window.unlock gets assigned — would throw and silently kill the entire
+   script. That leaves the gate's "View Dashboard" button wired to a function
+   that was never defined: it looks loaded, does nothing when clicked, and
+   gives no indication why. Fail loud and visible instead. */
+if (!D) {
+  document.getElementById('gate').innerHTML =
+    '<div class="gate-box"><div class="gate-logo">United Medical Exams</div>' +
+    '<div class="gate-sub" style="color:var(--red)">Dashboard data failed to load. ' +
+    'Make sure data.js is next to index.html and reachable, then reload.</div></div>';
+  return;
+}
+
 var MON  = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
 var MON3 = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 var charts = [];
@@ -239,6 +280,169 @@ function barNav(cb){
 }
 
 /* =========================================================================
+   FUNNEL CHART  —  Ad Spend → Calls → Bookings, weekly since engagement
+   began. Hero chart of the annual view; does not depend on which year tab is
+   selected, since the series spans multiple years.
+   ========================================================================= */
+function isoAddDays(iso, n){
+  var d = new Date(iso + 'T00:00:00Z');
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0,10);
+}
+function fmtMD(iso){
+  var d = new Date(iso + 'T00:00:00Z');
+  return (d.getUTCMonth()+1) + '/' + d.getUTCDate();
+}
+function weekRangeLabel(iso){
+  var end = isoAddDays(iso, 6);
+  var d0 = new Date(iso+'T00:00:00Z'), d1 = new Date(end+'T00:00:00Z');
+  var a = MON3[d0.getUTCMonth()+1] + ' ' + d0.getUTCDate();
+  var b = (d0.getUTCMonth()===d1.getUTCMonth()) ? String(d1.getUTCDate()) : (MON3[d1.getUTCMonth()+1] + ' ' + d1.getUTCDate());
+  return a + '–' + b;
+}
+
+/* Fills the continuous Monday-to-Monday range implied by D.weeklyFunnel.
+   A week absent from the sparse source array comes back fully null here —
+   that is the one and only "no data" signal the chart hatches. A week THAT
+   IS in the source with trad:0/web:0 stays a real, plotted zero. */
+function buildFunnelWeeks(){
+  var src = D.weeklyFunnel;
+  if (!src || !src.length) return [];
+  var byWeek = {};
+  src.forEach(function(r){ byWeek[r.week] = r; });
+  var out = [], cur = src[0].week, last = src[src.length - 1].week;
+  while (cur <= last) {
+    var r = byWeek[cur];
+    var trad = r ? r.trad : null, web = r ? r.web : null,
+        calls = r ? r.calls : null, spend = r ? r.spend : null;
+    out.push({
+      week: cur, trad: trad, web: web, calls: calls, spend: spend,
+      noData: trad === null && web === null && calls === null && spend === null
+    });
+    cur = isoAddDays(cur, 7);
+  }
+  return out;
+}
+
+/* Paused-campaign zones: a run of explicit spend===0 weeks bracketed by a
+   week where spend was known and > 0 on either side. Never hand-dated —
+   this only fires once real weekly spend exists. D.pausedZones is an
+   override list of the same {startWeek, endWeek, label} shape, for a zone
+   the auto-derivation misses or a label it should carry. */
+function deriveFunnelZones(weeks){
+  var zones = [], i = 0;
+  while (i < weeks.length) {
+    if (weeks[i].spend === 0) {
+      var j = i;
+      while (j < weeks.length && weeks[j].spend === 0) j++;
+      var prev = i > 0 ? weeks[i-1].spend : null, next = j < weeks.length ? weeks[j].spend : null;
+      if ((prev !== null && prev > 0) || (next !== null && next > 0)) zones.push({ start:i, end:j-1, label:'PAUSED' });
+      i = j;
+    } else i++;
+  }
+  (D.pausedZones || []).forEach(function(z){
+    var si = weeks.findIndex(function(w){ return w.week === z.startWeek; });
+    var ei = weeks.findIndex(function(w){ return w.week === z.endWeek; });
+    if (si > -1 && ei > -1) zones.push({ start:si, end:ei, label:z.label || 'PAUSED' });
+  });
+  return zones;
+}
+
+/* 45° hatch, clipped to one week's column — the "no data" texture. */
+function drawHatch(ctx, x0, x1, yTop, yBottom, color){
+  ctx.save();
+  ctx.beginPath(); ctx.rect(x0, yTop, x1 - x0, yBottom - yTop); ctx.clip();
+  ctx.strokeStyle = color; ctx.lineWidth = 1;
+  var h = yBottom - yTop, step = 6;
+  for (var off = -h; off < (x1 - x0) + h; off += step) {
+    ctx.beginPath(); ctx.moveTo(x0 + off, yBottom); ctx.lineTo(x0 + off + h, yTop); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function funnelSectionHTML(){
+  if (!D.weeklyFunnel || !D.weeklyFunnel.length) return '';
+  return '<section><div class="sec-title">Ad Spend → Calls → Bookings</div>' +
+    '<div class="sec-sub">Weekly, Mon–Sun, since the engagement began · bars = bookings (left) · blue line = tracked-line calls (left) · red line = ad spend (right, $) · hatched = no data yet</div>' +
+    '<div class="card"><div class="chart-wrap funnel"><canvas id="cFunnel"></canvas></div></div></section>';
+}
+
+function buildFunnelChart(){
+  var weeks = buildFunnelWeeks();
+  if (!weeks.length) return;
+  var labels = weeks.map(function(w){ return fmtMD(w.week); });
+  var zones = deriveFunnelZones(weeks);
+  var noDataIdx = [];
+  weeks.forEach(function(w,i){ if (w.noData) noDataIdx.push(i); });
+
+  var hatchPlugin = { id:'hatchNoData', beforeDatasetsDraw: function(chart){
+    var xs = chart.scales.x; if (!xs || !noDataIdx.length) return;
+    var step = xs.getPixelForValue(1) - xs.getPixelForValue(0), ctx = chart.ctx;
+    noDataIdx.forEach(function(i){
+      var cx = xs.getPixelForValue(i);
+      drawHatch(ctx, cx - step/2, cx + step/2, chart.chartArea.top, chart.chartArea.bottom, 'rgba(150,160,175,0.25)');
+    });
+  }};
+
+  var pausedPlugin = { id:'pausedZonesPlugin', beforeDatasetsDraw: function(chart){
+    if (!zones.length) return;
+    var xs = chart.scales.x, step = xs.getPixelForValue(1) - xs.getPixelForValue(0), ctx = chart.ctx;
+    zones.forEach(function(z){
+      var x0 = xs.getPixelForValue(z.start) - step/2, x1 = xs.getPixelForValue(z.end) + step/2;
+      ctx.save();
+      ctx.fillStyle = 'rgba(196,75,63,0.09)';
+      ctx.fillRect(x0, chart.chartArea.top, x1 - x0, chart.chartArea.bottom - chart.chartArea.top);
+      if (x1 - x0 > 34) {
+        ctx.fillStyle = '#c44b3f'; ctx.font = "600 10px 'Libre Franklin',sans-serif"; ctx.textAlign = 'center';
+        ctx.fillText(z.label, (x0 + x1) / 2, chart.chartArea.top + 12);
+      }
+      ctx.restore();
+    });
+  }};
+
+  mk('cFunnel', { type:'bar',
+    data:{ labels: labels, datasets:[
+      { label:'Traditional', data: weeks.map(function(w){ return w.trad; }), backgroundColor:'#9aa6b8', stack:'bookings', borderRadius:2, yAxisID:'y' },
+      { label:'Website', data: weeks.map(function(w){ return w.web; }), backgroundColor:'#3b7dd8', stack:'bookings', borderRadius:2, yAxisID:'y' },
+      { label:'Tracked-line calls', type:'line', data: weeks.map(function(w){ return w.calls; }),
+        borderColor:'#2d5fa5', backgroundColor:'#2d5fa5', pointBackgroundColor:'#2d5fa5', pointRadius:2.5, borderWidth:1.6, spanGaps:false, yAxisID:'y' },
+      { label:'Ad spend', type:'line', data: weeks.map(function(w){ return w.spend; }),
+        borderColor:'#c44b3f', backgroundColor:'#c44b3f', pointRadius:2, borderWidth:1.6, spanGaps:false, yAxisID:'y1' }
+    ]},
+    options:{ maintainAspectRatio:false, interaction:{ mode:'index', intersect:false },
+      plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, boxHeight:10 } },
+        tooltip:{ callbacks:{
+          title: function(items){ return weekRangeLabel(weeks[items[0].dataIndex].week); },
+          label: function(item){
+            var w = weeks[item.dataIndex], lbl = item.dataset.label;
+            if (lbl === 'Traditional') return 'Traditional: ' + (has(w.trad) ? w.trad : '—');
+            if (lbl === 'Website') return 'Website: ' + (has(w.web) ? w.web : '—');
+            if (lbl === 'Tracked-line calls') return 'Calls: ' + (has(w.calls) ? w.calls : '—');
+            if (lbl === 'Ad spend') {
+              var line = 'Spend: ' + (has(w.spend) ? money(w.spend) : '—');
+              var tot = (w.trad || 0) + (w.web || 0);
+              if (has(w.spend) && tot > 0) line += ' · ' + money(w.spend / tot) + '/booking';
+              return line;
+            }
+            return '';
+          },
+          footer: function(items){
+            var w = weeks[items[0].dataIndex];
+            return (has(w.trad) || has(w.web)) ? 'Total: ' + ((w.trad||0)+(w.web||0)) : '';
+          }
+        }}
+      },
+      scales:{
+        x:{ stacked:true, grid:{ display:false }, ticks:{ maxRotation:0, autoSkip:true, autoSkipPadding:10 } },
+        y:{ stacked:true, beginAtZero:true, position:'left', grid:{ color:'#eef3fa' } },
+        y1:{ beginAtZero:true, suggestedMax: 500, position:'right', grid:{ display:false }, ticks:{ callback:function(v){ return '$' + v; } } }
+      }
+    },
+    plugins:[hatchPlugin, pausedPlugin]
+  });
+}
+
+/* =========================================================================
    ANNUAL VIEW  —  #/2026
    ========================================================================= */
 function renderYear(y){
@@ -273,9 +477,7 @@ function renderYear(y){
 
   var html = '';
 
-  html += '<div class="tabs">' + Object.keys(D.years).sort().map(function(k){
-    return '<button class="tab' + (k===y?' on':'') + '" onclick="__go(\'#/' + k + '\')">' + k + '</button>';
-  }).join('') + '</div>';
+  html += yearTabs(y) + monthTabs(y, null);
 
   html += '<div class="hero"><h1><span class="big">' + exams + ' exams</span> booked in ' + y + '</h1>' +
           '<div class="sub">' + money(revenue) + ' in booked revenue' +
@@ -301,6 +503,14 @@ function renderYear(y){
       (spendExams ? money(spend/spendExams) : dash()) + '</div><div class="l">Cost per booked exam</div>' +
       '<div class="d">' + (spendExams ? 'tracked months only · ' + spendExams + ' exams' : 'needs spend data') + '</div></div>' +
   '</div>';
+
+  /* The funnel is a live, cross-year operational chart (calls/spend/bookings
+     since the engagement began) — not a per-year one. Showing it unchanged on
+     2023/2024, years that predate the engagement entirely, is nonsensical and
+     just duplicates the same chart on every tab. It belongs only on the
+     current year's page. */
+  var isCurrentYear = (y === Object.keys(D.years).sort().pop());
+  if (isCurrentYear) html += funnelSectionHTML();
 
   /* --- year over year --- */
   var allYears = Object.keys(D.years).sort();
@@ -399,6 +609,8 @@ function renderYear(y){
 
   document.getElementById('view').innerHTML = html;
 
+  if (isCurrentYear) buildFunnelChart();
+
   mk('cVol', { type:'bar', data:{ labels:labels, datasets:datasets },
     options:{ maintainAspectRatio:false, onClick: barNav(function(i){ go('#/' + y + '/' + keys[i]); }),
       onHover: function(e, els){ e.native.target.style.cursor = els.length ? 'pointer' : 'default'; },
@@ -406,7 +618,52 @@ function renderYear(y){
       scales:{ x:{ stacked:true, grid:{ display:false } },
                y:{ stacked:true, beginAtZero:true, ticks:{ stepSize:5 }, grid:{ color:'#eef3fa' } } } } });
 
-  setCrumb([{ label:y, here:true }]);
+  setCrumb([]);
+}
+
+/* A tiny pennant marking when the FX3 engagement began. currentColor so it
+   always matches whatever state (selected or not) the control is already in.
+   Built lazily, not as a top-level statement — a top-level dereference of D
+   runs at script-parse time, before the gate even unlocks, so if data.js were
+   ever slow, blocked, or missing, it would throw before unlock() could even
+   be wired up and take the whole page down with it. Calling this inside
+   yearTabs()/monthTabs() defers it to render time, well after D is known good. */
+function flagBadge(){
+  return '<span class="flag-badge" title="' +
+    esc(D.engagementStart.label) + ' — ' + MON[+D.engagementStart.month] + ' ' + D.engagementStart.year +
+    '"><svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true">' +
+    '<line x1="2" y1="1" x2="2" y2="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
+    '<path d="M2 1.8 L9.5 4 L2 6.2 Z" fill="currentColor"/></svg></span>';
+}
+
+/* Both tab rows render on every level, so the year and the month are always
+   one click away. `current` is null at the year level, which lights "All". */
+function yearTabs(y){
+  var startY = D.engagementStart.year;
+  return '<div class="tabs">' + Object.keys(D.years).sort().map(function(k){
+    return '<button class="tab' + (k === y ? ' on' : '') + '" onclick="__go(\'#/' + k + '\')">' +
+      (k === startY ? flagBadge() : '') + k + '</button>';
+  }).join('') + '</div>';
+}
+
+function monthTabs(y, current){
+  var yr = D.years[y];
+  var flagMonth = (y === D.engagementStart.year) ? D.engagementStart.month : null;
+  var out = '<button class="mtab all' + (current ? '' : ' on') + '" onclick="__go(\'#/' + y + '\')">All</button>';
+  for (var i = 1; i <= 12; i++) {
+    var k = (i < 10 ? '0' : '') + i;
+    var m = yr.months && yr.months[k];
+    var flag = (k === flagMonth) ? flagBadge() : '';
+    if (m) {
+      var t = total(m);
+      out += '<button class="mtab' + (k === current ? ' on' : '') + '"' +
+        ' title="' + MON[i] + ' ' + y + ' — ' + t + ' exam' + (t === 1 ? '' : 's') + '"' +
+        ' onclick="__go(\'#/' + y + '/' + k + '\')">' + flag + MON3[i] + '</button>';
+    } else {
+      out += '<button class="mtab" disabled title="' + MON[i] + ' ' + y + ' — no data on record">' + flag + MON3[i] + '</button>';
+    }
+  }
+  return '<div class="mtabs">' + out + '</div>';
 }
 
 function basisCaption(yr){
@@ -439,6 +696,7 @@ function renderMonth(y, mk_){
   var delta = (pyT !== null && pyT > 0) ? Math.round((t - pyT) / pyT * 100) : null;
 
   var html = '';
+  html += yearTabs(y) + monthTabs(y, mk_);
   html += '<div class="hero"><h1><span class="big">' + t + ' exam' + (t===1?'':'s') + '</span> booked in ' + name + ' ' + y + '</h1>' +
     '<div class="sub">' + money(rev) + ' in booked revenue · ' + basisCaption(yr).toLowerCase() +
     (has(m.cancels) ? '' : '') + '</div></div>';
@@ -501,12 +759,30 @@ function renderMonth(y, mk_){
   }
   html += '</section>';
 
+  /* --- web calls: rendered whenever the month belongs to the call-tracking
+         era (2026 months all carry `calls`, even as null). Earlier years omit
+         the section entirely rather than showing an empty chart for a system
+         that did not exist yet. Daily volume only — the fuller monthly/ad/
+         phone-match breakdown still lives in `calls`, just not shown here. */
+  if ('calls' in m) {
+    var c = m.calls || {};
+    html += '<section><div class="sec-title">Web Calls</div>';
+    if (c.days) {
+      html += '<div class="sec-sub">Calls by date, ' + name + ' ' + y + '</div>' +
+        '<div class="card"><div class="chart-wrap short"><canvas id="cCallsDaily"></canvas></div></div>';
+    } else {
+      html += '<div class="sec-sub">' + name + ' ' + y + (m.calls ? '' : ' · call tracking not yet live') + '</div>' +
+        '<div class="empty">No daily call detail on record for this month.</div>';
+    }
+    html += '</section>';
+  }
+
   /* --- weeks table --- */
   html += '<section><div class="sec-title">Week by Week</div>';
   if (m.weeks && m.weeks.length) {
     html += '<div class="sec-sub">Web = booked online · phone = booked by call</div>' +
       '<div class="card" style="padding:.4rem .6rem"><table>' +
-      '<tr><th>Week</th><th>Web</th><th>Phone</th><th>Total</th><th>Spend</th><th style="text-align:left">Notes</th><th class="arw"></th></tr>' +
+      '<tr><th>Week</th><th>Web</th><th>Phone/Other</th><th>Total</th><th>Spend</th><th style="text-align:left">Notes</th><th class="arw"></th></tr>' +
       m.weeks.map(function(w,i){
         return '<tr class="go" onclick="__go(\'#/' + y + '/' + mk_ + '/W' + (i+1) + '\')">' +
           '<td>' + esc(w.label) + '</td><td>' + (w.web||0) + '</td><td>' + (w.phone||0) + '</td>' +
@@ -535,7 +811,9 @@ function renderMonth(y, mk_){
 
   html += '<div class="prov">' + basisCaption(yr) + ' · source: ' +
     (m.src ? esc(m.src) : '<span style="color:var(--text-dim)">EHR export date not recorded</span>') +
-    ' · ad metrics: ' + (m.adsSrc ? esc(m.adsSrc) : '<span style="color:var(--text-dim)">Ads pull date not recorded</span>') + '</div>';
+    ' · ad metrics: ' + (m.adsSrc ? esc(m.adsSrc) : '<span style="color:var(--text-dim)">Ads pull date not recorded</span>') +
+    ('calls' in m ? ' · calls: ' + (m.quoSrc ? esc(m.quoSrc) : '<span style="color:var(--text-dim)">Quo export date not recorded</span>') : '') +
+    '</div>';
 
   document.getElementById('view').innerHTML = html;
 
@@ -562,7 +840,20 @@ function renderMonth(y, mk_){
                  y:{ beginAtZero:true, ticks:{ stepSize:1 }, grid:{ color:'#eef3fa' } } } } });
   }
 
-  setCrumb([{ label:y, hash:'#/'+y }, { label:name, here:true }]);
+  if (m.calls && m.calls.days) {
+    var cks = Object.keys(m.calls.days).map(Number).sort(function(a,b){ return a-b; });
+    mk('cCallsDaily', { type:'line',
+      data:{ labels: cks.map(String),
+        datasets:[{ label:'Calls', data: cks.map(function(d){ return m.calls.days[d]; }),
+          borderColor:'#2d5fa5', backgroundColor:'#2d5fa5', pointRadius:2.5, borderWidth:1.6, tension:.15 }] },
+      options:{ maintainAspectRatio:false,
+        plugins:{ legend:{ display:false },
+          tooltip:{ callbacks:{ title:function(c){ return MON3[+mk_] + ' ' + c[0].label; } } } },
+        scales:{ x:{ grid:{ display:false }, title:{ display:true, text: name + ' date', font:{ size:10 } } },
+                 y:{ beginAtZero:true, ticks:{ stepSize:2 }, grid:{ color:'#eef3fa' } } } } });
+  }
+
+  setCrumb([]);
 }
 
 /* =========================================================================
@@ -588,6 +879,7 @@ function renderWeek(y, mk_, wk){
   var daySum = dayVals.reduce(function(a,b){ return a+b; }, 0);
 
   var html = '';
+  html += yearTabs(y) + monthTabs(y, mk_);
   html += '<div class="hero"><h1><span class="big">' + exams + ' exam' + (exams===1?'':'s') + '</span> · week of ' + esc(w.label) + '</h1>' +
     '<div class="sub">' + money(rev) + ' in booked revenue · ' + (w.web||0) + ' online, ' + (w.phone||0) + ' by phone</div></div>';
 
@@ -599,6 +891,9 @@ function renderWeek(y, mk_, wk){
     '<div class="kpi' + (has(w.spend)?'':' none') + '"><div class="v">' + (has(w.spend) ? money(w.spend) : dash()) + '</div>' +
       '<div class="l">Ad spend</div><div class="d">' +
       (has(w.spend) ? (exams ? money(w.spend/exams) + ' per exam' : '') : 'not on record — weekly spend is not split out') + '</div></div>' +
+    /* weeks carry quoInbound only when it was actually pulled — omitted, never zeroed */
+    (has(w.quoInbound) ? '<div class="kpi"><div class="v">' + w.quoInbound + '</div>' +
+      '<div class="l">Tracked-line calls</div><div class="d">inbound</div></div>' : '') +
   '</div>';
 
   if (w.notes) html += '<div class="caption" style="margin:-1.4rem 0 2.4rem">' + esc(w.notes) + '</div>';
@@ -650,7 +945,9 @@ function renderMissing(msg){
 }
 
 function setCrumb(parts){
-  document.getElementById('crumb').innerHTML = parts.map(function(p, i){
+  var el = document.getElementById('crumb');
+  el.hidden = !parts.length;
+  el.innerHTML = parts.map(function(p, i){
     var sep = i ? '<span class="sep">›</span>' : '';
     return sep + (p.here ? '<span class="here">' + esc(p.label) + '</span>'
                          : '<a onclick="__go(\'' + p.hash + '\')">' + esc(p.label) + '</a>');

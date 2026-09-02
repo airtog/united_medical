@@ -1,6 +1,6 @@
 ---
 name: update-dashboard
-description: Update the UME master performance dashboard (unitedmedicalexams.com/reports/dashboard) from a fresh AdvancedMD EHR CSV export and optional Google Ads numbers. Use whenever Tog says "update the dashboard", "dashboard update", "new EHR export", "recount the month", drops a CSV from ~/Downloads and asks for the numbers refreshed, or asks to close out / finalize a month. Encodes the counting rules (create-date basis, families = individual exams, cancellations excluded), the boundary checks that catch a truncated export, the provenance stamping, and the deploy + live-verify + stealth checks.
+description: Update the UME master performance dashboard (unitedmedicalexams.com/reports/dashboard) from a fresh AdvancedMD EHR CSV export, plus — at monthly close — a Quo call export and Google Ads numbers. Use whenever Tog says "update the dashboard", "dashboard update", "new EHR export", "recount the month", "close out the month", mentions Quo call data or phone attribution, drops a CSV from ~/Downloads and asks for the numbers refreshed, or asks to finalize a month. Encodes the counting rules (create-date basis, families = individual exams, cancellations excluded), the boundary checks that catch a truncated export, the provenance stamping, and the deploy + live-verify + stealth checks.
 ---
 
 # Update the UME master dashboard
@@ -14,6 +14,36 @@ The dashboard lives at `reports/dashboard/` and is two files:
 
 If a data update seems to require an `index.html` change, stop and say so — it almost
 certainly means the schema needs a new field, which is a separate decision.
+
+## Two cadences — know which one you are running
+
+| | input | touches |
+|---|---|---|
+| **Weekly** | EHR CSV only | `trad` / `web` / `days` / `weeks` / `cancels`. **`calls` is not touched** — never infer phone numbers from a booking export. |
+| **Monthly close** | EHR CSV **+ Quo month export + Ads figures** | everything above, plus the whole `calls` block and the `revised` note |
+
+If Tog hands you only a CSV, it is a weekly run. Do not leave `calls` half-filled
+from a partial month — say what is still needed and add it to `backlog`.
+
+**Every weekly run, regardless of cadence, also appends one row to
+`weeklyFunnel`** — the source for the "Ad Spend → Calls → Bookings" chart:
+
+```js
+{ week: "YYYY-MM-DD", trad: N, web: N, calls: N|null, spend: N|null }
+```
+
+- `week` is the Monday (ISO, Mon-start) the booking week falls in.
+- `trad` / `web` come from the same EHR CSV as the month's own recount —
+  do not recompute differently.
+- `calls` is that week's Quo inbound count if a Quo export came with this
+  run, else `null`. Never estimate it from a partial pull.
+- `spend` is `null` until month close fills it in from the Ads UI. A week
+  genuinely worth $0 (a real pause) is `spend: 0`, not `null` — the funnel
+  chart's paused-zone shading depends on that distinction, and a `null`
+  written where a `0` belongs will silently swallow a pause from the chart.
+- If the week is missing from `weeklyFunnel` entirely, the chart renders it
+  as a true gap (hatched, no bar). Never invent a row to fill a week you
+  have not actually recounted.
 
 ---
 
@@ -82,33 +112,65 @@ will be wrong. When you recount a closed month:
 
 ---
 
-## 4. Ads numbers
+## 4. Ads numbers (monthly close)
 
-If Tog supplies Google Ads figures, fill `spend`, `impressions`, `clicks`,
-`ctr`, `cpc`, `conv` on the month.
+From the pasted Ads block, fill `spend`, `impressions`, `clicks`, `ctr`, `cpc`,
+`conv` on the month — and from the **Call details** report and the conversions
+summary, the three ad-side call fields in `calls`:
+
+- `adCalls` — calls via the ad's call button (Google forwarding), any duration
+- `siteCalls` — calls via the website number-swap on paid sessions, any duration
+- `callConv` — ≥60s call conversions Google counted. This is a **subset of
+  `conv`**, not an addition to it. Never sum the two.
 
 **Fields you were not given stay `null`.** They render as "—". Never derive a
-missing metric from the others (no `clicks = impressions × ctr`) and never carry
-a number forward from a previous month. A blank is honest; a guess is not.
-
-The known backfill gap is tracked in the `backlog` array at the bottom of
-`data.js` — update it as items are filled.
+missing metric from the others (no `clicks = impressions × ctr`), never carry a
+number forward from a previous month, and never let a partial month stand in as
+a month total — a count that starts mid-month is a floor, not a total, and
+belongs in `backlog` until the full figure exists. A blank is honest; a guess is not.
 
 ---
 
-## 5. Stamp provenance on every edit
+## 5. Calls and phone attribution (monthly close)
+
+Input is a **Quo month CSV export**. From it:
+
+- `quoInbound` — human inbound calls on the tracked line for the full month.
+  Exclude spam/robocalls where identifiable, and say how many you dropped.
+- `sonaAnswered` — after-hours calls Sona handled, from the Quo log.
+
+Then run the **phone match** against that month's traditional (non-web) EHR rows:
+
+- normalize both sides to the **last 10 digits** before joining — Quo and
+  AdvancedMD format numbers differently and a raw string join silently misses
+- record the result as `phoneMatch: { matched, of, note }`
+
+`phoneMatch` is an **attribution floor, not a rate.** It says "at least this many
+phone bookings provably came from the tracked line". A booking that fails to
+match is unproven, not proven-organic — households call from numbers that are
+not the one in their chart. Write the note so it says what was audited and what
+was not, e.g. the Aug 2026 entry naming the six verified households and flagging
+late-month traditionals as unaudited.
+
+`calls: null` means call tracking did not exist that month. Never write zeros
+into it to make a month look complete.
+
+---
+
+## 6. Stamp provenance on every edit
 
 Every month you touch gets:
 
 - `src: "EHR export YYYY-MM-DD"` — the date of the CSV you counted from
 - `adsSrc: "Ads UI pull YYYY-MM-DD"` — when ads fields changed
+- `quoSrc: "Quo export YYYY-MM-DD"` — when anything in `calls` changed
 
 `data.js` is append/amend-only through this skill. Do not silently rewrite a
 closed month's numbers without a `revised` note.
 
 ---
 
-## 6. Ship it
+## 7. Ship it
 
 1. Edit **only** `reports/dashboard/data.js`.
 2. Show Tog the diff (`git diff reports/dashboard/data.js`) plus a plain-language
@@ -132,7 +194,7 @@ mentions in `robots.txt` and `sitemap.xml`.
 
 ---
 
-## 7. Stealth rules — non-negotiable
+## 8. Stealth rules — non-negotiable
 
 - **Never** link the dashboard from any site page, the sitemap, or `robots.txt` —
   not even in a comment. `build.js` already excludes `reports/` from the sitemap
