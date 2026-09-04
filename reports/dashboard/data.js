@@ -226,9 +226,27 @@ window.UME_DATA = {
                 },
                 quoSrc: "Quo export 2025-12-01–2026-09-03, pulled 2026-09-02",
                 adsSrc: "Google Ads: daily performance export 2025-10-01–2026-09-02 + Call details (GFN log, since 2026-08-13), pulled 2026-09-02"
+        },
+        "09": { trad: 7,  web: 1,  cancels: 0,    spend: 213.00,  impressions: 314,  clicks: 28,   ctr: 8.92, cpc: 7.61, conv: 0,
+                note: "MTD through Sep 4 · dry-run daily pull",
+                // days = exams by create date, cancellations excluded. Sum MUST equal trad+web.
+                days: { "1":3, "4":5 },
+                weeks: [
+                  { label: "Sep 1–7", web: 1, phone: 7, spend: 213.00, notes: "MTD through Sep 4 (week in progress)" }
+                ],
+                calls: {
+                  quoInbound:   18,   // MTD Sep 1–4, Quo analytics
+                  adCalls:      null, // GFN/call-details not pulled in this dry run
+                  siteCalls:    null,
+                  callConv:     null,
+                  sonaAnswered: null, // Sona totals not visible in Quo analytics for this window
+                  // no per-day Quo breakdown in this dry run — omit days rather than invent zeros
+                },
+                quoSrc: "Quo analytics MTD Sep 1–4 2026, pulled 2026-09-04 (inbound 18: forwarded 16, answered 1, missed 1)",
+                adsSrc: "Google Ads Campaign report Sep 1–4 2026, Cardiacare Center PC, pulled 2026-09-04"
         }
       },
-      banked_next: { label: "Booked for Sept", exams: 6, revenue: 3594 }
+      banked_next: { label: "Booked for Oct", exams: 0, revenue: 0 }
     }
 
   },
